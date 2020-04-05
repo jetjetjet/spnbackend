@@ -1,0 +1,366 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API documentation SPN",
+        "description": "Ikhwan Computer",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "afd.zik@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/spnbackend/public/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Loginnya kena ERROR",
+                "operationId": "createUsersWithListInput",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/jabatan/list": {
+            "get": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "List Jabatan",
+                "description": "List Jabatan",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/jabatan/view/{id}": {
+            "get": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "Detail Jabatan",
+                "description": "Jabatan By ID",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/jabatan/save/{id?}": {
+            "post": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "Tambah atau edit Jabatan",
+                "description": "Tambah atau edit Jabatan",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "group_name": {
+                                        "type": "string"
+                                    },
+                                    "group_code": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "group_name": "Ikhwan Komputer",
+                                    "group_code": "IKE"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/jabatan/delete/{id}": {
+            "post": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "Hapus Jabatan",
+                "description": "Hapus Jabatan",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/user/list": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "List User",
+                "description": "List User",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/user/view/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Detail User",
+                "description": "User By ID",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/user/save/{id?}": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Tambah atau edit User",
+                "description": "Tambah atau edit User",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "full_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "username": "Simba",
+                                    "full_name": "Simba The Cat",
+                                    "email": "simba@thecat.dev.id",
+                                    "password": "*****",
+                                    "phone": "084212312",
+                                    "address": "Jl. Ridwan Rais Depok, Jawa Barat"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/user/delete/{id}": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Hapus User",
+                "description": "Hapus User",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/menu/list": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "List Menu",
+                "description": "List Menu",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/Menu/view/{id}": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Detail Menu",
+                "description": "Menu By ID",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/menu/save/{id?}": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Tambah atau edit Menu",
+                "description": "Tambah atau edit Menu",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "menu_name": {
+                                        "type": "string"
+                                    },
+                                    "display": {
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "type": "string"
+                                    },
+                                    "isparent": {
+                                        "type": "boolean"
+                                    },
+                                    "parent_id": {
+                                        "type": "string"
+                                    },
+                                    "index": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "menu_name": "menu",
+                                    "display": "Menu",
+                                    "url": "/Menu",
+                                    "icon": "fa-menu",
+                                    "isparent": true,
+                                    "parent_id": null,
+                                    "index": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/menu/delete/{id}": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Hapus Menu",
+                "description": "Hapus Menu",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Sistem SPN",
+            "description": "Ikhwan Komputer"
+        }
+    ]
+}

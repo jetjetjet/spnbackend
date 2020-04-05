@@ -25,7 +25,6 @@ class GroupController extends Controller
   public function getById(Request $request, $id = null)
   {
     $result = Helper::$responses;
-    dd($result);
     $q = Group::where('active', '1')
       ->where('gen_group.id', $id)
       ->first();

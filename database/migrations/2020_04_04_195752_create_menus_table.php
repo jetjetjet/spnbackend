@@ -18,7 +18,7 @@ class CreateMenusTable extends Migration
             $table->string('menu_name');
             $table->string('display');
             $table->string('url');
-            $table->string('icon');
+            $table->string('icon')->nullable();
             $table->boolean('isparent');
             $table->integer('parent_id')->nullable();
             $table->integer('index')->nullable();
