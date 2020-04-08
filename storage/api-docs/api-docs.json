@@ -20,26 +20,31 @@
                     "Auth"
                 ],
                 "summary": "Loginnya kena ERROR",
-                "operationId": "createUsersWithListInput",
-                "parameters": [
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
+                "operationId": "id",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "admin@admin.com",
+                                    "password": "********"
+                                }
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
-                    "default": {
-                        "description": "successful operation"
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -224,6 +229,37 @@
                 }
             }
         },
+        "/spnbackend/public/api/user/changePassword/{id?}": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Ubah Password User",
+                "description": "Ubah Password User dari ID",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "password": "*****"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/spnbackend/public/api/user/delete/{id}": {
             "post": {
                 "tags": [
@@ -265,6 +301,26 @@
                 ],
                 "summary": "Detail Menu",
                 "description": "Menu By ID",
+                "operationId": "auth",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/Menu/sidebar": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Sidebar Nav",
+                "description": "Menu Sidebar",
                 "operationId": "auth",
                 "responses": {
                     "default": {

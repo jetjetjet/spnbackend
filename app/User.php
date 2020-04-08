@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use DB;
 
 class User extends Authenticatable
 {
@@ -62,6 +63,21 @@ class User extends Authenticatable
   public function getRememberTokenName()
   {
       // Return the name of the column / attribute used to store the "remember me" token
+  }
+
+  public function scopeGetPermission($query, $id)
+  {
+    $permissions = $query->join('gen_groupmenu as gg', 'gg.group_id', 'gen_user.group_id')
+    ->where([
+      'gg.active' => '1',
+      'gen_user.active' => '1',
+      'gen_user.id' => $id,
+    ])
+    ->where('permissions', '!=', "")
+    ->select(DB::raw('string_agg(permissions, \'|\') as permissions'))->first();
+
+    $perm = explode("|",$permissions->permissions);
+    return $perm;
   }
 
 }

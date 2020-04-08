@@ -17,15 +17,31 @@ class MenuController extends Controller
 {
   public function getAllMenuPermission()
   {
-    $perm = HakAkses::all();$dw = Auth::user()->getAuthIdentifier();
+    $perm = HakAkses::all();
     return response()->json($perm, 200);
   }
 
   public function getMenuSideBar()
   {
-    $q = Menu::join('gen_groupmenu as gm', 'menu.id', 'menu_id')
-      ->join('gen_group as gg', 'gg.id', 'group_id')
-      ->join('user as u', 'u.id', '');
+    $result = Helper::$responses;
+    $q = Menu::sideBar();
+    $pMenu = $q->where('isparent', '1')->get();
+    foreach($pMenu as $m1){
+      $tempMenu = new \StdClass();
+      $tempMenu = $m1;
+      if($m1['isparent']){
+        $tempSubMenu = Array();
+        $subMenu = Menu::sideBar()->where('parent_id', $m1['id'])->get();
+        foreach($subMenu as $sm){
+          array_push($tempSubMenu, Menu::mapMenuSideBar($sm));
+        }
+        $tempMenu->subMenu = $tempSubMenu;
+      }
+      array_push($result['data'], Menu::mapMenuSideBar($tempMenu));
+    }
+    $result['success'] = true;
+    $result['state_code']= 200;
+    return response()->json($result, $result['state_code']);
   }
 
   public function getAll(Request $request)

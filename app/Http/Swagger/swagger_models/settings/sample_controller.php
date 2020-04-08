@@ -10,29 +10,31 @@ class SampleController //This is a sample laravel Controller
 
     /////////////// LOGIN
     /**
-     * @OA\POST(
+     * @OA\Post(
      *     path="/spnbackend/public/api/login",
      *     tags={"Auth"},
      *     summary="Loginnya kena ERROR",
-     *     operationId="createUsersWithListInput",
+     *     operationId="id",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string"
+     *                 ),
+     *                 example={"email": "admin@admin.com", "password": "********"}
+     *             )
+     *         )
+     *     ),
      *     @OA\Response(
-     *         response="default",
-     *         description="successful operation"
-     *     ),
-     *     @OA\Parameter(
-     *         name="email",
-     *         in="query",
-     *         @OA\Schema(
-     *             type="string",
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="password",
-     *         in="query",
-     *         @OA\Schema(
-     *             type="string",
-     *         )
-     *     ),
+     *         response=200,
+     *         description="OK"
+     *     )
      * )
      */
 
@@ -198,6 +200,32 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
+     ///Ubah Password
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/user/changePassword/{id?}",
+     *     tags={"User"}, 
+     *     summary="Ubah Password User",
+     *     description="Ubah Password User dari ID",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string"
+     *                 ),
+     *                 example={"password": "*****"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
      /**
      * @OA\Post(
      *     path="/spnbackend/public/api/user/delete/{id}",
@@ -235,6 +263,24 @@ class SampleController //This is a sample laravel Controller
      *     tags={"Menu"}, 
      *     summary="Detail Menu",
      *     description="Menu By ID",
+     *     operationId="auth",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     //Menu SideBar
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/Menu/sidebar",
+     *     tags={"Menu"}, 
+     *     summary="Sidebar Nav",
+     *     description="Menu Sidebar",
      *     operationId="auth",
      *     @OA\Response(
      *         response="default",

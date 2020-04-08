@@ -4,6 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Auth;
 
 class Menu extends Model
 {
@@ -73,5 +74,38 @@ class Menu extends Model
   public function scopeGetById($query, $id)
   {
     return $query->where('active', '1')->where('gen_menu.id', $id);
+  }
+
+  public function scopeSideBar($query)
+  {
+    return $query->join('gen_groupmenu as gm', 'gen_menu.id', 'gm.menu_id')
+      ->join('gen_group as gg', 'gg.id', 'gm.group_id')
+      ->join('gen_user as u', 'u.group_id', 'gg.id')
+      ->where([
+        "gen_menu.active" => '1',
+        "gg.active" => '1',
+        "gm.active" => '1',
+        "u.active" => '1',
+        "u.id" => Auth::user()->getAuthIdentifier()
+      ])
+      ->orderBy('index')
+      ->select('gen_menu.id','parent_id', 'index', 'menu_name', 'display', 'url', 'icon', 'isparent');
+  }
+
+  public static function mapMenuSideBar($db)
+  {
+    $temp = new \StdClass();
+    $temp->id = isset($db['id']) ? $db['id'] : null;
+    $temp->parent_id = isset($db['parent_id']) ? $db['parent_id'] : null;
+    $temp->index = isset($db['index']) ? $db['index'] : null;
+    $temp->menu_name = isset($db['menu_name']) ? $db['menu_name'] : null;
+    $temp->display = isset($db['display']) ? $db['display'] : null;
+    $temp->url = isset($db['url']) ? $db['url'] : null;
+    $temp->icon = isset($db['icon']) ? $db['icon'] : null;
+    $temp->isparent = isset($db['isparent']) ? $db['isparent'] : null;
+    if(isset($db->subMenu)){
+      $temp->subMenu = $db->subMenu;
+    }
+    return $temp;
   }
 }

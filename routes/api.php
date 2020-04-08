@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
     Route::get('/menu/list', 'MenuController@getAll');
     Route::get('/menu/view/{id?}', 'MenuController@getById');
+    Route::get('/menu/sidebar', 'MenuController@getMenuSideBar');
     Route::post('/menu/save/{id?}', 'MenuController@save');
     Route::post('/menu/delete/{id?}', 'MenuController@delete');
     

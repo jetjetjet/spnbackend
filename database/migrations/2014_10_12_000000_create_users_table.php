@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('gen_user', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('group_id')->nullable();
             $table->string('username',50);
             $table->string('email');
             $table->string('full_name', 100)->nullable();

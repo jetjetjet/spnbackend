@@ -35,21 +35,14 @@ class AuthController extends Controller
           array_push($result['messages'],'Password Anda Salah');
           $result['state_code'] = 400;
         } else {
-          $abilities = ['user_create'];
-          $token = $user->createToken($request->email, $abilities);
+          $perm = User::getPermission($user->id);
+          $token = $user->createToken($request->email, $perm);
           $data = Array( "token" => $token->plainTextToken,
             "userid" => $user->id,
             "username" => $user->username,
             "email" => $user->email,
             "full_name" => $user->full_name
           );
-            // foreach($token as $tk){
-            //   dd($tk->name);
-            // }
-          session(['email' => $user->email,
-            'userid' => $user->id,
-            'username' => $user->username
-          ]);Session::put('key', 'value');
           $result['success'] = true;
           $result['state_code'] = 200;
           $result['data'] = $data;
