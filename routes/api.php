@@ -28,9 +28,11 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/user/delete/{id?}', 'UserController@delete');
     Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
 
-    
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
-
+    Route::get('/menu/list', 'MenuController@getAll');
+    Route::get('/menu/view/{id?}', 'MenuController@getById');
+    Route::post('/menu/save/{id?}', 'MenuController@save');
+    Route::post('/menu/delete/{id?}', 'MenuController@delete');
     
-Route::post('/logout', 'AuthController@logout');
+    Route::post('/logout', 'AuthController@logout');
 });

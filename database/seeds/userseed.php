@@ -22,5 +22,7 @@ class userseed extends Seeder
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
+
+        factory(User::class, 40)->create();
     }
 }
