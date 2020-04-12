@@ -14,10 +14,12 @@ class UserController extends Controller
   public function getAll(Request $request)
   {
     $result = Helper::$responses;
-    $q = User::where('active', '1')->get();
+    $filter = Helper::mapFilter($request);
+    $data = User::getUserList($filter);
+
     $result['state_code'] = 200;
     $result['success'] = true;
-    $result['data'] = $q;
+    $result['data'] = $data;
 
     return response()->json($result, 200);
   }

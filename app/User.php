@@ -80,4 +80,49 @@ class User extends Authenticatable
     return $perm;
   }
 
+  public function scopeGetUserList($query, $filter)
+  {
+    $data = new \stdClass();
+    $q = $query
+      ->leftJoin('gen_group as gg', 'gg.id', 'group_id')
+      ->where([
+        'gg.active' => '1',
+        'gen_user.active' => '1'
+      ]);
+
+    if($filter->search){
+			foreach($filter->search as $qCol){
+				$sCol = explode('|', $qCol);
+				$fCol = str_replace('"', '', $sCol[0]);
+				$q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
+			}
+    }
+    
+    $qCount = $q->count();
+
+    if ($filter->sortColumns){
+			$order = $filter->sortColumns[0];
+			$q = $q->orderBy($order->column, $order->order);
+		} else {
+			$q = $q->orderBy('gen_user.created_at');
+    }
+    
+		$q = $q->skip($filter->offset);
+    $q = $q->take($filter->limit);
+    
+    $data->totalCount = $qCount;
+    $data->data = $q->select('gen_user.id', 
+      'gg.group_name',
+      'gg.id as group_id',
+      'username', 
+      'full_name',
+      'email',
+      'phone',
+      'address',
+      'last_login'
+      )->get();
+
+    return $data;
+  }
+
 }
