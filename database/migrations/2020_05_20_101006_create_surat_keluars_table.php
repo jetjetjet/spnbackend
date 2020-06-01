@@ -27,7 +27,6 @@ class CreateSuratKeluarsTable extends Migration
             $table->integer('approval_user');
             $table->integer('file_id')->nullable();
 
-
             $table->boolean('active');
             $table->timestamp('created_at');
             $table->integer('created_by');

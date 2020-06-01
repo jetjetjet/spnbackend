@@ -7,79 +7,34 @@ use Illuminate\Http\Request;
 
 class FileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+  public static function prepareFiles($inputs, $subFolder=''){
+    $files = array();
+    try {
+      $fileCount = isset($inputs['plupload_count']) ? $inputs['plupload_count'] : 0;
+      for ($i = 0; $i < $fileCount; $i++){   
+        if (!isset($inputs['plupload_' . $i . '_status'])) continue;
+        $status = $inputs['plupload_' . $i . '_status'];
+        if ($status !== 'done') continue;
+
+        $file = new \stdClass();
+        if (!isset($inputs['plupload_' . $i . '_tmpname'])) continue;
+        $file->path = $inputs['plupload_' . $i . '_tmpname'];
+        if (!isset($inputs['plupload_' . $i . '_name'])) continue;
+        $file->name = $inputs['plupload_' . $i . '_name'];
+        array_push($files, $file);
+
+        // Moves from tmp to parent.
+        $oldPath = base_path() . '/upload/files/tmp/' . $file->path;
+        $newPath = base_path() . '/upload/files/' . $subFolder . $file->path;
+        rename($oldPath, $newPath);
+
+        //update file->path
+        $file->path = $subFolder . $file->path;
+      }
+    } catch (Exception $e){
+        // supress
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function show(File $file)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(File $file)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, File $file)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(File $file)
-    {
-        //
-    }
+    return $files;
+  }
 }

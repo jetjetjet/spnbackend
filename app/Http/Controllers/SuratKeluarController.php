@@ -2,84 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\SuratKeluar;
+use App\Model\SuratKeluar;
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
+use Auth;
+use Validator;
+use DB;
 
 class SuratKeluarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+   public function getAll()
+   {
+    $result = Helper::$responses;
+    $filter = Helper::mapFilter($request);
+    $data = SuratKeluar::getSuratKeluar($filter);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    $result['state_code'] = 200;
+    $result['success'] = true;
+    $result['data'] = $data;
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    return response()->json($result, 200);
+   }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\SuratKeluar  $suratKeluar
-     * @return \Illuminate\Http\Response
-     */
-    public function show(SuratKeluar $suratKeluar)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\SuratKeluar  $suratKeluar
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(SuratKeluar $suratKeluar)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SuratKeluar  $suratKeluar
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, SuratKeluar $suratKeluar)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\SuratKeluar  $suratKeluar
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(SuratKeluar $suratKeluar)
-    {
-        //
-    }
+   public function getById(Request $request, $id = null)
+   {
+     
+   }
 }
