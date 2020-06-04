@@ -11,6 +11,12 @@ use Exception;
 
 class SuratKeluarRepository
 {
+
+  public static function getList($filter, $loginid)
+  {
+    
+  }
+
   public static function save($id, $result,$inputs, $loginid)
   {
     try{

@@ -83,7 +83,7 @@
                 ]
             }
         },
-        "/spnbackend/public/api/jabatan/view/{id}": {
+        "/spnbackend/public/api/jabatan/view": {
             "get": {
                 "tags": [
                     "Jabatan"
@@ -91,6 +91,16 @@
                 "summary": "Detail Jabatan",
                 "description": "Jabatan By ID",
                 "operationId": "auth",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": "successful operation"
@@ -103,13 +113,23 @@
                 ]
             }
         },
-        "/spnbackend/public/api/jabatan/save/{id?}": {
+        "/spnbackend/public/api/jabatan/save": {
             "post": {
                 "tags": [
                     "Jabatan"
                 ],
                 "summary": "Tambah atau edit Jabatan",
                 "description": "Tambah atau edit Jabatan",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -135,21 +155,41 @@
                     "200": {
                         "description": "OK"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/spnbackend/public/api/jabatan/delete/{id}": {
+        "/spnbackend/public/api/jabatan/delete": {
             "post": {
                 "tags": [
                     "Jabatan"
                 ],
                 "summary": "Hapus Jabatan",
                 "description": "Hapus Jabatan",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/spnbackend/public/api/user/list": {
@@ -160,6 +200,24 @@
                 "summary": "List User",
                 "description": "List User",
                 "operationId": "auth",
+                "parameters": [
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": "successful operation"
@@ -172,7 +230,7 @@
                 ]
             }
         },
-        "/spnbackend/public/api/user/view/{id}": {
+        "/spnbackend/public/api/user/view": {
             "get": {
                 "tags": [
                     "User"
@@ -180,6 +238,16 @@
                 "summary": "Detail User",
                 "description": "User By ID",
                 "operationId": "auth",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": "successful operation"
@@ -192,13 +260,23 @@
                 ]
             }
         },
-        "/spnbackend/public/api/user/save/{id?}": {
+        "/spnbackend/public/api/user/save": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Tambah atau edit User",
                 "description": "Tambah atau edit User",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -243,13 +321,23 @@
                 }
             }
         },
-        "/spnbackend/public/api/user/changePassword/{id?}": {
+        "/spnbackend/public/api/user/changePassword": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Ubah Password User",
                 "description": "Ubah Password User dari ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -274,13 +362,23 @@
                 }
             }
         },
-        "/spnbackend/public/api/user/delete/{id}": {
+        "/spnbackend/public/api/user/delete": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Hapus User",
                 "description": "Hapus User",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -308,7 +406,7 @@
                 ]
             }
         },
-        "/spnbackend/public/api/Menu/view/{id}": {
+        "/spnbackend/public/api/Menu/view": {
             "get": {
                 "tags": [
                     "Menu"
@@ -316,6 +414,16 @@
                 "summary": "Detail Menu",
                 "description": "Menu By ID",
                 "operationId": "auth",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": "successful operation"
@@ -348,13 +456,23 @@
                 ]
             }
         },
-        "/spnbackend/public/api/menu/save/{id?}": {
+        "/spnbackend/public/api/menu/save": {
             "post": {
                 "tags": [
                     "Menu"
                 ],
                 "summary": "Tambah atau edit Menu",
                 "description": "Tambah atau edit Menu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -403,13 +521,23 @@
                 }
             }
         },
-        "/spnbackend/public/api/menu/delete/{id}": {
+        "/spnbackend/public/api/menu/delete": {
             "post": {
                 "tags": [
                     "Menu"
                 ],
                 "summary": "Hapus Menu",
                 "description": "Hapus Menu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -417,13 +545,24 @@
                 }
             }
         },
-        "/spnbackend/public/api/suratKeluar/save/{id?}": {
+        "/spnbackend/public/api/suratKeluar/save": {
             "post": {
                 "tags": [
                     "Surat Keluar"
                 ],
                 "summary": "Tambah atau edit Surat Keluar",
                 "description": "Tambah atau edit Surat Keluar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Project id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -523,13 +662,23 @@
                 }
             }
         },
-        "/spnbackend/public/api/suratKeluar/read/{idDosposisi?}": {
+        "/spnbackend/public/api/suratKeluar/read": {
             "post": {
                 "tags": [
                     "Surat Keluar"
                 ],
                 "summary": "Ubah status baca disposisi",
                 "description": "ubah Status Baca Disposisi",
+                "parameters": [
+                    {
+                        "name": "idDisposisi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"

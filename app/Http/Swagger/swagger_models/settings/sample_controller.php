@@ -71,11 +71,19 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\GET(
-     *     path="/spnbackend/public/api/jabatan/view/{id}",
+     *     path="/spnbackend/public/api/jabatan/view",
      *     tags={"Jabatan"}, 
      *     summary="Detail Jabatan",
      *     description="Jabatan By ID",
      *     operationId="auth",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response="default",
      *         description="successful operation"
@@ -88,10 +96,18 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/jabatan/save/{id?}",
+     *     path="/spnbackend/public/api/jabatan/save",
      *     tags={"Jabatan"}, 
      *     summary="Tambah atau edit Jabatan",
      *     description="Tambah atau edit Jabatan",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -111,20 +127,34 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
      /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/jabatan/delete/{id}",
+     *     path="/spnbackend/public/api/jabatan/delete",
      *     tags={"Jabatan"}, 
      *     summary="Hapus Jabatan",
      *     description="Hapus Jabatan",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -136,6 +166,22 @@ class SampleController //This is a sample laravel Controller
      *     summary="List User",
      *     description="List User",
      *     operationId="auth",
+     *     @OA\Parameter(
+     *          name="skip",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *          name="take",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response="default",
      *         description="successful operation"
@@ -148,11 +194,19 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\GET(
-     *     path="/spnbackend/public/api/user/view/{id}",
+     *     path="/spnbackend/public/api/user/view",
      *     tags={"User"}, 
      *     summary="Detail User",
      *     description="User By ID",
      *     operationId="auth",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response="default",
      *         description="successful operation"
@@ -165,10 +219,18 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/user/save/{id?}",
+     *     path="/spnbackend/public/api/user/save",
      *     tags={"User"}, 
      *     summary="Tambah atau edit User",
      *     description="Tambah atau edit User",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -216,10 +278,18 @@ class SampleController //This is a sample laravel Controller
      ///Ubah Password
      /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/user/changePassword/{id?}",
+     *     path="/spnbackend/public/api/user/changePassword",
      *     tags={"User"}, 
      *     summary="Ubah Password User",
      *     description="Ubah Password User dari ID",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -241,10 +311,18 @@ class SampleController //This is a sample laravel Controller
 
      /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/user/delete/{id}",
+     *     path="/spnbackend/public/api/user/delete",
      *     tags={"User"}, 
      *     summary="Hapus User",
      *     description="Hapus User",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="OK"
@@ -272,11 +350,19 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\GET(
-     *     path="/spnbackend/public/api/Menu/view/{id}",
+     *     path="/spnbackend/public/api/Menu/view",
      *     tags={"Menu"}, 
      *     summary="Detail Menu",
      *     description="Menu By ID",
      *     operationId="auth",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response="default",
      *         description="successful operation"
@@ -307,10 +393,18 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/menu/save/{id?}",
+     *     path="/spnbackend/public/api/menu/save",
      *     tags={"Menu"}, 
      *     summary="Tambah atau edit Menu",
      *     description="Tambah atau edit Menu",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -362,10 +456,18 @@ class SampleController //This is a sample laravel Controller
 
      /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/menu/delete/{id}",
+     *     path="/spnbackend/public/api/menu/delete",
      *     tags={"Menu"}, 
      *     summary="Hapus Menu",
      *     description="Hapus Menu",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="OK"
@@ -378,10 +480,19 @@ class SampleController //This is a sample laravel Controller
 
     /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/suratKeluar/save/{id?}",
+     *     path="/spnbackend/public/api/suratKeluar/save",
      *     tags={"Surat Keluar"}, 
      *     summary="Tambah atau edit Surat Keluar",
      *     description="Tambah atau edit Surat Keluar",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Project id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -485,10 +596,18 @@ class SampleController //This is a sample laravel Controller
 
      /**
      * @OA\Post(
-     *     path="/spnbackend/public/api/suratKeluar/read/{idDosposisi?}",
+     *     path="/spnbackend/public/api/suratKeluar/read",
      *     tags={"Surat Keluar"}, 
      *     summary="Ubah status baca disposisi",
      *     description="ubah Status Baca Disposisi",
+     *     @OA\Parameter(
+     *          name="idDisposisi",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="OK"

@@ -15,7 +15,7 @@ class SuratKeluarController extends Controller
   {
     $result = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = SuratKeluar::getSuratKeluar($filter);
+    $data = SuratKeluar::getList($filter, Auth::user()->getAuthIdentifier());
 
     $result['state_code'] = 200;
     $result['success'] = true;

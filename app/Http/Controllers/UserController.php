@@ -80,8 +80,8 @@ class UserController extends Controller
       return response()->json($results, 400);
     }
 
-    $result = UserRepository::changePassword($id, $result, $inputs, Auth::user()->getAuthIdentifier());
-    return response()->json($result, $results['state_code']);
+    $result = UserRepository::changePassword($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+    return response()->json($result, $result['state_code']);
   }
 
 }

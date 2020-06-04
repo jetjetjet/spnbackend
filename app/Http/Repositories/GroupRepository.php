@@ -34,7 +34,7 @@ class GroupRepository
     return $respon;
   }
 
-  public static function save($respon, $id, $input, $loginid)
+  public static function save($respon, $id, $inputs, $loginid)
   {
     try{
       $jabatan = null;
@@ -83,9 +83,10 @@ class GroupRepository
 
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      array_push($result['messages'], trans('messages.successDeleting', ["item" => $jabatan->group_code]));
+      array_push($respon['messages'], trans('messages.successDeleting', ["item" => $jabatan->group_code]));
     }catch(\Exception $e){
       array_push($respon['messages'], $e->getMessage());
     }
+    return $respon;
   }
 }
