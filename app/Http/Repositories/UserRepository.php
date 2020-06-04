@@ -7,7 +7,7 @@ use App\Helpers\Helper;
 use DB;
 use Exception;
 
-class SuratKeluarRepository
+class UserRepository
 {
   public static function getUserList($filter)
   {

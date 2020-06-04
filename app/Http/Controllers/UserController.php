@@ -15,7 +15,7 @@ class UserController extends Controller
   {
     $result = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = UserRepository::getList($filter);
+    $data = UserRepository::getUserList($filter);
 
     $result['state_code'] = 200;
     $result['success'] = true;
