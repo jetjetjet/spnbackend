@@ -19,7 +19,7 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Loginnya kena ERROR",
+                "summary": "",
                 "operationId": "id",
                 "requestBody": {
                     "content": {
@@ -42,6 +42,20 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "",
+                "operationId": "id",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -396,6 +410,126 @@
                 ],
                 "summary": "Hapus Menu",
                 "description": "Hapus Menu",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/suratKeluar/save/{id?}": {
+            "post": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Tambah atau edit Surat Keluar",
+                "description": "Tambah atau edit Surat Keluar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "jenis_surat": {
+                                        "type": "string"
+                                    },
+                                    "klasifikasi_surat": {
+                                        "type": "string"
+                                    },
+                                    "sifat_surat": {
+                                        "type": "string"
+                                    },
+                                    "tujuan_surat": {
+                                        "type": "string"
+                                    },
+                                    "hal_surat": {
+                                        "type": "string"
+                                    },
+                                    "lampiran_surat": {
+                                        "type": "string"
+                                    },
+                                    "approval_user": {
+                                        "type": "integer"
+                                    },
+                                    "to_user": {
+                                        "type": "integer"
+                                    },
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "jenis_surat": "Penting",
+                                    "klasifikasi_surat": "IT",
+                                    "sifat_surat": "Segera",
+                                    "tujuan_surat": "Ikhwan Komputer",
+                                    "hal_surat": "-",
+                                    "lampiran_surat": "-",
+                                    "approval_user": 1,
+                                    "to_user": 2,
+                                    "file": "file"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/suratKeluar/disposisi": {
+            "post": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Tambah atau edit Surat Keluar",
+                "description": "Tambah atau edit Surat Keluar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "surat_keluar_id": {
+                                        "type": "integer"
+                                    },
+                                    "tujuan_user": {
+                                        "type": "integer"
+                                    },
+                                    "file_id": {
+                                        "type": "file"
+                                    },
+                                    "keterangan": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "surat_keluar_id": "3",
+                                    "tujuan_user": "1",
+                                    "file_id": "[]",
+                                    "keterangan": "Mohon Respon"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/suratKeluar/read/{idDosposisi?}": {
+            "post": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Ubah status baca disposisi",
+                "description": "ubah Status Baca Disposisi",
                 "responses": {
                     "200": {
                         "description": "OK"

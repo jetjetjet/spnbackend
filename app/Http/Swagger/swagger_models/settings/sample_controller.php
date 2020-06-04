@@ -13,7 +13,7 @@ class SampleController //This is a sample laravel Controller
      * @OA\Post(
      *     path="/spnbackend/public/api/login",
      *     tags={"Auth"},
-     *     summary="Loginnya kena ERROR",
+     *     summary="",
      *     operationId="id",
      *     @OA\RequestBody(
      *         @OA\MediaType(
@@ -31,6 +31,19 @@ class SampleController //This is a sample laravel Controller
      *             )
      *         )
      *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/logout",
+     *     tags={"Auth"},
+     *     summary="",
+     *     operationId="id",
      *     @OA\Response(
      *         response=200,
      *         description="OK"
@@ -353,6 +366,129 @@ class SampleController //This is a sample laravel Controller
      *     tags={"Menu"}, 
      *     summary="Hapus Menu",
      *     description="Hapus Menu",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
+
+    //Surat Keluar
+
+    /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratKeluar/save/{id?}",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Tambah atau edit Surat Keluar",
+     *     description="Tambah atau edit Surat Keluar",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="jenis_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="klasifikasi_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="sifat_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tujuan_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="hal_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="lampiran_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="approval_user",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="to_user",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="file"
+     *                 ),
+     *                 example={
+     *                      "jenis_surat": "Penting", 
+     *                      "klasifikasi_surat": "IT", 
+     *                      "sifat_surat": "Segera", 
+     *                      "tujuan_surat": "Ikhwan Komputer",
+     *                      "hal_surat": "-",
+     *                      "lampiran_surat": "-",
+     *                      "approval_user": 1,
+     *                      "to_user": 2,
+     *                      "file": "file"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratKeluar/disposisi",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Tambah atau edit Surat Keluar",
+     *     description="Tambah atau edit Surat Keluar",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="surat_keluar_id",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tujuan_user",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="file_id",
+     *                     type="file"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="keterangan",
+     *                     type="string"
+     *                 ),
+     *                 example={ 
+     *                      "surat_keluar_id": "3", 
+     *                      "tujuan_user": "1", 
+     *                      "file_id": "[]", 
+     *                      "keterangan": "Mohon Respon"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratKeluar/read/{idDosposisi?}",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Ubah status baca disposisi",
+     *     description="ubah Status Baca Disposisi",
      *     @OA\Response(
      *         response=200,
      *         description="OK"

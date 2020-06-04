@@ -26,5 +26,19 @@ class Helper
     $filter->search = $req->input('filter') != null ? json_decode($req->input('filter'), true) : array();
     
     return $filter;
-}
+  }
+
+  public static function prepareFile($inputs, $subFolder=''){
+    $file = new \StdClass;
+    try {
+      $file = isset($inputs['file']) ? $inputs['file'] : null;
+      $file->path = base_path() . '/upload/files';
+      $file->newName = time()."_".$file->getClientOriginalName();
+      $file->originalName = $file->getClientOriginalName();
+      $file->move($file->path ,$file->newName);
+    } catch (Exception $e){
+        // supress
+    }
+    return $file;
+  }
 }

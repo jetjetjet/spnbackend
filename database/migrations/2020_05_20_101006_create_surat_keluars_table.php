@@ -19,12 +19,13 @@ class CreateSuratKeluarsTable extends Migration
             $table->string('nomor_surat')->nullable();
             $table->dateTime('tgl_surat')->nullable();
             $table->string('jenis_surat');
-            $table->integer('klasifikasi_surat');
+            $table->string('klasifikasi_surat');
             $table->string('sifat_surat');
             $table->string('tujuan_surat');
             $table->string('hal_surat');
             $table->string('lampiran_surat');
             $table->integer('approval_user');
+            $table->integer('to_user');
             $table->integer('file_id')->nullable();
 
             $table->boolean('active');

@@ -3,6 +3,9 @@
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Model\DisSuratKeluar;
+use DB;
+use Auth;
 
 class SuratKeluar extends Model
 {
@@ -11,11 +14,13 @@ class SuratKeluar extends Model
   protected $fillable = [
     'nomor_agenda',
     'nomor_surat',
+    'jenis_surat',
     'tgl_surat',
     'klasifikasi_surat',
     'sifat_surat',
     'tujuan_surat',
     'hal_surat',
+    'to_user',
     'lampiran_surat',
     'approval_user',
     'file_id',
@@ -26,7 +31,7 @@ class SuratKeluar extends Model
     'modified_by'
   ];
 
-  public function scopeGeAll($query, $filter, $loginId)
+  public function scopeGetAll($query, $filter, $loginId)
   {
     $data = new \stdClass();
     $q = $query
@@ -73,4 +78,5 @@ class SuratKeluar extends Model
 
     return $data;
   }
+
 }
