@@ -12,9 +12,10 @@ class UserRepository
   public static function getUserList($filter)
   {
     $data = new \stdClass();
-    $q = User::leftJoin('gen_group as gg', 'gg.id', 'group_id')
+    $q = User::leftJoin('gen_group as gg', function($sq){
+      $sq->on('gg.id', 'group_id')
+        ->on('gg.active', DB::raw("'1'")); })
       ->where([
-        'gg.active' => '1',
         'gen_user.active' => '1'
       ]);
 
