@@ -20,6 +20,9 @@ class CreateUsersTable extends Migration
             $table->string('username',50);
             $table->string('email');
             $table->string('full_name', 100)->nullable();
+            $table->dateTime('ttl')->nullable();
+            $table->string('jenis_kelamin');
+            $table->string('path_foto')->nullable();
             $table->string('password', 100);
             $table->string('phone', 15)->nullable();
             $table->string('address', 400)->nullable();

@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/user/delete/{id?}', 'UserController@delete');
     Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
     Route::post('/user/search', 'UserController@searchUser');
+    Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto');
 
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
     Route::get('/menu/list', 'MenuController@getAll');

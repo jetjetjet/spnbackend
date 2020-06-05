@@ -83,6 +83,8 @@ class UserRepository
           'position_id' => $inputs['position_id'] ?? null,
           'phone' => $inputs['phone'],
           'address' => $inputs['address'],
+          'ttl' => $inputs['nip'] ?? null,
+          'jenis_kelamin' => $inputs['jenis_kelamin'],
           'modified_at' => DB::raw('now()'),
           'modified_by' => $userLogin
         ]);
@@ -93,6 +95,8 @@ class UserRepository
           'position_id' => $inputs['position_id'] ?? null,
           'nip' => $inputs['nip'],
           'password' => bcrypt($inputs['password']),
+          'ttl' => $inputs['nip'] ?? null,
+          'jenis_kelamin' => $inputs['jenis_kelamin'],
           'email' => $inputs['email'],
           'full_name' => $inputs['full_name'],
           'phone' => $inputs['phone'],
@@ -167,6 +171,30 @@ class UserRepository
     $respon['state_code'] = 200;
     $respon['data'] = $q;
 
+    return $respon;
+  }
+
+  public static function saveFoto($id, $respon, $inputs, $loginid)
+  {
+    try{
+      $file = Helper::prepareFile($inputs, '/upload/photo');
+      if ($file){
+        $user = User::where('active', '1')->where('id', $id)->firstOrFail();
+
+        $user->update([
+          'path_foto' => '/upload/photo/'. $file->newName,
+          'modified_at' => \Carbon\Carbon::now(),
+          'modified_by' => $loginid
+        ]);
+
+        $respon['success'] = true;
+        $respon['state_code'] = 200;
+        array_push($respon['messages'], trans('messages.successUpdatedPhoto'));
+      } 
+    }catch (\Exception $e){
+      $respon['state_code'] = 500;
+      array_push($result['messages'], $e->getMessage());
+    }
     return $respon;
   }
 }

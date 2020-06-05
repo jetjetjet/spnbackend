@@ -502,6 +502,22 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/user/uploadPhoto/1",
+     *     tags={"User"}, 
+     *     summary="Upload poto User",
+     *     description="upload poto User",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
      /////////////// MENU
     /**
      * @OA\GET(

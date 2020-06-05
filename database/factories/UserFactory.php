@@ -24,6 +24,8 @@ $factory->define(User::class, function (Faker $faker) {
         'username' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'nip' => $faker->unique()->randomNumber($nbDigits = 8),
+        'jenis_kelamin' => $faker->randomElement($array = array ('Laki-laki', 'Perempuan')),
+        'ttl' => $faker->dateTimeThisCentury->format('Y-m-d'),
         'full_name' => $faker->name,
         'phone' => '081352',
         'address' => $faker->address,

@@ -595,6 +595,25 @@
                 ]
             }
         },
+        "/spnbackend/public/api/user/uploadPhoto/1": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Upload poto User",
+                "description": "upload poto User",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/spnbackend/public/api/menu/list": {
             "get": {
                 "tags": [

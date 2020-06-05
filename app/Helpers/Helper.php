@@ -28,11 +28,12 @@ class Helper
     return $filter;
   }
 
-  public static function prepareFile($inputs, $subFolder=''){
+  public static function prepareFile($inputs, $subFolder)
+  {
     $file = new \StdClass;
     try {
       $file = isset($inputs['file']) ? $inputs['file'] : null;
-      $file->path = base_path() . '/upload/files';
+      $file->path = base_path() . $subFolder;
       $file->newName = time()."_".$file->getClientOriginalName();
       $file->originalName = $file->getClientOriginalName();
       $file->move($file->path ,$file->newName);

@@ -90,8 +90,8 @@ class PositionRepository
           'position_name' => $inputs['position_name'],
           'position_type' => $inputs['position_type'],
           'detail' => $inputs['address'] ?? null,
-          'created_at' => DB::raw('now()'),
-          'created_by' => $loginid
+          'modified_at' => DB::raw('now()'),
+          'modified_by' => $loginid
         ]);
 
         $mode = "Ubah";
@@ -126,8 +126,8 @@ class PositionRepository
 
       $posisi->update([
         'active' => '1',
-        'created_at' => DB::raw('now()'),
-        'created_by' => $loginid
+        'modified_at' => DB::raw('now()'),
+        'modified_by' => $loginid
       ]);
       
       $respon['success'] = true;

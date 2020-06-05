@@ -20,6 +20,7 @@ class Userseed extends Seeder
             'full_name' => 'Afdal Zikri',
             'username' => 'Afdal',
             'email' => 'afd.zik@gmail.com',
+            'jenis_kelamin' => 'Laki-laki',
             'nip' => '12345678',
             'password' => bcrypt('afd'),
             'active' => '1',

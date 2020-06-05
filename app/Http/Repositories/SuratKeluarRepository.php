@@ -47,7 +47,7 @@ class SuratKeluarRepository
 
   public static function saveFile(&$result, $inputs, $loginid)
   {
-    $file = Helper::prepareFile($inputs);
+    $file = Helper::prepareFile($inputs, '/upload/suratkeluar');
     if ($file){
       $newFile = File::create([
         'file_name' => $file->newName,

@@ -41,6 +41,7 @@ class UserController extends Controller
     $rules = array(
       'username' => 'required',
       'email' => 'required',
+      'jenis_kelamin' => 'required',
       'phone' => 'max:15',
     );
 
@@ -94,6 +95,32 @@ class UserController extends Controller
 		$result = UserRepository::searchUser($respon);
 
 		return response()->json($result, $result['state_code']);
+  }
+
+  public function uploadFoto(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $user = request()->user(); 
+
+    // Validation rules.
+    $rules = array(
+      'file' => 'required|image|max:1024|mimes:jpeg,bmp,png,gif',
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+		// Validation fails?
+		if ($validator->fails()){
+			$respon['state_code'] = 400;
+      $respon['messages'] = $validator->messages();
+      $respon['data'] = $inputs;
+      return response()->json($respon, 400);
+    }
+    
+    $result = UserRepository::saveFoto($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
+    
+    return response()->json($result, $result['state_code']);
   }
 
 }
