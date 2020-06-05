@@ -36,7 +36,7 @@ class UserController extends Controller
     $results = Helper::$responses;
     $rules = array(
       'username' => 'required',
-      'email' => 'required|exists:gen_user,email',
+      'email' => 'required',
       'phone' => 'max:15',
       'password' => 'required'
     );
