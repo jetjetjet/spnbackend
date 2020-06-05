@@ -14,7 +14,10 @@ class SuratKeluarRepository
 
   public static function getList($filter, $loginid)
   {
-    
+    // $query = DB::table('surat_keluar as sk')
+    //   ->join('dis_surat_keluar as dsk', 'sk.id', 'dsk.surat_keluar_id')
+    //   ->leftJoin('gen_user as cr', 'cr.id', 'dsk.created_by')
+    //   ->leftJoin('')
   }
 
   public static function save($id, $result,$inputs, $loginid)

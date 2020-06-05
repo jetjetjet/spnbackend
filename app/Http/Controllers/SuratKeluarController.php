@@ -33,7 +33,6 @@ class SuratKeluarController extends Controller
   {
     $results = Helper::$responses;
     $user = request()->user(); 
-    dd($user->tokenCan('user:index'));
 
     // Validation rules.
     $rules = array(

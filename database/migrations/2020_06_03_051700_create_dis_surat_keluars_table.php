@@ -21,7 +21,10 @@ class CreateDisSuratKeluarsTable extends Migration
             $table->boolean('is_read');
             $table->dateTime('last_read')->nullable();
             $table->string('keterangan')->nullable();
+
             $table->boolean('is_approved')->nullable();
+            $table->integer('approved_by')->nullable();
+            $table->dateTime('approved_at')->nullable();
 
             $table->boolean('active');
             $table->dateTime('created_at');

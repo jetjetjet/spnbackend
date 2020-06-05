@@ -51,6 +51,129 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
+     /////////////// Unit
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/unit/list",
+     *     tags={"Unit"}, 
+     *     summary="List Unit",
+     *     description="List Unit",
+     *     operationId="auth",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/unit/view",
+     *     tags={"Unit"}, 
+     *     summary="Detail Unit",
+     *     description="Unit By ID",
+     *     operationId="auth",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/unit/save",
+     *     tags={"Unit"}, 
+     *     summary="Tambah atau edit Unit",
+     *     description="Tambah atau edit Unit",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="group_name",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="group_code",
+     *                     type="string"
+     *                 ),
+     *                 example={"group_name": "Ikhwan Komputer", "group_code": "IKE"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/unit/delete",
+     *     tags={"Unit"}, 
+     *     summary="Hapus Unit",
+     *     description="Hapus Unit",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/unit/search",
+     *     tags={"Unit"}, 
+     *     summary="Hapus Unit",
+     *     description="Hapus Unit",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
      /////////////// Jabatan
     /**
      * @OA\GET(
@@ -113,14 +236,22 @@ class SampleController //This is a sample laravel Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="group_name",
+     *                     property="group_id",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="position_name",
      *                     type="string"
      *                 ),
      *                 @OA\Property(
-     *                     property="group_code",
+     *                     property="position_type",
      *                     type="string"
      *                 ),
-     *                 example={"group_name": "Ikhwan Komputer", "group_code": "IKE"}
+     *                 @OA\Property(
+     *                     property="detail",
+     *                     type="string"
+     *                 ),
+     *                 example={"group_id": "1", "position_name": "Kepala Dinas", "position_type": "Gol. III", "detail": "Tanggung Jawab Untuk"}
      *             )
      *         )
      *     ),
@@ -148,6 +279,22 @@ class SampleController //This is a sample laravel Controller
      *              type="integer"
      *          )
      *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/jabatan/search",
+     *     tags={"Jabatan"}, 
+     *     summary="Cari Jabatan",
+     *     description="Cari Jabatan",
      *     @OA\Response(
      *         response=200,
      *         description="OK"
@@ -197,7 +344,7 @@ class SampleController //This is a sample laravel Controller
      *     path="/spnbackend/public/api/user/view",
      *     tags={"User"}, 
      *     summary="Detail User",
-     *     description="User By ID",
+     *     description="Detail ID",
      *     operationId="auth",
      *     @OA\Parameter(
      *          name="id",
@@ -271,7 +418,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -305,7 +455,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -326,7 +479,26 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/user/search",
+     *     tags={"User"}, 
+     *     summary="Cari User",
+     *     description="Cari User",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -450,7 +622,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -471,7 +646,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -549,7 +727,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -590,7 +771,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -611,7 +795,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 }

@@ -15,6 +15,8 @@ class User extends Authenticatable
     public $timestamps = false;
     protected $fillable = [
       'username'
+      ,'nip'
+      ,'position_id'
       ,'email'
       ,'password'
       ,'full_name'
@@ -67,9 +69,11 @@ class User extends Authenticatable
 
   public function scopeGetPermission($query, $id)
   {
-    $permissions = $query->join('gen_groupmenu as gg', 'gg.group_id', 'gen_user.group_id')
+    $permissions = $query->join('gen_position as gp', 'gp.id', 'position_id')
+    ->join('gen_groupmenu as gg', 'gg.group_id', 'gp.group_id')
     ->where([
       'gg.active' => '1',
+      'gp.active' => '1',
       'gen_user.active' => '1',
       'gen_user.id' => $id,
     ])

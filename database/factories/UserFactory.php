@@ -23,6 +23,7 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'username' => $faker->name,
         'email' => $faker->unique()->safeEmail,
+        'nip' => $faker->unique()->randomNumber($nbDigits = 8),
         'full_name' => $faker->name,
         'phone' => '081352',
         'address' => $faker->address,

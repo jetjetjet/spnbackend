@@ -18,6 +18,8 @@ class DisSuratKeluar extends Model
     'last_read',
     'keterangan',
     'is_approved',
+    'approved_by',
+    'approved_at',
     'active',
     'created_at',
     'created_by',

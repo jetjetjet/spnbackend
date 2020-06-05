@@ -12,8 +12,8 @@ class UserRepository
   public static function getUserList($filter)
   {
     $data = new \stdClass();
-    $q = User::leftJoin('gen_group as gg', function($sq){
-      $sq->on('gg.id', 'group_id')
+    $q = User::leftJoin('gen_position as gg', function($sq){
+      $sq->on('gg.id', 'position_id')
         ->on('gg.active', DB::raw("'1'")); })
       ->where([
         'gen_user.active' => '1'
@@ -41,8 +41,8 @@ class UserRepository
     
     $data->totalCount = $qCount;
     $data->data = $q->select('gen_user.id', 
-      'gg.group_name',
-      'gg.id as group_id',
+      'gg.position_name',
+      'gg.id as position_id',
       'username', 
       'full_name',
       'email',
@@ -80,6 +80,7 @@ class UserRepository
 
         $user->update([
           'full_name' => $inputs['full_name'],
+          'position_id' => $inputs['position_id'] ?? null,
           'phone' => $inputs['phone'],
           'address' => $inputs['address'],
           'modified_at' => DB::raw('now()'),
@@ -89,6 +90,8 @@ class UserRepository
       } else {
         $user = User::create([
           'username' => $inputs['username'],
+          'position_id' => $inputs['position_id'] ?? null,
+          'nip' => $inputs['nip'],
           'password' => bcrypt($inputs['password']),
           'email' => $inputs['email'],
           'full_name' => $inputs['full_name'],
@@ -151,5 +154,19 @@ class UserRepository
       array_push($result['messages'], $e->getMessage());
     }
     return $result;
+  }
+
+  public static function searchUser($respon)
+  {
+    $q = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')
+      ->where('gen_user.active','1')
+      ->orderBy('full_name')
+      ->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
+      ->get();
+    $respon['success'] = true;
+    $respon['state_code'] = 200;
+    $respon['data'] = $q;
+
+    return $respon;
   }
 }

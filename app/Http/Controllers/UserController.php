@@ -34,11 +34,14 @@ class UserController extends Controller
   public function save(Request $request, $id = null)
   {
     $results = Helper::$responses;
+    if(!$id){
+      $rules['password'] = 'required';
+      $rules['nip'] = 'required';
+    }
     $rules = array(
       'username' => 'required',
       'email' => 'required',
       'phone' => 'max:15',
-      'password' => 'required'
     );
 
     $inputs = $request->all();
@@ -82,6 +85,15 @@ class UserController extends Controller
 
     $result = UserRepository::changePassword($id, $results, $inputs, Auth::user()->getAuthIdentifier());
     return response()->json($result, $result['state_code']);
+  }
+
+  public function searchUser(Request $request)
+  {
+    $respon = Helper::$responses;
+		//$keyword = $request['keyword'];
+		$result = UserRepository::searchUser($respon);
+
+		return response()->json($result, $result['state_code']);
   }
 
 }
