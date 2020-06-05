@@ -52,7 +52,7 @@ class UserController extends Controller
     }
 
     $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());    
-    return response()->json($result, $results['state_code']);
+    return response()->json($result, $result['state_code']);
   }
 
   public function delete(Request $request, $id = null)
