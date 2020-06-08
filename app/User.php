@@ -87,4 +87,18 @@ class User extends Authenticatable
     return $perm;
   }
 
+  public function scopeJabatanGroup($query, $idUser)
+  {
+    return $query->leftJoin('gen_position as gp', function($q){
+      $q->on('gp.id', 'position_id')
+      ->on('gp.active', DB::raw("'1'"));
+    })->leftJoin('gen_group as gg', function($q){
+      $q->on('gg.id', 'gp.group_id')
+      ->on('gg.active', DB::raw("'1'"));
+    })
+    ->where('gen_user.id', $idUser)
+    ->where('gen_user.active', '1')
+    ->select('gp.id as position_id', 'position_type', 'position_name', 'gg.id as group_id', 'group_name');
+  }
+
 }

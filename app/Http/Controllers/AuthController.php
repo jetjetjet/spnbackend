@@ -37,11 +37,22 @@ class AuthController extends Controller
         } else {
           $perm = User::getPermission($user->id);
           $token = $user->createToken($request->email, $perm);
+          $jbtgrp = User::JabatanGroup($user->id)->first();
           $data = Array( "token" => $token->plainTextToken,
             "userid" => $user->id,
             "username" => $user->username,
             "email" => $user->email,
-            "full_name" => $user->full_name
+            "full_name" => $user->full_name,
+            "nip" => $user->nip,
+            "position_id" => $jbtgrp->position_id ?? null,
+            "position_name" => $jbtgrp->position_name ?? null,
+            "group_id" => $jbtgrp->group_id ?? null,
+            "group_name" => $jbtgrp->group_name ?? null,
+            "path_foto" => $user->path_foto,
+            "address" => $user->address,
+            "phone" => $user->phone,
+            "jenis_kelamin" => $user->jenis_kelamin,
+            "ttl" => $user->ttl
           );
           $result['success'] = true;
           $result['state_code'] = 200;

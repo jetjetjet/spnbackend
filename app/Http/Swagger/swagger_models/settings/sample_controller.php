@@ -27,7 +27,7 @@ class SampleController //This is a sample laravel Controller
      *                     property="password",
      *                     type="string"
      *                 ),
-     *                 example={"email": "admin@admin.com", "password": "********"}
+     *                 example={"email": "admin@ratafd.xyz", "password": "admin"}
      *             )
      *         )
      *     ),
@@ -383,11 +383,23 @@ class SampleController //This is a sample laravel Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
+     *                     property="position_id",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
      *                     property="username",
      *                     type="string"
      *                 ),
      *                 @OA\Property(
      *                     property="full_name",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="nip",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="ttl",
      *                     type="string"
      *                 ),
      *                 @OA\Property(
@@ -406,9 +418,12 @@ class SampleController //This is a sample laravel Controller
      *                     property="address",
      *                     type="string"
      *                 ),
-     *                 example={"username": "Simba", 
+     *                 example={ "position_id": "2",
+     *                      "username": "Simba", 
      *                      "full_name": "Simba The Cat", 
-     *                      "email": "simba@thecat.dev.id", 
+     *                      "nip" : "12345678",
+     *                      "email": "simba@thecat.xyz", 
+     *                      "ttl" : "1992-01-29",
      *                      "password": "*****", 
      *                      "phone": "084212312",
      *                      "address": "Jl. Ridwan Rais Depok, Jawa Barat"}

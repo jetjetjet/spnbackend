@@ -33,7 +33,7 @@ class UserRepository
 			$order = $filter->sortColumns[0];
 			$q = $q->orderBy($order->column, $order->order);
 		} else {
-			$q = $q->orderBy('gen_user.created_at');
+			$q = $q->orderBy('gen_user.username');
     }
     
 		$q = $q->skip($filter->offset);
@@ -41,6 +41,10 @@ class UserRepository
     
     $data->totalCount = $qCount;
     $data->data = $q->select('gen_user.id', 
+      'nip',
+      'ttl',
+      'jenis_kelamin',
+      'position_id',
       'gg.position_name',
       'gg.id as position_id',
       'username', 
@@ -56,8 +60,29 @@ class UserRepository
 
   public static function getUserById($id, $result)
   {
-    $q = User::where('active', '1')
+    $q = User::leftJoin('gen_position as gp', function($q){
+        $q->on('gp.id', 'position_id')
+        ->on('gp.active', DB::raw("'1'"));
+      })->leftJoin('gen_group as gg', function($q){
+        $q->on('gg.id', 'gp.group_id')
+        ->on('gg.active', DB::raw("'1'"));
+      })
+      ->where('active', '1')
       ->where('gen_user.id', $id)
+      ->select('gen_user.id as id',
+        'position_id',
+        'position_name',
+        'position_type',
+        'gen_group.id as group_id',
+        'group_name',
+        'nip',
+        'username',
+        'full_name',
+        'email',
+        'ttl',
+        'jenis_kelamin',
+        'address',
+        'phone')
       ->first();
     if ($q == null){
       $result['state_code'] = 400;
@@ -189,7 +214,9 @@ class UserRepository
 
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        array_push($respon['messages'], trans('messages.successUpdatedPhoto'));
+        $pathPoto = Array('path_photo' => $user['path_foto']);
+        array_push($respon['data'], $pathPoto);
+        array_push($respon['messages'], trans('messages.successUpdatedPhoto'), ["item" => $user->username]);
       } 
     }catch (\Exception $e){
       $respon['state_code'] = 500;

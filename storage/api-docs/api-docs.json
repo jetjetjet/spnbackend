@@ -35,8 +35,8 @@
                                 },
                                 "type": "object",
                                 "example": {
-                                    "email": "admin@admin.com",
-                                    "password": "********"
+                                    "email": "admin@ratafd.xyz",
+                                    "password": "admin"
                                 }
                             }
                         }
@@ -457,10 +457,19 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "position_id": {
+                                        "type": "integer"
+                                    },
                                     "username": {
                                         "type": "string"
                                     },
                                     "full_name": {
+                                        "type": "string"
+                                    },
+                                    "nip": {
+                                        "type": "integer"
+                                    },
+                                    "ttl": {
                                         "type": "string"
                                     },
                                     "email": {
@@ -478,9 +487,12 @@
                                 },
                                 "type": "object",
                                 "example": {
+                                    "position_id": "2",
                                     "username": "Simba",
                                     "full_name": "Simba The Cat",
-                                    "email": "simba@thecat.dev.id",
+                                    "nip": "12345678",
+                                    "email": "simba@thecat.xyz",
+                                    "ttl": "1992-01-29",
                                     "password": "*****",
                                     "phone": "084212312",
                                     "address": "Jl. Ridwan Rais Depok, Jawa Barat"

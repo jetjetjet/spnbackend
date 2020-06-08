@@ -37,10 +37,10 @@ class UserController extends Controller
     if(!$id){
       $rules['password'] = 'required';
       $rules['nip'] = 'required';
+      $rules['email'] = 'required';
+      $rules['nip'] = 'required';
     }
     $rules = array(
-      'username' => 'required',
-      'email' => 'required',
       'jenis_kelamin' => 'required',
       'phone' => 'max:15',
     );

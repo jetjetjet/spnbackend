@@ -17,12 +17,12 @@ class Userseed extends Seeder
     {
         User::truncate();
         User::create([
-            'full_name' => 'Afdal Zikri',
-            'username' => 'Afdal',
-            'email' => 'afd.zik@gmail.com',
+            'full_name' => 'Super Admin',
+            'username' => 'admin',
+            'email' => 'admin@ratafd.xyz',
             'jenis_kelamin' => 'Laki-laki',
             'nip' => '12345678',
-            'password' => bcrypt('afd'),
+            'password' => bcrypt('admin'),
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
