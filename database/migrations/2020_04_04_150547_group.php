@@ -15,7 +15,6 @@ class Group extends Migration
     {
         Schema::create('gen_group', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('unit_id')->nullable();
             $table->string('group_code')->nullable();
             $table->string('group_name');
             $table->boolean('active');

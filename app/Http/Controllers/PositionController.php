@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\PositionRepository;
 use Illuminate\Http\Request;
+use App\HakAkses;
 use DB;
 use Auth;
 use Validator;
@@ -74,5 +75,24 @@ class PositionController extends Controller
 		$result = PositionRepository::searchPosition($respon);
 
 		return response()->json($result, $result['state_code']);
-	}
+  }
+  
+  public function getAllPermissions()
+  {
+    $hakAkses = HakAkses::All();
+    $result = Helper::$responses;
+    $result['success'] = true;
+    $result['state_code'] = 200;
+    array_push($result['data'], $hakAkses);
+
+		return response()->json($result, $result['state_code']);
+  }
+  
+  public function getPositionMenu(Request $request, $idPosisi = null)
+  {
+    $respon = Helper::$responses;
+    $result = PositionRepository::getPositionMenuById($respon, $idPosisi);
+
+		return response()->json($result, $result['state_code']);
+  }
 }

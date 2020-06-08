@@ -153,4 +153,15 @@ class PositionRepository
 
     return $respon;
   }
+
+  public static function getPositionMenuById($respon, $id)
+  {
+    // $q = Position::join('gen_positionmenu as gpm', function($q){
+    //     $q->on('gpm.position_id', 'gen_position.id')
+    //       ->on('gpm.active', DB::raw("'1'"));
+    //   })->join('gen_menu as gm', function($q){
+    //     $q->on('gpm.menu_id', 'gm.id')
+    //       ->on('gm.active', DB::raw("'1'"));
+    //   )->select('menu_name')
+  }
 }

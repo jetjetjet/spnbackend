@@ -73,10 +73,10 @@ class User extends Authenticatable
   public function scopeGetPermission($query, $id)
   {
     $permissions = $query->join('gen_position as gp', 'gp.id', 'position_id')
-    ->join('gen_groupmenu as gg', 'gg.group_id', 'gp.group_id')
+    ->join('gen_positionmenu as gpm', 'gp.id', 'gpm.position_id')
     ->where([
-      'gg.active' => '1',
       'gp.active' => '1',
+      'gpm.active' => '1',
       'gen_user.active' => '1',
       'gen_user.id' => $id,
     ])
@@ -89,6 +89,23 @@ class User extends Authenticatable
 
   public function scopeJabatanGroup($query, $idUser)
   {
+    return self::getJabatanGroup($query)
+    ->where('gen_user.id', $idUser)
+    ->select('gp.id as position_id', 'position_type', 'position_name', 'gg.id as group_id', 'group_name');
+  }
+
+  public function scopeCheckAdmin($query, $idUser)
+  {
+    $q = self::getJabatanGroup($query)
+      ->where('gen_user.id', $idUser)
+      ->where('gg.id', 1)
+      ->select(db::raw("1 as col"))
+      ->first();
+    return isset($q->col) ? $q->col : 0 ;
+  }
+
+  private static function getJabatanGroup($query)
+  {
     return $query->leftJoin('gen_position as gp', function($q){
       $q->on('gp.id', 'position_id')
       ->on('gp.active', DB::raw("'1'"));
@@ -96,9 +113,7 @@ class User extends Authenticatable
       $q->on('gg.id', 'gp.group_id')
       ->on('gg.active', DB::raw("'1'"));
     })
-    ->where('gen_user.id', $idUser)
-    ->where('gen_user.active', '1')
-    ->select('gp.id as position_id', 'position_type', 'position_name', 'gg.id as group_id', 'group_name');
+    ->where('gen_user.active', '1');
   }
 
 }

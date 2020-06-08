@@ -36,6 +36,11 @@ class AuthController extends Controller
           $result['state_code'] = 400;
         } else {
           $perm = User::getPermission($user->id);
+          $sa = User::checkAdmin($user->id);
+
+          if($sa)
+            array_push($perm, 'is_admin');
+            
           $token = $user->createToken($request->email, $perm);
           $jbtgrp = User::JabatanGroup($user->id)->first();
           $data = Array( "token" => $token->plainTextToken,

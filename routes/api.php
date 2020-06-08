@@ -44,6 +44,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/menu/save/{id?}', 'MenuController@save');
     Route::post('/menu/delete/{id?}', 'MenuController@delete');
 
+    Route::get('/suratKeluar/list', 'SuratKeluarController@getAll');
+    Route::get('/suratKeluar/view/{id?}', 'SuratKeluarController@getById');
     Route::post('/suratKeluar/save/{id?}', 'SuratKeluarController@save');
     route::post('/suratKeluar/read/{idDisposisi?}', 'SuratKeluarController@read');
     Route::post('/suratKeluar/disposisi', 'DisSuratKeluarController@disposisiSuratKeluar');

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGroupMenusTable extends Migration
+class CreatePositionMenusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateGroupMenusTable extends Migration
      */
     public function up()
     {
-        Schema::create('gen_groupmenu', function (Blueprint $table) {
+        Schema::create('gen_positionmenu', function (Blueprint $table) {
             $table->id();
-            $table->integer('group_id');
+            $table->integer('position_id');
             $table->integer('menu_id');
             $table->string('permissions', 800)->nullable();
             $table->boolean('active');
@@ -33,6 +33,6 @@ class CreateGroupMenusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('group_menus');
+        Schema::dropIfExists('position_menus');
     }
 }

@@ -1,19 +1,22 @@
 <?php
 
+namespace App;
+
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
+use Auth;
 
-class Position extends Model
+class PositionMenu extends Model
 {
-  protected $table = 'gen_position';
+  protected $table = 'gen_positionmenu';
   public $timestamps = false;
   protected $fillable = [
-    'group_id',
-    'position_name',
-    'position_type',
+    'position_id',
+    'menu_id',
+    'permissions',
     'active',
-    'detail',
     'created_at',
     'created_by',
     'modified_at',

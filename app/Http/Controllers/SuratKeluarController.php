@@ -11,11 +11,13 @@ use Validator;
 
 class SuratKeluarController extends Controller
 {
-  public function getAll()
+  public function getAll(Request $request)
   {
+    $user = request()->user();
     $result = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = SuratKeluar::getList($filter, Auth::user()->getAuthIdentifier());
+    $isAdmin = $user->tokenCan('is_admin') ? true : false;
+    $data = SuratKeluarRepository::getList($filter, Auth::user()->getAuthIdentifier(), $isAdmin);
 
     $result['state_code'] = 200;
     $result['success'] = true;

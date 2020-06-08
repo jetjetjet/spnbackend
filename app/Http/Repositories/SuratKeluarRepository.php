@@ -12,12 +12,60 @@ use Exception;
 class SuratKeluarRepository
 {
 
-  public static function getList($filter, $loginid)
+  public static function getList($filter, $loginid, $isAdmin)
   {
-    // $query = DB::table('surat_keluar as sk')
-    //   ->join('dis_surat_keluar as dsk', 'sk.id', 'dsk.surat_keluar_id')
-    //   ->leftJoin('gen_user as cr', 'cr.id', 'dsk.created_by')
-    //   ->leftJoin('')
+    $data = new \StdClass();
+    $q = DB::table('surat_keluar as sk')
+      ->join('dis_surat_keluar as dsk', 'sk.id', 'dsk.surat_keluar_id')
+      ->leftJoin('gen_user as cr', 'cr.id', 'dsk.created_by')
+      ->leftJoin('gen_position as gp', 'gp.id', 'cr.position_id')
+      ->leftJoin('gen_group as gg', 'gg.id', 'gp.group_id')
+      ->where('sk.active', '1')
+      ->where('dsk.active', '1');
+      
+    if(!$isAdmin)
+      $q = $q->where('dsk.tujuan_user', $loginid)
+        ->orWhere('dsk.created_by', $loginid);
+    
+    if($filter->search){
+      foreach($filter->search as $qCol){
+        $sCol = explode('|', $qCol);
+        $fCol = str_replace('"', '', $sCol[0]);
+        $q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
+      }
+    }
+      
+    $qCount = $q->count();
+  
+    if ($filter->sortColumns){
+      $order = $filter->sortColumns[0];
+      $q = $q->orderBy($order->column, $order->order);
+    } else {
+      $q = $q->orderBy('sk.id', 'DESC');
+    }
+      
+    $q = $q->skip($filter->offset);
+    $q = $q->take($filter->limit);
+      
+    $data->totalCount = $qCount;
+    $data->data =  $q->select(
+      'sk.id',
+      'dsk.id as disposisi_id',
+      'tujuan_surat',
+      'jenis_surat',
+      'hal_surat',
+      'group_name',
+      'position_name',
+      DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
+      DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
+      DB::raw("coalesce(tgl_surat::varchar, 'belum diisi') as tgl_surat"),
+      DB::raw("case when is_approved = '1' then 'Disetujui'
+        when is_approved = '0' then 'Ditolak'
+        else 'Draft' end as status"),
+      DB::raw("case when dsk.created_by =". $loginid ." and (dsk.is_approved is null or dsk.is_approved = '0') then '1' else '0' end as is_editable")
+    )->get();
+
+    return $data;
   }
 
   public static function save($id, $result,$inputs, $loginid)
