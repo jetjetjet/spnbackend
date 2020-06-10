@@ -28,7 +28,10 @@ class SuratKeluarController extends Controller
 
   public function getById(Request $request, $id = null)
   {
+    $responses = Helper::$responses;
+    $result = SuratKeluarRepository::getById($responses, $id);
     
+    return response()->json($result, $result['state_code']);
   }
 
   public function save(Request $request, $id = null)
@@ -70,5 +73,13 @@ class SuratKeluarController extends Controller
     $read = DisSuratKeluarRepository::readDis($idDisposisi);
     $res = $read != null ? "Ok" : "Nok";
     return response()->json($res, 200);
+  }
+
+  public function delete($id)
+  {
+    $respon = Helper::$responses;
+    $result = SuratKeluarRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
+
+    return response()->json($result, $result['state_code']);
   }
 }

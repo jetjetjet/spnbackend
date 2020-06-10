@@ -42,4 +42,18 @@ class Helper
     }
     return $file;
   }
+
+  public static function prepFile($file, $subFolder)
+  {
+    $newFile = new \StdClass;
+    try {
+      $newFile->path = base_path() . $subFolder;
+      $newFile->newName = time()."_".$file->getClientOriginalName();
+      $newFile->originalName = $file->getClientOriginalName();
+      $file->move($newFile->path ,$newFile->newName);
+    } catch (Exception $e){
+        // supress
+    }
+    return $newFile;
+  }
 }

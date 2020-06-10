@@ -47,8 +47,14 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/suratKeluar/list', 'SuratKeluarController@getAll');
     Route::get('/suratKeluar/view/{id?}', 'SuratKeluarController@getById');
     Route::post('/suratKeluar/save/{id?}', 'SuratKeluarController@save');
-    route::post('/suratKeluar/read/{idDisposisi?}', 'SuratKeluarController@read');
+    Route::post('/suratKeluar/delete/{id}', 'SuratKeluarController@delete');
+    Route::post('/suratKeluar/read/{idDisposisi?}', 'SuratKeluarController@read');
     Route::post('/suratKeluar/disposisi', 'DisSuratKeluarController@disposisiSuratKeluar');
+
+    Route::get('/templateSurat/list', 'TemplateSuratController@getAll');
+    Route::get('/templateSurat/view/{id?}', 'TemplateSuratController@getById');
+    Route::post('/templateSurat/save/{id?}', 'TemplateSuratController@save');
+    Route::post('/templateSurat/delete/{id}', 'TemplateSuratController@delete');
     
     Route::post('/logout', 'AuthController@logout');
 });

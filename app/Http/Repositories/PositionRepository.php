@@ -73,6 +73,7 @@ class PositionRepository
       } else {
         $respon['success'] = true;
         $respon['state_code'] = 200;
+        $respon['data'] = $q;
       }
     return $respon;
   }

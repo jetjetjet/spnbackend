@@ -3,6 +3,7 @@
 namespace app\Http\Repositories;
 
 use App\Model\SuratKeluar;
+use App\Model\DisSuratKeluar;
 use App\Http\Repositories\DisSuratKeluarRepository;
 use App\Model\File;
 use App\Helpers\Helper;
@@ -68,6 +69,70 @@ class SuratKeluarRepository
     return $data;
   }
 
+  public static function getById($respon, $id)
+  {
+    $header = DB::table('surat_keluar as sk')
+      ->join('gen_user as cr', 'cr.id', 'sk.created_by')
+      ->join('gen_user as appr', 'appr.id', 'approval_user')
+      ->leftJoin('gen_position as gp', 'gp.id', 'appr.position_id')
+      ->join('gen_user as tu', 'tu.id', 'to_user')
+      ->leftJoin('gen_user as md', 'md.id', 'sk.modified_by')
+      ->where('sk.active', '1')
+      ->where('sk.id', $id)
+      ->select(
+        DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
+        DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
+        DB::raw("coalesce(tgl_surat::varchar, 'belum diisi') as tgl_surat"),
+        DB::raw("coalesce(file_id::varchar, 'belum diisi') as file_id"),
+        'jenis_surat',
+        'klasifikasi_surat',
+        'sifat_surat',
+        'tujuan_surat',
+        'hal_surat',
+        'lampiran_surat',
+        'approval_user',
+        'appr.full_name as approval_name',
+        'to_user',
+        'tu.full_name as to_username',
+        'gp.position_name',
+        'cr.full_name as created_by',
+        'sk.created_at',
+        'md.full_name as modified_by',
+        'sk.modified_by',
+      )->first();
+    
+    if($header != null){
+      $data = new \stdClass();
+
+      $disposisi = DB::table('dis_surat_keluar as dsk')
+        ->join('gen_user as to', 'dsk.created_by', 'to.id')
+        ->join('gen_position as gp', 'to.position_id', 'gp.id')
+        ->join('gen_file as f', 'file_id', 'f.id')
+        ->where('dsk.active', '1')
+        ->where('dsk.surat_keluar_id', $id)
+        ->select('dsk.id', 
+          'surat_keluar_id', 
+          'dsk.created_by',
+          'to.full_name as tujuan_username',
+          'gp.position_name',
+          'file_id',
+          'original_name as file_name',
+          'file_path'
+        )->get();
+
+        $data = $header;
+        $data->disposisi = $disposisi;
+
+        $respon['success'] = true;
+        $respon['state_code'] = 200;
+        $respon['data'] = $data;
+    } else {
+      array_push($respon['messages'], trans('messages.errorNotFound'));
+      $respon['state_code'] = 400;
+    }
+    return $respon;
+  }
+
   public static function save($id, $result,$inputs, $loginid)
   {
     try{
@@ -83,7 +148,8 @@ class SuratKeluarRepository
         $inputs['file_id'] = $result['file_id'];
         $inputs['id'] = $result['id'];
         unset($result['id'], $result['file_id'], $inputs['file']);
-        $result['data'] = $inputs;
+        array_push($result['messages'], trans('messages.successSaveSuratKeluar'));
+        //$result['data'] = $inputs;
       });
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
@@ -99,7 +165,7 @@ class SuratKeluarRepository
     if ($file){
       $newFile = File::create([
         'file_name' => $file->newName,
-        'file_path' => $file->path,
+        'file_path' => '/upload/suratkeluar/'.$file->newName,
         'original_name' => $file->originalName,
         'active' => '1',
         'created_at' => DB::raw('now()'),
@@ -172,5 +238,37 @@ class SuratKeluarRepository
       $result['id'] = $insert->id ?: $id;
       return true;
     }
+  }
+
+  public static function delete($respon, $id, $loginid)
+  {
+    $cekDisposisi = DisSuratKeluar::where('active', '1')
+      ->where('surat_keluar_id', $id)
+      ->count();
+    if($cekDisposisi > 1)
+    {
+      $respon['state_code'] = 500;
+      array_push($respon['messages'], trans('messages.errorDeleteSuratKeluarDispositionAlr'));
+    } else {
+      $header = SuratKeluar::where('active', '1')
+        ->where('id', $id)
+        ->update([
+          'active' => '0',
+          'modified_at' => DB::raw('now()'),
+          'modified_by' => $loginid
+        ]);
+      $detail = DisSuratKeluar::where('active', '1')
+      ->where('surat_keluar_id', $id)
+      ->update([
+        'active' => '0',
+        'modified_at' => DB::raw('now()'),
+        'modified_by' => $loginid
+      ]);
+
+      $respon['success'] = true;
+      $respon['state_code'] = 200;
+      array_push($respon['messages'], trans('messages.successDeleteSuratKeluar'));
+    }
+    return $respon;
   }
 }
