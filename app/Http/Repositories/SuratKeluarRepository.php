@@ -98,7 +98,7 @@ class SuratKeluarRepository
         'cr.full_name as created_by',
         'sk.created_at',
         'md.full_name as modified_by',
-        'sk.modified_by',
+        'sk.modified_by'
       )->first();
     
     if($header != null){

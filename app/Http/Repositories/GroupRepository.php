@@ -20,7 +20,7 @@ class GroupRepository
   public static function groupById($respon)
   {
     $q = Group::where('active', '1')
-      ->where('gen_group.id', $id)
+      ->where('id', $id)
       ->first();
     if ($q == null){
       $respon['state_code'] = 400;

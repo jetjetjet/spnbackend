@@ -51,7 +51,6 @@ class GroupController extends Controller
 
   public function delete($id = null)
   {
-    dd($id);
     $respon = Helper::$responses;
     $result = GroupRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
     return response()->json($result, $result['state_code']);
