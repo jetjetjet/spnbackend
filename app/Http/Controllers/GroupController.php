@@ -56,4 +56,13 @@ class GroupController extends Controller
     $result = GroupRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
     return response()->json($result, $result['state_code']);
   }
+
+  public function searchGroup(Request $request)
+	{
+		$respon = Helper::$responses;
+		//$keyword = $request['keyword'];
+		$result = GroupRepository::searchGroup($respon);
+
+		return response()->json($result, $result['state_code']);
+  }
 }

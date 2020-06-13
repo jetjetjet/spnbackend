@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\PositionRepository;
+use App\Http\Repositories\PositionRepository;
 use Illuminate\Http\Request;
 use App\HakAkses;
 use DB;

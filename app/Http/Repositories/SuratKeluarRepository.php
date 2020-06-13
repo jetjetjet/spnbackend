@@ -107,7 +107,7 @@ class SuratKeluarRepository
       $disposisi = DB::table('dis_surat_keluar as dsk')
         ->join('gen_user as to', 'dsk.created_by', 'to.id')
         ->join('gen_position as gp', 'to.position_id', 'gp.id')
-        ->join('gen_file as f', 'file_id', 'f.id')
+        ->leftJoin('gen_file as f', 'file_id', 'f.id')
         ->where('dsk.active', '1')
         ->where('dsk.surat_keluar_id', $id)
         ->select('dsk.id', 
@@ -116,6 +116,9 @@ class SuratKeluarRepository
           'to.full_name as tujuan_username',
           'gp.position_name',
           'file_id',
+          'is_read',
+          'last_read',
+          'dsk.keterangan',
           'original_name as file_name',
           'file_path'
         )->get();

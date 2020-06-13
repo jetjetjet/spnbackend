@@ -90,10 +90,10 @@ class GroupRepository
     return $respon;
   }
 
-  public static function searchPosition($respon)
+  public static function searchGroup($respon)
   {
     $q = Group::where('active','1')
-      ->orderBy('position_name')
+      ->orderBy('group_name')
       ->select('id', DB::raw("group_code || ' - ' || group_name as text"))
       ->get();
     $respon['success'] = true;
