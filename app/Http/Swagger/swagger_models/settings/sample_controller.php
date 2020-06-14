@@ -791,11 +791,15 @@ class SampleController //This is a sample laravel Controller
      *                     property="keterangan",
      *                     type="string"
      *                 ),
+     *                 @OA\Property(
+     *                     property="is_approved",
+     *                     type="boolean"
+     *                 ),
      *                 example={ 
      *                      "surat_keluar_id": "3", 
      *                      "tujuan_user": "1", 
      *                      "file_id": "[]", 
-     *                      "keterangan": "Mohon Respon"}
+     *                      "keterangan": "Mohon Respon", "is_approved": "1"}
      *             )
      *         )
      *     ),

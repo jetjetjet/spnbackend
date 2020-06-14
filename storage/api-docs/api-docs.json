@@ -897,6 +897,9 @@
                                     },
                                     "keterangan": {
                                         "type": "string"
+                                    },
+                                    "is_approved": {
+                                        "type": "boolean"
                                     }
                                 },
                                 "type": "object",
@@ -904,7 +907,8 @@
                                     "surat_keluar_id": "3",
                                     "tujuan_user": "1",
                                     "file_id": "[]",
-                                    "keterangan": "Mohon Respon"
+                                    "keterangan": "Mohon Respon",
+                                    "is_approved": "1"
                                 }
                             }
                         }

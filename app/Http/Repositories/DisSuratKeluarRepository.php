@@ -41,12 +41,15 @@ class DisSuratKeluarRepository
 
   public static function saveDisSuratKeluar($inputs, $loginid)
   {
+    $appr = $inputs['is_approved']  ?? "false";
     return DisSuratKeluar::create([
       'surat_keluar_id' => $inputs['surat_keluar_id'],
       'tujuan_user' => $inputs['tujuan_user'],
       'file_id' => $inputs['file_id'],
       'keterangan' => $inputs['keterangan'],
       'log' => $inputs['log'],
+      'is_approved' => json_decode($appr),
+      'approved_by' => $appr = "true" ? $loginid : null,
       'is_read' => '0',
       'active' => '1',
       'created_at' => DB::raw('now()'),
