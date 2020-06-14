@@ -1,26 +1,26 @@
 <?php
-
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Auth;
 
-class DisSuratKeluar extends Model
+class SuratMasuk extends Model
 {
-  protected $table = 'dis_surat_keluar';
+  protected $table = 'surat_masuk';
   public $timestamps = false;
   protected $fillable = [
-    'surat_keluar_id',
-    'tujuan_user',
     'file_id',
-    'is_read',
-    'last_read',
+    'asal_surat',
+    'perihal',
+    'nomor_surat',
+    'tgl_surat',
+    'tgl_diterima',
+    'lampiran',
+    'sifat_surat',
+    'klasifikasi',
     'keterangan',
-    'log',
-    'is_approved',
-    'approved_by',
-    'approved_at',
+    'prioritas',
     'active',
     'created_at',
     'created_by',

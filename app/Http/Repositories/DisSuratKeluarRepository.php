@@ -13,6 +13,7 @@ class DisSuratKeluarRepository
 
   public static function disSuratKeluar($respon, $inputs, $loginid)
   {
+    $inputs['log'] = "disposition";
     try{
       DB::transaction(function () use (&$respon, $inputs, $loginid){
         $valid = SuratKeluarRepository::saveFile($respon, $inputs, $loginid);
@@ -45,6 +46,7 @@ class DisSuratKeluarRepository
       'tujuan_user' => $inputs['tujuan_user'],
       'file_id' => $inputs['file_id'],
       'keterangan' => $inputs['keterangan'],
+      'log' => $inputs['log'],
       'is_read' => '0',
       'active' => '1',
       'created_at' => DB::raw('now()'),

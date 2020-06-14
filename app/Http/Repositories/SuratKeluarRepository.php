@@ -36,7 +36,7 @@ class SuratKeluarRepository
       }
     }
       
-    $qCount = $q->count();
+    $qCount = $q->distinct('sk.id')->count();
   
     if ($filter->sortColumns){
       $order = $filter->sortColumns[0];
@@ -63,8 +63,8 @@ class SuratKeluarRepository
       DB::raw("case when is_approved = '1' then 'Disetujui'
         when is_approved = '0' then 'Ditolak'
         else 'Draft' end as status"),
-      DB::raw("case when dsk.created_by =". $loginid ." and (dsk.is_approved is null or dsk.is_approved = '0') then '1' else '0' end as is_editable")
-    )->get();
+      DB::raw("case when sk.created_by =". $loginid ." and (dsk.is_approved is null or dsk.is_approved = '0') then '1' else '0' end as is_editable")
+    )->distinct('sk.id')->get();
 
     return $data;
   }
@@ -106,21 +106,26 @@ class SuratKeluarRepository
 
       $disposisi = DB::table('dis_surat_keluar as dsk')
         ->join('gen_user as to', 'dsk.created_by', 'to.id')
-        ->join('gen_position as gp', 'to.position_id', 'gp.id')
+        ->leftJoin('gen_position as gp', 'to.position_id', 'gp.id')
         ->leftJoin('gen_file as f', 'file_id', 'f.id')
         ->where('dsk.active', '1')
         ->where('dsk.surat_keluar_id', $id)
         ->select('dsk.id', 
+          DB::raw("case when log = 'create' then 'Surat dibuat oleh: '
+            when log = 'disposition' then 'Surat Didisposisikan oleh: '
+            when log = 'finish' then 'Surat selesai'
+            else '' end as label_disposisi"),
           'surat_keluar_id', 
           'dsk.created_by',
-          'to.full_name as tujuan_username',
+          'to.full_name as created_by',
           'gp.position_name',
           'file_id',
           'is_read',
           'last_read',
           'dsk.keterangan',
           'original_name as file_name',
-          'file_path'
+          'file_path',
+          'dsk.created_at'
         )->get();
 
         $data = $header;
@@ -231,6 +236,7 @@ class SuratKeluarRepository
           'surat_keluar_id' => $insert['id'],
           'tujuan_user' => $inputs['to_user'],
           'file_id' => $inputs['file_id'],
+          'log' => "create",
           'keterangan' => null,
         );
         $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);

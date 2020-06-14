@@ -1,30 +1,25 @@
 <?php
-
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
-use Auth;
 
-class DisSuratKeluar extends Model
+class DisSuratMasuk extends Model
 {
-  protected $table = 'dis_surat_keluar';
+  protected $table = 'dis_surat_masuk';
   public $timestamps = false;
   protected $fillable = [
-    'surat_keluar_id',
-    'tujuan_user',
-    'file_id',
+    'surat_masuk_id',
+    'to_user_id',
+    'is_tembusan',
+    'arahan',
+    'is_private',
     'is_read',
     'last_read',
-    'keterangan',
     'log',
-    'is_approved',
-    'approved_by',
-    'approved_at',
     'active',
     'created_at',
     'created_by',
     'modified_at',
     'modified_by'
   ];
-}
+} 
