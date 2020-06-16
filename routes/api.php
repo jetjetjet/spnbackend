@@ -15,8 +15,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', 'AuthController@login');
+Route::post('/forgotPassword', 'AuthController@forgotPassword');
+Route::post('/resetPassword', 'AuthController@resetPassword');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
+    
+    Route::post('/logout', 'AuthController@logout');
+
     Route::get('/jabatan/list', 'PositionController@getAll');
     Route::get('/jabatan/view/{id?}', 'PositionController@getById');
     Route::post('/jabatan/save/{id?}', 'PositionController@save');
@@ -51,7 +56,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/suratKeluar/read/{idDisposisi?}', 'SuratKeluarController@read');
     Route::post('/suratKeluar/disposisi', 'DisSuratKeluarController@disposisiSuratKeluar');
 
-    
     Route::get('/suratMasuk/list', 'SuratMasukController@getAll');
     Route::get('/suratMasuk/view/{id?}', 'SuratMasukController@getById');
     Route::post('/suratMasuk/save/{id?}', 'SuratMasukController@save');
@@ -64,5 +68,4 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/templateSurat/save/{id?}', 'TemplateSuratController@save');
     Route::post('/templateSurat/delete/{id}', 'TemplateSuratController@delete');
     
-    Route::post('/logout', 'AuthController@logout');
 });

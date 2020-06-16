@@ -49,6 +49,74 @@
                 }
             }
         },
+        "/spnbackend/public/api/forgotPassword": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Lupa password. token akan kirim via email",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "afd@ratafd.xyz"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/spnbackend/public/api/resetPassword": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset Password dari token email",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "konci_pas": {
+                                        "type": "string"
+                                    },
+                                    "new_password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "afd@ratafd.xyz",
+                                    "konci_pas": "b65925b748b72800ed8264d5eec736d78e51043c3aaf462e37e7ad2df4850ae8",
+                                    "new_password": "pass@word"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/spnbackend/public/api/logout": {
             "post": {
                 "tags": [
@@ -60,7 +128,12 @@
                     "200": {
                         "description": "OK"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/spnbackend/public/api/unit/list": {
@@ -795,6 +868,236 @@
                 ]
             }
         },
+        "/spnbackend/public/api/templateSurat/list": {
+            "get": {
+                "tags": [
+                    "Template Surat"
+                ],
+                "summary": "List Template Surat",
+                "description": "List TemplateSurat",
+                "operationId": "tsurat",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/templateSurat/view/{id}": {
+            "get": {
+                "tags": [
+                    "Template Surat"
+                ],
+                "summary": "Detail Template Surat",
+                "description": "Template Surat By ID",
+                "operationId": "auth",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/templateSurat/save/{id?}": {
+            "post": {
+                "tags": [
+                    "Template Surat"
+                ],
+                "summary": "Tambah atau edit Template Surat",
+                "description": "Tambah atau edit Template Surat",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "template_type": {
+                                        "type": "string"
+                                    },
+                                    "template_name": {
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "template_type": "Template Surat Dinas ",
+                                    "template_name": "TTD Bapak",
+                                    "file": "[binary]"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/templateSurat/delete/{id?}": {
+            "post": {
+                "tags": [
+                    "Template Surat"
+                ],
+                "summary": "Hapus Template Surat",
+                "description": "hapus Template Surat",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/menu/delete/{id}": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Hapus Menu",
+                "description": "Hapus Menu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratKeluar/list": {
+            "get": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "List Surat Keluar",
+                "description": "API List Surat Keluar",
+                "operationId": "suratKeluar",
+                "parameters": [
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratKeluar/view/{id}": {
+            "get": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Detail surat Keluar by ID",
+                "description": "Detail Surat Keluar By ID",
+                "operationId": "suratKeluar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/spnbackend/public/api/suratKeluar/save": {
             "post": {
                 "tags": [
@@ -930,6 +1233,230 @@
             "post": {
                 "tags": [
                     "Surat Keluar"
+                ],
+                "summary": "Ubah status baca disposisi",
+                "description": "ubah Status Baca Disposisi",
+                "parameters": [
+                    {
+                        "name": "idDisposisi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratMasuk/list": {
+            "get": {
+                "tags": [
+                    "Surat Masuk"
+                ],
+                "summary": "List Surat Masuk",
+                "description": "API List Surat Masuk",
+                "operationId": "suratMasuk",
+                "parameters": [
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratMasuk/view/{id}": {
+            "get": {
+                "tags": [
+                    "Surat Masuk"
+                ],
+                "summary": "Detail surat masuk by ID",
+                "description": "Detail Surat Masuk By ID",
+                "operationId": "suratMasuk",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratMasuk/save/{id?}": {
+            "post": {
+                "tags": [
+                    "Surat Masuk"
+                ],
+                "summary": "Tambah atau edit Surat Masuk",
+                "description": "Tambah atau edit Surat Masuk",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Project id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "asal_surat": {
+                                        "type": "string"
+                                    },
+                                    "perihal": {
+                                        "type": "string"
+                                    },
+                                    "nomor_surat": {
+                                        "type": "string"
+                                    },
+                                    "tgl_surat": {
+                                        "type": "string"
+                                    },
+                                    "sifat_surat": {
+                                        "type": "string"
+                                    },
+                                    "lampiran": {
+                                        "type": "string"
+                                    },
+                                    "prioritas": {
+                                        "type": "string"
+                                    },
+                                    "klasifikasi": {
+                                        "type": "string"
+                                    },
+                                    "keterangan": {
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "asal_surat": "Ikhwan Komputer",
+                                    "perihal": "SIT Aplikasi e-Office",
+                                    "nomor_surat": "1/A/2020",
+                                    "tgl_surat": "2020-06-15",
+                                    "sifat_surat": "Penting",
+                                    "lampiran": "-",
+                                    "prioritas": "Segera",
+                                    "klasifikasi": "kla",
+                                    "keterangan": "Mohon Atensinya",
+                                    "file": "[binary]"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratMasuk/disposisi": {
+            "post": {
+                "tags": [
+                    "Surat Masuk"
+                ],
+                "summary": "Tambah atau edit Surat Masuk",
+                "description": "Tambah atau edit Surat Masuk",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "surat_masuk_id": {
+                                        "type": "integer"
+                                    },
+                                    "to_user_id": {
+                                        "type": "integer"
+                                    },
+                                    "arahan": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "surat_masuk_id": "1",
+                                    "to_user_id": "10",
+                                    "arahan": "Mohon Respon"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratMasuk/read/{idDisposisi?}  ": {
+            "post": {
+                "tags": [
+                    "Surat Masuk"
                 ],
                 "summary": "Ubah status baca disposisi",
                 "description": "ubah Status Baca Disposisi",

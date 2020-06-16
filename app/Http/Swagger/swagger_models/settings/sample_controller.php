@@ -40,6 +40,64 @@ class SampleController //This is a sample laravel Controller
 
      /**
      * @OA\Post(
+     *     path="/spnbackend/public/api/forgotPassword",
+     *     tags={"Auth"},
+     *     summary="Lupa password. token akan kirim via email",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="string"
+     *                 ),
+     *                 example={"email": "afd@ratafd.xyz"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/resetPassword",
+     *     tags={"Auth"},
+     *     summary="Reset Password dari token email",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="konci_pas",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="new_password",
+     *                     type="string"
+     *                 ),
+     *                 example={"email": "afd@ratafd.xyz",
+     *                  "konci_pas": "b65925b748b72800ed8264d5eec736d78e51043c3aaf462e37e7ad2df4850ae8",
+     *                  "new_password": "pass@word"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
+     */
+
+     /**
+     * @OA\Post(
      *     path="/spnbackend/public/api/logout",
      *     tags={"Auth"},
      *     summary="",
@@ -47,7 +105,10 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
-     *     )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
      * )
      */
 
@@ -684,8 +745,203 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
+     /////////////// TEMPLATE SURAT
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/templateSurat/list",
+     *     tags={"Template Surat"}, 
+     *     summary="List Template Surat",
+     *     description="List TemplateSurat",
+     *     operationId="tsurat",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/templateSurat/view/{id}",
+     *     tags={"Template Surat"}, 
+     *     summary="Detail Template Surat",
+     *     description="Template Surat By ID",
+     *     operationId="auth",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/templateSurat/save/{id?}",
+     *     tags={"Template Surat"}, 
+     *     summary="Tambah atau edit Template Surat",
+     *     description="Tambah atau edit Template Surat",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="template_type",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="template_name",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="file"
+     *                 ),
+     *                 example={"template_type": "Template Surat Dinas ", 
+     *                      "template_name": "TTD Bapak", 
+     *                      "file": "[binary]"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/templateSurat/delete/{id?}",
+     *     tags={"Template Surat"}, 
+     *     summary="Hapus Template Surat",
+     *     description="hapus Template Surat",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/menu/delete/{id}",
+     *     tags={"Menu"}, 
+     *     summary="Hapus Menu",
+     *     description="Hapus Menu",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
 
     //Surat Keluar
+
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/suratKeluar/list",
+     *     tags={"Surat Keluar"}, 
+     *     summary="List Surat Keluar",
+     *     description="API List Surat Keluar",
+     *     operationId="suratKeluar",
+     *     @OA\Parameter(
+     *          name="skip",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *          name="take",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/suratKeluar/view/{id}",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Detail surat Keluar by ID",
+     *     description="Detail Surat Keluar By ID",
+     *     operationId="suratKeluar",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
 
     /**
      * @OA\Post(
@@ -817,6 +1073,212 @@ class SampleController //This is a sample laravel Controller
      * @OA\Post(
      *     path="/spnbackend/public/api/suratKeluar/read",
      *     tags={"Surat Keluar"}, 
+     *     summary="Ubah status baca disposisi",
+     *     description="ubah Status Baca Disposisi",
+     *     @OA\Parameter(
+     *          name="idDisposisi",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     //Surat MASUK
+
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/suratMasuk/list",
+     *     tags={"Surat Masuk"}, 
+     *     summary="List Surat Masuk",
+     *     description="API List Surat Masuk",
+     *     operationId="suratMasuk",
+     *     @OA\Parameter(
+     *          name="skip",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *          name="take",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/suratMasuk/view/{id}",
+     *     tags={"Surat Masuk"}, 
+     *     summary="Detail surat masuk by ID",
+     *     description="Detail Surat Masuk By ID",
+     *     operationId="suratMasuk",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratMasuk/save/{id?}",
+     *     tags={"Surat Masuk"}, 
+     *     summary="Tambah atau edit Surat Masuk",
+     *     description="Tambah atau edit Surat Masuk",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Project id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="asal_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="perihal",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="nomor_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tgl_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="sifat_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="lampiran",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="prioritas",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="klasifikasi",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="keterangan",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="file"
+     *                 ),
+     *                 example={
+     *                      "asal_surat": "Ikhwan Komputer", 
+     *                      "perihal": "SIT Aplikasi e-Office", 
+     *                      "nomor_surat": "1/A/2020", 
+     *                      "tgl_surat": "2020-06-15",
+     *                      "sifat_surat": "Penting",
+     *                      "lampiran": "-",
+     *                      "prioritas": "Segera",
+     *                      "klasifikasi": "kla",
+     *                      "keterangan": "Mohon Atensinya",
+     *                      "file": "[binary]"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratMasuk/disposisi",
+     *     tags={"Surat Masuk"}, 
+     *     summary="Tambah atau edit Surat Masuk",
+     *     description="Tambah atau edit Surat Masuk",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="surat_masuk_id",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="to_user_id",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="arahan",
+     *                     type="string"
+     *                 ),
+     *                 example={ 
+     *                      "surat_masuk_id": "1", 
+     *                      "to_user_id": "10", 
+     *                      "arahan": "Mohon Respon"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratMasuk/read/{idDisposisi?}  ",
+     *     tags={"Surat Masuk"}, 
      *     summary="Ubah status baca disposisi",
      *     description="ubah Status Baca Disposisi",
      *     @OA\Parameter(

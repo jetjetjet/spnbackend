@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\CanResetPassword;
+//use Illuminate\Auth\Passwords\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use DB;
 
@@ -13,6 +15,7 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
 
     public $timestamps = false;
+    protected $hidden = ['password', 'active'];
     protected $fillable = [
       'username'
       ,'nip'
@@ -33,8 +36,6 @@ class User extends Authenticatable
       ,'modified_by'
   ];
 
-  protected $hidden = ['password', 'active'];
-
   public function getAuthIdentifierName()
   {
     return $this->attributes['username'];
@@ -45,10 +46,15 @@ class User extends Authenticatable
     return $this->attributes['id'];
   }
 
-  public function getEmail()
+  public function routeNotificationForMail()
   {
-    return $this->attributes['email'];
+    return $this->email;
   }
+
+  // public function getEmail()
+  // {
+  //   return $this->attributes['email'];
+  // }
 
   public function getAuthPassword()
   {
