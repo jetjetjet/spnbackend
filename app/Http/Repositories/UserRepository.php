@@ -67,13 +67,13 @@ class UserRepository
         $q->on('gg.id', 'gp.group_id')
         ->on('gg.active', DB::raw("'1'"));
       })
-      ->where('active', '1')
+      ->where('gen_user.active', '1')
       ->where('gen_user.id', $id)
       ->select('gen_user.id as id',
         'position_id',
         'position_name',
         'position_type',
-        'gen_group.id as group_id',
+        'gg.id as group_id',
         'group_name',
         'nip',
         'username',
