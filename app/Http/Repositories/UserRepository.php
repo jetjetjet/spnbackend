@@ -108,7 +108,7 @@ class UserRepository
           'position_id' => $inputs['position_id'] ?? null,
           'phone' => $inputs['phone'],
           'address' => $inputs['address'],
-          'ttl' => $inputs['nip'] ?? null,
+          'ttl' => $inputs['ttl'] ?? null,
           'jenis_kelamin' => $inputs['jenis_kelamin'],
           'modified_at' => DB::raw('now()'),
           'modified_by' => $userLogin
@@ -120,7 +120,7 @@ class UserRepository
           'position_id' => $inputs['position_id'] ?? null,
           'nip' => $inputs['nip'],
           'password' => bcrypt($inputs['password']),
-          'ttl' => $inputs['nip'] ?? null,
+          'ttl' => $inputs['ttl'] ?? null,
           'jenis_kelamin' => $inputs['jenis_kelamin'],
           'email' => $inputs['email'],
           'full_name' => $inputs['full_name'],
