@@ -43,7 +43,7 @@ class PositionRepository
       'gg.group_name',
       'gg.id as group_id',
       'position_name', 
-      'position_type',
+      'position_type'
       )->get();
     return $data;
   }

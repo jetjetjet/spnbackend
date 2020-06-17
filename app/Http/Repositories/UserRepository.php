@@ -66,8 +66,7 @@ class UserRepository
       })->leftJoin('gen_group as gg', function($q){
         $q->on('gg.id', 'gp.group_id')
         ->on('gg.active', DB::raw("'1'"));
-      })
-      ->where('gen_user.active', '1')
+      })->where('gen_user.active', '1')
       ->where('gen_user.id', $id)
       ->select('gen_user.id as id',
         'position_id',
@@ -78,6 +77,7 @@ class UserRepository
         'nip',
         'username',
         'full_name',
+        'path_foto',
         'email',
         'ttl',
         'jenis_kelamin',
