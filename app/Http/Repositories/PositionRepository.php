@@ -85,12 +85,11 @@ class PositionRepository
       $mode = "";
       if ($id){
         $posisi = Position::where('active', '1')->where('id', $id)->firstOrFail();
-
         $posisi->update([
           'group_id' => $inputs['group_id'] ?? null,
           'position_name' => $inputs['position_name'],
           'position_type' => $inputs['position_type'],
-          'detail' => $inputs['address'] ?? null,
+          'detail' => $inputs['detail'] ?? null,
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
         ]);
@@ -101,7 +100,7 @@ class PositionRepository
           'group_id' => $inputs['group_id'] ?? null,
           'position_name' => $inputs['position_name'],
           'position_type' => $inputs['position_type'],
-          'detail' => $inputs['address'] ?? null,
+          'detail' => $inputs['detail'] ?? null,
           'active' => '1',
           'created_at' => DB::raw('now()'),
           'created_by' => $loginid
@@ -110,8 +109,8 @@ class PositionRepository
       }
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      $respon['data'] = $user;
-      array_push($respon['messages'], trans('messages.succesSaveUpdate', ["item" => $user->position_name, "item2" => $mode]));
+      $respon['data'] = $posisi;
+      array_push($respon['messages'], trans('messages.succesSaveUpdate', ["item" => $posisi->position_name, "item2" => $mode]));
     } catch(\Exception $e){
       $respon['state_code'] = 500;
       array_push($respon['messages'], $e->getMessage());

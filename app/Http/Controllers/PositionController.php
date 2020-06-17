@@ -55,7 +55,7 @@ class PositionController extends Controller
       return response()->json($respon, 400);
     }
     
-    $result = PositionRepository::save($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
+    $result = PositionRepository::save($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
     
     return response()->json($result, $result['state_code']);
 	}
