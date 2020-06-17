@@ -17,7 +17,10 @@ class SuratKeluarRepository
   {
     $data = new \StdClass();
     $q = DB::table('surat_keluar as sk')
-      ->join('dis_surat_keluar as dsk', 'sk.id', 'dsk.surat_keluar_id')
+      ->join('dis_surat_keluar as dsk',function($query){
+        $query->on('dsk.surat_keluar_id', 'sk.id')
+        ->on('dsk.active', DB::raw("'1'"));
+      })
       ->leftJoin('gen_user as cr', 'cr.id', 'dsk.created_by')
       ->leftJoin('gen_position as gp', 'gp.id', 'cr.position_id')
       ->leftJoin('gen_group as gg', 'gg.id', 'gp.group_id')

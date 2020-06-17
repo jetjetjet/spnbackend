@@ -52,8 +52,8 @@ class PositionRepository
   {
     $q = Position::leftJoin('gen_group as gg', 'group_id', 'gg.id')
       ->leftJoin('gen_user as cr', 'gen_position.created_by', 'cr.id')
-      ->leftJoin('gen_user as md', 'gen_position.modified_by', 'mo.id')
-      ->where('gen_position.id', '$id')
+      ->leftJoin('gen_user as md', 'gen_position.modified_by', 'md.id')
+      ->where('gen_position.id', $id)
       ->where('gen_position.active', '1')
       ->select('gen_position.id',
         'group_id',
@@ -133,7 +133,7 @@ class PositionRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       //$respon['data'] = $posisi;
-      array_push($respon['messages'], trans('messages.successDeleting', ["item" => $user->position_name]));
+      array_push($respon['messages'], trans('messages.successDeleting', ["item" => $posisi->position_name]));
     } catch (\Exception $e) {
       $respon['state_code'] = 500;
       array_push($respon['messages'], $e->getMessage());
