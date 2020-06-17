@@ -17,7 +17,7 @@ class GroupRepository
     return $respon;
   }
 
-  public static function groupById($respon)
+  public static function groupById($respon, $id)
   {
     $q = Group::where('active', '1')
       ->where('id', $id)
