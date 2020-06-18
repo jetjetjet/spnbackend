@@ -54,7 +54,8 @@ class TemplateSuratController extends Controller
     }
     
     $result = TemplateSuratRepository::save($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
-    
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
 	}
 
@@ -62,7 +63,8 @@ class TemplateSuratController extends Controller
 	{
 		$respon = Helper::$responses;
     $result = TemplateSuratRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
-    
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
 	}
 }

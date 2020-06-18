@@ -29,6 +29,8 @@ class DisSuratMasukController extends Controller
     }
 
     $result = DisSuratMasukRepository::disSuratMasuk($respon, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Disposition', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
   }
 }

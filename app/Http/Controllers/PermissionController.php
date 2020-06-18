@@ -32,7 +32,8 @@ class PermissionController extends Controller
     $responses = Helper::$responses;
     $inputs = $request->all();
     $result = PermissionRepository::savePermission($responses, $idJabatan, $inputs, Auth::user()->getAuthIdentifier());
-  
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'UpdatePermissions', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
   }
 }

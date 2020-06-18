@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Repositories\SuratMasukRepository;
 use App\Http\Repositories\DisSuratMasukRepository;
+use App\Http\Repositories\AuditTrailRepository;
 use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Auth;
@@ -66,7 +67,8 @@ class SuratMasukController extends Controller
     }
     
     $result = SuratMasukRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
-    
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
   }
 
@@ -81,6 +83,7 @@ class SuratMasukController extends Controller
   {
     $respon = Helper::$responses;
     $result = SuratMasukRepository::tutup($respon, $id, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Close', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
   }
@@ -89,6 +92,7 @@ class SuratMasukController extends Controller
   {
     $respon = Helper::$responses;
     $result = SuratMasukRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
   }

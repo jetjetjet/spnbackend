@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Repositories\SuratKeluarRepository;
 use App\Http\Repositories\DisSuratKeluarRepository;
+use App\Http\Repositories\AuditTrailRepository;
 use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Auth;
@@ -69,8 +70,8 @@ class SuratKeluarController extends Controller
       $result['data'] = $inputs;
       return response()->json($result, 400);
     }
-    
     $result = SuratKeluarRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
     
     return response()->json($result, $result['state_code']);
   }
@@ -110,6 +111,8 @@ class SuratKeluarController extends Controller
   public static function approveSuratKeluar(Request $request, $id)
   {
     $respon = Helper::$responses;
+    $ww = explode("/", $request->path());
+    dd($ww[1]);
     $result = SuratKeluarRepository::approve($respon, $id, Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);

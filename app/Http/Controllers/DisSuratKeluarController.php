@@ -33,6 +33,8 @@ class DisSuratKeluarController extends Controller
     }
 
     $result = DisSuratKeluarRepository::disSuratKeluar($respon, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Disposition', Auth::user()->getAuthIdentifier());
+    
     return response()->json($result, $result['state_code']);
   }
 }

@@ -56,6 +56,7 @@ class PositionController extends Controller
     }
     
     $result = PositionRepository::save($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
     
     return response()->json($result, $result['state_code']);
 	}
@@ -64,6 +65,7 @@ class PositionController extends Controller
 	{
 		$respon = Helper::$responses;
     $result = PositionRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
 	}

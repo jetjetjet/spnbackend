@@ -13,6 +13,7 @@ use App\Helpers\Helper;
 use Session;
 use Validator;
 use App\Notifications\CustomResetPasswordNotification;
+use App\Http\Repositories\AuditTrailRepository;
 
 class AuthController extends Controller
 {
@@ -71,6 +72,9 @@ class AuthController extends Controller
       array_push($result['messages'],'Email anda salah atau tidak terdaftar');
       $result['state_code'] = 400;
     }
+    $idUser = $user->id ?? 0;
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Login', $idUser);
+
     return response()->json($result, $result['state_code']);
   }
 
@@ -78,6 +82,10 @@ class AuthController extends Controller
   {
     //$user = User::where('email', Auth::user()->getEmail())->first();
     $user = request()->user();
+    $idUser = $user->id ?? 0;
+    $result = Helper::$responses;
+    $result['success'] = true;
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Logout', $idUser);
     $user->tokens()->where('name', $user->email)->delete();
     return response()->json(['success' => true], 200);
   }
@@ -122,6 +130,7 @@ class AuthController extends Controller
   public function resetPassword(Request $request)
   {
     $result = Helper::$responses;
+    $idUser = 0;
     $input = $request->all();
     $rules = array(
         'email' => "required|email",
@@ -157,12 +166,14 @@ class AuthController extends Controller
       $result['state_code'] = 200;
       $result['success'] = true;
       array_push($result['messages'], trans('messages.successResetPassword'));
+      $idUser = $rPass->id;
     } else {
       $result['state_code'] = 500;
       array_push($result['messages'], trans('messages.failResetPassword'));
       $result['data'] = $input;
     }
 
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'ResetPassword', $idUser);
     return response()->json($result, $result['state_code']);
   }
 

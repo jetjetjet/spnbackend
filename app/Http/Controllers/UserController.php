@@ -55,7 +55,9 @@ class UserController extends Controller
       return response()->json($results, 400);
     }
 
-    $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());    
+    $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+  
     return response()->json($result, $result['state_code']);
   }
 
@@ -63,7 +65,8 @@ class UserController extends Controller
   {
     $results = Helper::$responses;
     $result = UserRepository::deleteUserById($id, $results, Auth::user()->getAuthIdentifier());
-    
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
   }
 
@@ -85,6 +88,8 @@ class UserController extends Controller
     }
 
     $result = UserRepository::changePassword($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'ChangePassword', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
   }
 
@@ -119,7 +124,8 @@ class UserController extends Controller
     }
     
     $result = UserRepository::saveFoto($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
-    
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'UploadPhoto', Auth::user()->getAuthIdentifier());
+
     return response()->json($result, $result['state_code']);
   }
 
