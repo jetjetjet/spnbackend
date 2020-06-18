@@ -1093,6 +1093,66 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratKeluar/agenda/{id}",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Edit Agenda Surat Keluar",
+     *     description="Edit Agenda Surat Keluar",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="nomor_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="nomor_agenda",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tgl_surat",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="file"
+     *                 ),
+     *                 example={ 
+     *                      "nomor_surat": "1A/VI/2020", 
+     *                      "nomor_agenda": "1AA/2BB/2020", 
+     *                      "tgl_surat": "2020-06-19", 
+     *                      "file": "[binnary]"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratKeluar/approve/{id}",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Approve Surat Keluar",
+     *     description="Approve Surat Keluar",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
      //Surat MASUK
 
      /**
@@ -1289,6 +1349,22 @@ class SampleController //This is a sample laravel Controller
      *              type="integer"
      *          )
      *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/suratMasuk/close/{id}",
+     *     tags={"Surat Masuk"}, 
+     *     summary="Tutup Surat Masuk",
+     *     description="Approve Surat Masuk",
      *     @OA\Response(
      *         response=200,
      *         description="OK"

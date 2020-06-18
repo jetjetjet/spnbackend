@@ -16,7 +16,7 @@ class CreateDisSuratMasuksTable extends Migration
         Schema::create('dis_surat_masuk', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('surat_masuk_id');
-            $table->bigInteger('to_user_id')->nullable();
+            $table->bigInteger('to_user_id');
             $table->string('arahan')->nullable();
             $table->boolean('is_tembusan')->nullable();
             $table->boolean('is_private')->nullable();

@@ -17,7 +17,7 @@ class CreateSuratMasuksTable extends Migration
             $table->id();
             $table->bigInteger('file_id');
             $table->string('asal_surat');
-            $table->string('to_user_id')->nullable();
+            $table->string('to_user_id');
             $table->string('perihal')->nullable();
             $table->string('nomor_surat');
             $table->dateTime('tgl_surat');
@@ -27,6 +27,10 @@ class CreateSuratMasuksTable extends Migration
             $table->string('klasifikasi');
             $table->string('keterangan')->nullable();
             $table->string('prioritas')->nullable();
+
+            $table->bigInteger('closed_by')->nullable();
+            $table->dateTime('closed_at')->nullable();
+            $table->boolean('is_closed');
 
             $table->boolean('active');
             $table->timestamp('created_at');

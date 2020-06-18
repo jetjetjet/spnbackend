@@ -1258,6 +1258,73 @@
                 ]
             }
         },
+        "/spnbackend/public/api/suratKeluar/agenda/{id}": {
+            "post": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Edit Agenda Surat Keluar",
+                "description": "Edit Agenda Surat Keluar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nomor_surat": {
+                                        "type": "string"
+                                    },
+                                    "nomor_agenda": {
+                                        "type": "string"
+                                    },
+                                    "tgl_surat": {
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "nomor_surat": "1A/VI/2020",
+                                    "nomor_agenda": "1AA/2BB/2020",
+                                    "tgl_surat": "2020-06-19",
+                                    "file": "[binnary]"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratKeluar/approve/{id}": {
+            "post": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Approve Surat Keluar",
+                "description": "Approve Surat Keluar",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/spnbackend/public/api/suratMasuk/list": {
             "get": {
                 "tags": [
@@ -1470,6 +1537,25 @@
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/suratMasuk/close/{id}": {
+            "post": {
+                "tags": [
+                    "Surat Masuk"
+                ],
+                "summary": "Tutup Surat Masuk",
+                "description": "Approve Surat Masuk",
                 "responses": {
                     "200": {
                         "description": "OK"

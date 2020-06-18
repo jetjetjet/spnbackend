@@ -24,9 +24,13 @@ class CreateSuratKeluarsTable extends Migration
             $table->string('tujuan_surat');
             $table->string('hal_surat');
             $table->string('lampiran_surat');
-            $table->integer('approval_user');
             $table->integer('to_user');
             $table->integer('file_id')->nullable();
+
+            $table->integer('approval_user');
+            $table->bigInteger('approved_by')->nullable();
+            $table->dateTime('approved_at')->nullable();
+            $table->boolean('is_approved');
 
             $table->boolean('active');
             $table->timestamp('created_at');

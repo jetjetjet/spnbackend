@@ -27,8 +27,13 @@ class SuratMasukController extends Controller
 
   public function getById(Request $request, $id = null)
   {
+    $user = request()->user();
+    $permissions = Array(
+      'suratMasuk_close' => $user->tokenCan('suratMasuk_close') ? 1 : 0,
+      'suratMasuk_disposition' => $user->tokenCan('suratMasuk_disposition') ? 1 : 0
+    );
     $responses = Helper::$responses;
-    $result = SuratMasukRepository::getById($responses, $id);
+    $result = SuratMasukRepository::getById($responses, $id, $permissions);
     
     return response()->json($result, $result['state_code']);
   }
@@ -43,6 +48,7 @@ class SuratMasukController extends Controller
       'asal_surat' => 'required',
       'nomor_surat' => 'required',
       'tgl_surat' => 'required',
+      'to_user_id' => 'required',
       'sifat_surat' => 'required',
       'klasifikasi' => 'required',
       'file' => 'required|file|max:5000|mimes:pdf,docx,doc',
@@ -69,6 +75,14 @@ class SuratMasukController extends Controller
     $read = DisSuratMasukRepository::readDis($idDisposisi);
     $res = $read != null ? "Ok" : "Nok";
     return response()->json($res, 200);
+  }
+  
+  public static function tutupSuratMasuk(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $result = SuratMasukRepository::tutup($respon, $id, Auth::user()->getAuthIdentifier());
+
+    return response()->json($result, $result['state_code']);
   }
 
   public function delete($id)

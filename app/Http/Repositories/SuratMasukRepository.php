@@ -68,7 +68,7 @@ class SuratMasukRepository
     return $data;
   }
 
-  public static function getById($respon, $id)
+  public static function getById($respon, $id, $perms)
   {
     $header = DB::table('surat_masuk as sm')
       ->join('gen_user as cr', 'cr.id', 'sm.created_by')
@@ -94,7 +94,9 @@ class SuratMasukRepository
         'sifat_surat',
         'klasifikasi',
         'keterangan',
-        'prioritas'
+        'prioritas',
+        DB::raw($perms['suratMasuk_close'] . "as can_closed"),
+        DB::raw($perms['suratMasuk_disposition'] . "as can_disposition")
       )
       ->first();
     
@@ -212,34 +214,62 @@ class SuratMasukRepository
         'perihal' => $inputs['perihal'] ?? null,
         'nomor_surat' => $inputs['nomor_surat'] ?? null,
         'tgl_surat' => $inputs['tgl_surat'] ?? null,
+        'to_user_id' => $inputs['to_user_id'],
         'tgl_diterima' => DB::raw('now()'),
         'lampiran' => $inputs['lampiran'] ?? null,
         'sifat_surat' => $inputs['sifat_surat'] ?? null,
         'klasifikasi' => $inputs['klasifikasi'] ?? null,
         'prioritas' => $inputs['prioritas'] ?? null,
         'keterangan' => $inputs['keterangan'] ?? null,
+        'is_closed' => '0',
         'active' => '1',
         'created_at' => DB::raw('now()'),
         'created_by' => $loginid
       ]);
       
-      // if($insert != null){
-      //   $dataDis = Array(
-      //     'surat_masuk_id' => $insert['id'],
-      //     'to_user_id' => null,
-      //     'arahan' => null,
-      //     'log' => 'create',
-      //     'is_tembusan' => null,
-      //     'is_private' => null
-      //   );
-      //   $dis = DisSuratMasukRepository::saveDisSuratMasuk($dataDis, $loginid);
-      //   if($dis == null){
-      //     throw new Exception('rollbacked');
-      //   }
-      // }
+      if($insert != null){
+        $dataDis = Array(
+          'surat_masuk_id' => $insert['id'],
+          'to_user_id' => $inputs['to_user_id'],
+          'arahan' => null,
+          'log' => 'create',
+          'is_tembusan' => null,
+          'is_private' => null
+        );
+        $dis = DisSuratMasukRepository::saveDisSuratMasuk($dataDis, $loginid);
+        if($dis == null){
+          throw new Exception('rollbacked');
+        }
+      }
       $result['id'] = $insert->id ?: $id;
       return true;
     }
+  }
+
+  public static function tutup($respon, $id, $loginid)
+  {
+    $sm = SuratMasuk::where('active', '1')
+      ->where('id', $id)
+      ->where('is_closed', '0')
+      ->first();
+    
+    if($sm != null){
+      $sm->update([
+        'is_closed' => '1',
+        'closed_at' => DB::raw("now()"),
+        'closed_by' => $loginid,
+        'modified_at' => DB::raw("now()"),
+        'modified_by' => $loginid,
+      ]);
+      
+      $respon['success'] = true;
+      $respon['state_code'] = 200;
+      array_push($respon['messages'], trans('messages.successClosedSuratMasuk'));
+    } else {
+      $respon['state_code'] = 500;
+      array_push($respon['messages'], trans('messages.suratAlreadyClosed'));
+    }
+    return $respon;
   }
 
   public static function delete($respon, $id, $loginid)

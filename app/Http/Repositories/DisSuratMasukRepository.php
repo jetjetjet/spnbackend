@@ -32,8 +32,7 @@ class DisSuratMasukRepository
 
   public static function saveDisSuratMasuk($inputs, $loginid)
   {
-    $cr = SuratMasuk::where('active', '1')->where('id', $inputs['surat_masuk_id'])->where('created_by', $loginid)->select(DB::raw('1'))->first();
-    $inputs['log'] = $cr != null ? 'create' : 'disposition';
+    //$appr = $inputs['is_approved']  ?? "false";
     return DisSuratMasuk::create([
       'surat_masuk_id' => $inputs['surat_masuk_id'],
       'to_user_id' => $inputs['to_user_id'],

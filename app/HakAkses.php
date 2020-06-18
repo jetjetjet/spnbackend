@@ -28,14 +28,15 @@ class HakAkses
     'suratKeluar_save',
     'suratKeluar_delete',
     'suratKeluar_disposition',
-    'suratKeluar_closed',
+    'suratKeluar_agenda',
+    'suratKeluar_approve',
 
     'suratMasuk_list',
     'suratMasuk_view',
     'suratMasuk_save',
     'suratMasuk_delete',
     'suratMasuk_disposition',
-    'suratMasuk_closed',
+    'suratMasuk_close',
     
     'templateSurat_list',
     'templateSurat_view',

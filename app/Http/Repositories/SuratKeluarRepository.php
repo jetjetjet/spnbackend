@@ -101,7 +101,10 @@ class SuratKeluarRepository
         'cr.full_name as created_by',
         'sk.created_at',
         'md.full_name as modified_by',
-        'sk.modified_by'
+        'sk.modified_by',
+        DB::raw($perms['suratKeluar_approve'] . "as can_approve"),
+        DB::raw($perms['suratKeluar_disposition'] . "as can_disposition"),
+        DB::raw($perms['suratKeluar_agenda'] . "as can_agenda")
       )->first();
     
     if($header != null){
@@ -228,6 +231,7 @@ class SuratKeluarRepository
         'hal_surat' => $inputs['hal_surat'],
         'lampiran_surat' => $inputs['lampiran_surat'],
         'approval_user' => $inputs['approval_user'],
+        'is_approved' => '0',
         //'file_id' => $inputs['file_id'],
         'active' => '1',
         'created_at' => DB::raw('now()'),
@@ -250,6 +254,79 @@ class SuratKeluarRepository
       $result['id'] = $insert->id ?: $id;
       return true;
     }
+  }
+
+  public static function agenda($respon, $id, $inputs, $loginid)
+  {
+    $sm = SuratKeluar::where('active', '1')
+      ->where('id', $id)
+      ->where('is_approved', '0')
+      ->first();
+    
+    if($sm != null){
+      try{
+        DB::transaction(function () use (&$respon, $sm, $inputs, $loginid){
+          $valid = self::saveFile($respon, $inputs, $loginid);
+          if (!$valid) return;
+
+          $valid = self::updateAgenda($respon, $sm, $inputs, $loginid);
+          if (!$valid) return;
+          
+          unset($respon['file_id']);
+          $respon['success'] = true;
+          $respon['state_code'] = 200;
+          array_push($respon['messages'], trans('messages.successUpdatedAgenda'));
+        });
+      } catch (\Exception $e) {
+        if ($e->getMessage() === 'rollbacked') return $result;
+        $result['state_code'] = 500;
+        array_push($result['messages'], $e->getMessage());
+      }
+    } else {
+      $respon['state_code'] = 500;
+      array_push($respon['messages'], trans('messages.suratAlreadyApproved'));
+    }
+    return $respon;
+  }
+
+  private static function updateAgenda(&$respon, $sm, $inputs, $loginid)
+  {
+    $tes = $sm->update([
+      'nomor_agenda' => $inputs['nomor_agenda'],
+      'nomor_surat' => $inputs['nomor_surat'],
+      'tgl_surat' => $inputs['tgl_surat'],
+      'file_id' => $respon['file_id'],
+      'modified_at' => DB::raw("now()"),
+      'modified_by' => $loginid
+    ]);
+
+    return true;
+  }
+
+  public static function approve($respon, $id, $loginid)
+  {
+    $sk = SuratKeluar::where('active', '1')
+      ->where('id', $id)
+      ->where('is_approved', '0')
+      ->first();
+    
+    if($sk != null){
+      $sk->update([
+        'is_approved' => '1',
+        'approved_at' => DB::raw("now()"),
+        'approved_by' => $loginid,
+        'modified_at' => DB::raw("now()"),
+        'modified_by' => $loginid,
+      ]);
+      
+      $respon['success'] = true;
+      $respon['state_code'] = 200;
+      array_push($respon['messages'], trans('messages.successApprovedSuratKeluar'));
+    } else {
+      $respon['state_code'] = 500;
+      array_push($respon['messages'], trans('messages.suratAlreadyApproved'));
+    }
+    return $respon;
   }
 
   public static function delete($respon, $id, $loginid)
