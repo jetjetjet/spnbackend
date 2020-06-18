@@ -22,6 +22,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     
     Route::post('/logout', 'AuthController@logout');
 
+    Route::get('/auditTrail/list', 'AuditTrailController@getAll');
+
     Route::get('/jabatan/list', 'PositionController@getAll');
     Route::get('/jabatan/view/{id?}', 'PositionController@getById');
     Route::post('/jabatan/save/{id?}', 'PositionController@save');

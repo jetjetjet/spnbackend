@@ -7,6 +7,7 @@ use Validator;
 use App\Helpers\Helper;
 
 use App\Http\Repositories\PermissionRepository;
+use App\Http\Repositories\AuditTrailRepository;
 
 use Illuminate\Http\Request;
 

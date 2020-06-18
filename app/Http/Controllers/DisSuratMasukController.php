@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\DisSuratMasukRepository;
+use App\Http\Repositories\AuditTrailRepository;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 use Auth;

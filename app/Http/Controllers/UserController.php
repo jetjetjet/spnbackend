@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Repositories\UserRepository;
+use App\Http\Repositories\AuditTrailRepository;
 use Auth;
 use App\Helpers\Helper;
 use Validator;

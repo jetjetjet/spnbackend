@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\PositionRepository;
+use App\Http\Repositories\AuditTrailRepository;
 use Illuminate\Http\Request;
 use App\HakAkses;
 use DB;
