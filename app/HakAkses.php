@@ -10,10 +10,39 @@ use DB;
 class HakAkses
 {
   public static $all = array(
+    'jabatan_list',
+    'jabatan_view',
+    'jabatan_save',
+    'jabatan_delete',
+    'jabatan_permission',
+    'jabatan_savePermission',
+
+    'menu_list',
     'menu_view',
     'menu_save',
     'menu_edit',
     'menu_delete',
+    
+    'suratKeluar_list',
+    'suratKeluar_view',
+    'suratKeluar_save',
+    'suratKeluar_delete',
+    'suratKeluar_disposition',
+    'suratKeluar_closed',
+
+    'suratMasuk_list',
+    'suratMasuk_view',
+    'suratMasuk_save',
+    'suratMasuk_delete',
+    'suratMasuk_disposition',
+    'suratMasuk_closed',
+    
+    'templateSurat_list',
+    'templateSurat_view',
+    'templateSurat_save',
+    'templateSurat_edit',
+    'templateSurat_delete',
+
     'user_view',
     'user_save',
     'user_edit',

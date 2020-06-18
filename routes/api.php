@@ -31,20 +31,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/jabatan/permission/{idJabatan?}', 'PermissionController@getPositionPermission');
     Route::get('/jabatan/savePermission/{idJabatan?}', 'PermissionController@savePositionPermission');
 
-    Route::get('/unit/list', 'GroupController@getAll');
-    Route::get('/unit/view/{id?}', 'GroupController@getById');
-    Route::post('/unit/save/{id?}', 'GroupController@save');
-    Route::post('/unit/delete/{id?}', 'GroupController@delete');
-    Route::get('/unit/search', 'GroupController@searchGroup');
-    
-    Route::get('/user/list', 'UserController@getAll');
-    Route::get('/user/view/{id?}', 'UserController@getById');
-    Route::post('/user/save/{id?}', 'UserController@save');
-    Route::post('/user/delete/{id?}', 'UserController@delete');
-    Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
-    Route::get('/user/search', 'UserController@searchUser');
-    Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto');
-
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
     Route::get('/menu/list', 'MenuController@getAll');
     Route::get('/menu/view/{id?}', 'MenuController@getById');
@@ -70,5 +56,18 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/templateSurat/view/{id?}', 'TemplateSuratController@getById');
     Route::post('/templateSurat/save/{id?}', 'TemplateSuratController@save');
     Route::post('/templateSurat/delete/{id}', 'TemplateSuratController@delete');
+
+    Route::get('/unit/list', 'GroupController@getAll');
+    Route::get('/unit/view/{id?}', 'GroupController@getById');
+    Route::post('/unit/save/{id?}', 'GroupController@save');
+    Route::post('/unit/delete/{id?}', 'GroupController@delete');
+    Route::get('/unit/search', 'GroupController@searchGroup');
     
+    Route::get('/user/list', 'UserController@getAll');
+    Route::get('/user/view/{id?}', 'UserController@getById');
+    Route::post('/user/save/{id?}', 'UserController@save');
+    Route::post('/user/delete/{id?}', 'UserController@delete');
+    Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
+    Route::get('/user/search', 'UserController@searchUser');
+    Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto');
 });

@@ -16,7 +16,7 @@ class DisSuratKeluarController extends Controller
     $rules = array(
       'surat_keluar_id' => 'required',
       'tujuan_user' => 'required',
-      'file' => 'file|max:5000|mimes:pdf,docx,doc'
+      'file' => 'mimes:pdf,docx,doc'
     );
 
     $inputs = $request->all();

@@ -17,12 +17,14 @@ class SuratMasukRepository
   {
     $data = new \StdClass();
     $q = DB::table('surat_masuk as sm')
-    ->join('dis_surat_masuk as dsm', 'sm.id', 'dsm.surat_masuk_id')
+    ->leftJoin('dis_surat_masuk as dsm',function($query){
+      $query->on('dsm.surat_masuk_id', 'sm.id')
+      ->on('dsm.active', DB::raw("'1'"));
+    })
     ->leftJoin('gen_user as cr', 'cr.id', 'dsm.created_by')
     ->leftJoin('gen_position as gp', 'gp.id', 'cr.position_id')
     ->leftJoin('gen_group as gg', 'gg.id', 'gp.group_id')
-    ->where('sm.active', '1')
-    ->where('dsm.active', '1');
+    ->where('sm.active', '1');
 
     if(!$isAdmin)
       $q = $q->where('dsm.to_user_id', $loginid)
