@@ -63,8 +63,8 @@ class SuratKeluarRepository
       DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
       DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
       DB::raw("coalesce(tgl_surat::varchar, 'belum diisi') as tgl_surat"),
-      DB::raw("case when is_approved = '1' then 'Disetujui'
-        when is_approved = '0' then 'Ditolak'
+      DB::raw("case when dsk.is_approved = '1' then 'Disetujui'
+        when dsk.is_approved = '0' then 'Ditolak'
         else 'Draft' end as status"),
       DB::raw("case when sk.created_by =". $loginid ." and (dsk.is_approved is null or dsk.is_approved = '0') then '1' else '0' end as is_editable")
     )->distinct('sk.id')->get();
