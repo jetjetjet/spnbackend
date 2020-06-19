@@ -72,7 +72,7 @@ class SuratKeluarRepository
     return $data;
   }
 
-  public static function getById($respon, $id)
+  public static function getById($respon, $id, $perms)
   {
     $header = DB::table('surat_keluar as sk')
       ->join('gen_user as cr', 'cr.id', 'sk.created_by')
