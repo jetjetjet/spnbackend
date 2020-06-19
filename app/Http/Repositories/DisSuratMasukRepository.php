@@ -13,6 +13,7 @@ class DisSuratMasukRepository
   public static function disSuratMasuk($respon, $inputs, $loginid)
   {
     try{
+      $inputs['log'] = 'disposition';
       DB::transaction(function () use (&$respon, $inputs, $loginid){
         $valid = self::saveDisSuratMasuk($inputs, $loginid);
         if($valid == null) return;

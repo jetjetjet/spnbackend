@@ -18,14 +18,7 @@ class Otorisasi
     {
       $responses = array( 'state_code' => "", 'success' => false, 'messages' => "", 'data' => Array());
       $user = Auth::user();
-      
-      if (empty($user)){
-        $responses['messages'] = "You are not logged in!";
-        $responses['state_code'] = 403;
-        return response()->json($responses, 403);
-      }
-
-      if (!$user->tokenCan($actions[0])) 
+      if (!$request->user()->tokenCan($actions[0])) 
       {
         $responses['messages'] = "You are not authorized to access this resource / execute the action!";
         $responses['state_code'] = 401;

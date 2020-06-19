@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 
     Route::get('/suratMasuk/list', 'SuratMasukController@getAll');
     Route::get('/suratMasuk/view/{id?}', 'SuratMasukController@getById');
-    Route::post('/suratMasuk/save/{id?}', 'SuratMasukController@save');
+    Route::post('/suratMasuk/save/{id?}', 'SuratMasukController@save'); //->middleware('can:suratMasuk_save');
     Route::post('/suratMasuk/delete/{id}', 'SuratMasukController@delete');
     Route::post('/suratMasuk/read/{idDisposisi?}', 'SuratMasukController@read');
     Route::post('/suratMasuk/disposisi', 'DisSuratMasukController@disposisiSuratMasuk');
