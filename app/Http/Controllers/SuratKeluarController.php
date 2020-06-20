@@ -118,10 +118,11 @@ class SuratKeluarController extends Controller
     return response()->json($result, $result['state_code']);
   }
 
-  public function delete($id)
+  public function delete(Request $request,$id)
   {
     $respon = Helper::$responses;
     $result = SuratKeluarRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
   }
