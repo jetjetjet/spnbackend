@@ -13,14 +13,22 @@ use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
+  public function getAllPermission(Request $request)
+  {
+    $responses = Helper::$responses;
+
+    array_push($responses['data'], HakAkses::all());
+    $responses['success'] = true;
+    $responses['state_code'] = 200;
+
+    return response()->json($responses, $responses['state_code']);
+  }
+
   public function getPositionPermission(Request $request, $idJabatan = null)
   {
     $responses = Helper::$responses;
     
-    $allPerm = Array( 'all' => HakAkses::all());
-    $userPerm = Array('granted' => PermissionRepository::getPositionPerm($idJabatan));
-
-    array_push($responses['data'], $allPerm);
+    $userPerm = PermissionRepository::getPositionPerm($idJabatan);
     array_push($responses['data'], $userPerm);
     $responses['success'] = true;
     $responses['state_code'] = 200;

@@ -66,7 +66,13 @@ class SuratKeluarRepository
       DB::raw("case when dsk.is_approved = '1' then 'Disetujui'
         when dsk.is_approved = '0' then 'Ditolak'
         else 'Draft' end as status"),
-      DB::raw("case when sk.created_by =". $loginid ." and (dsk.is_approved is null or dsk.is_approved = '0') then '1' else '0' end as is_editable")
+      'sk.is_approved',
+      DB::raw("
+        case when sk.is_approved = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_edit
+      "),
+      DB::raw("
+        case when sk.is_approved = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_delete
+      ")
     )->distinct('sk.id')->get();
 
     return $data;

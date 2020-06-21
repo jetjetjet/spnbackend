@@ -48,9 +48,9 @@ class DisSuratMasukRepository
     ]);
   }
 
-  public static function readDis($id)
+  public static function readDis($id, $loginid)
   {
-    $surat = DisSuratMasuk::where('id', $id)->first();
+    $surat = DisSuratMasuk::where('id', $id)->where('to_user_id', $loginid)->where('active', '1')->first();
 
     if ($surat != null) {
       $surat->update([

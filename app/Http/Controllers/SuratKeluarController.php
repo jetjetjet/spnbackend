@@ -112,7 +112,6 @@ class SuratKeluarController extends Controller
   {
     $respon = Helper::$responses;
     $ww = explode("/", $request->path());
-    dd($ww[1]);
     $result = SuratKeluarRepository::approve($respon, $id, Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);

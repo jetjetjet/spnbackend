@@ -62,7 +62,14 @@ class SuratMasukRepository
       DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
       'cr.full_name as user_created_by',
       'gp.position_name as user_created_position',
-      'gg.group_name as user_created_group'
+      'gg.group_name as user_created_group',
+      'is_closed',
+      DB::raw("
+        case when is_closed = '0' and sm.created_by = ". $loginid ." then 1 else 0 end as can_edit
+      "),
+      DB::raw("
+        case when is_closed = '0' and sm.created_by = ". $loginid ." then 1 else 0 end as can_delete
+      ")
       )->distinct('sm.id')->get();
 
     return $data;

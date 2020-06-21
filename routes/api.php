@@ -30,7 +30,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/jabatan/delete/{id?}', 'PositionController@delete');
     Route::get('/jabatan/search', 'PositionController@searchPosition');
     //PERMISSION
-    Route::get('/jabatan/permission/{idJabatan?}', 'PermissionController@getPositionPermission');
+    Route::get('/jabatan/permission/all', 'PermissionController@getAllPermission');
+    Route::get('/jabatan/permission/granted/{idJabatan}', 'PermissionController@getPositionPermission');
     Route::get('/jabatan/savePermission/{idJabatan?}', 'PermissionController@savePositionPermission');
 
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
