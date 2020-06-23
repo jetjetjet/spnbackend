@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     //PERMISSION
     Route::get('/jabatan/permission/all', 'PermissionController@getAllPermission');
     Route::get('/jabatan/permission/granted/{idJabatan}', 'PermissionController@getPositionPermission');
-    Route::get('/jabatan/permission/save/{idJabatan?}', 'PermissionController@savePositionPermission');
+    Route::post('/jabatan/permission/save/{idJabatan?}', 'PermissionController@savePositionPermission');
 
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
     Route::get('/menu/list', 'MenuController@getAll');

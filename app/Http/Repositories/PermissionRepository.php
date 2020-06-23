@@ -24,7 +24,7 @@ class PermissionRepository
   {
     try{
       //$inputs['permissions'] = !empty($inputs['permissions']) ? $inputs['permissions'] : array();
-      $inputs['perm'] = implode(",", $inputs['permissions']);
+      $inputs['perm'] = $inputs['permissions'];
       $checkData = PositionMenu::where('active', '1')->where('position_id', $idPosisi)->first();
       if($checkData	!= null){
         $checkData->update([
@@ -35,11 +35,12 @@ class PermissionRepository
         array_push($respon['messages'], trans('messages.successUpdatePermissions'));
       } else {
         $cr = PositionMenu::create([
-          'position_id' => $inputs['position_id'],
+          'position_id' => $idPosisi,
           'permissions' => $inputs['perm'],
+          'menu_id' => 0,
           'created_at' => DB::raw('now()'),
           'active' => '1',
-          'modified_at' => $loginid
+          'created_by' => $loginid
         ]);
         array_push($respon['messages'], trans('messages.successSavePermissions'));
       }
