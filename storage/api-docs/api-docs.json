@@ -311,7 +311,7 @@
                 ],
                 "summary": "Detail Jabatan",
                 "description": "Jabatan By ID",
-                "operationId": "auth",
+                "operationId": "viewJabatan",
                 "parameters": [
                     {
                         "name": "id",
@@ -325,6 +325,102 @@
                 "responses": {
                     "default": {
                         "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/jabatan/permission/all": {
+            "get": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "Get all permission",
+                "description": "All permission",
+                "operationId": "jabatan",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/jabatan/permission/granted/{idJabatan}": {
+            "get": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "get permission granted by id Jabatan",
+                "description": "Get permission granted",
+                "operationId": "idJabatan",
+                "parameters": [
+                    {
+                        "name": "idJabatan",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/jabatan/permission/save/{idJabatan?}": {
+            "post": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "Save jabatan permissions",
+                "description": "save jabatan Permissions",
+                "parameters": [
+                    {
+                        "name": "idJabatan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "permissions": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "permissions": "['can_save','can_edit']"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 },
                 "security": [
@@ -1559,6 +1655,44 @@
                 "responses": {
                     "200": {
                         "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/auditTrail/list": {
+            "get": {
+                "tags": [
+                    "AuditTrail"
+                ],
+                "summary": "List AuditTrail",
+                "description": "List AuditTrail",
+                "operationId": "AuditTrail",
+                "parameters": [
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
                     }
                 },
                 "security": [

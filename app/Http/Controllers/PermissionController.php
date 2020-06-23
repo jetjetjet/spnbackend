@@ -39,7 +39,19 @@ class PermissionController extends Controller
   public function savePositionPermission(Request $request, $idJabatan = null)
   {
     $responses = Helper::$responses;
+    $rules = array(
+      'permissions' => 'required'
+    );
+
     $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+    if ($validator->fails()){
+      $results['state_code'] = 400;
+      $results['messages'] = $validator->messages();
+      $results['data'] = $inputs;
+      return response()->json($results, $results['state_code']);
+    }
     $result = PermissionRepository::savePermission($responses, $idJabatan, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'UpdatePermissions', Auth::user()->getAuthIdentifier());
 

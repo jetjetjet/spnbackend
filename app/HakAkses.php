@@ -10,18 +10,14 @@ use DB;
 class HakAkses
 {
   public static $all = array(
+    'auditTrail_list',
+
     'jabatan_list',
     'jabatan_view',
     'jabatan_save',
     'jabatan_delete',
     'jabatan_permission',
     'jabatan_savePermission',
-
-    'menu_list',
-    'menu_view',
-    'menu_save',
-    'menu_edit',
-    'menu_delete',
     
     'suratKeluar_list',
     'suratKeluar_view',

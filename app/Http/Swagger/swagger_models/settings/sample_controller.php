@@ -259,7 +259,7 @@ class SampleController //This is a sample laravel Controller
      *     tags={"Jabatan"}, 
      *     summary="Detail Jabatan",
      *     description="Jabatan By ID",
-     *     operationId="auth",
+     *     operationId="viewJabatan",
      *     @OA\Parameter(
      *          name="id",
      *          required=false,
@@ -271,6 +271,84 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response="default",
      *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/jabatan/permission/all",
+     *     tags={"Jabatan"}, 
+     *     summary="Get all permission",
+     *     description="All permission",
+     *     operationId="jabatan",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/jabatan/permission/granted/{idJabatan}",
+     *     tags={"Jabatan"}, 
+     *     summary="get permission granted by id Jabatan",
+     *     description="Get permission granted",
+     *     operationId="idJabatan",
+     *     @OA\Parameter(
+     *          name="idJabatan",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/jabatan/permission/save/{idJabatan?}",
+     *     tags={"Jabatan"}, 
+     *     summary="Save jabatan permissions",
+     *     description="save jabatan Permissions",
+     *     @OA\Parameter(
+     *          name="idJabatan",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="permissions",
+     *                     type="string"
+     *                 ),
+     *                 example={"permissions": "['can_save','can_edit']"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
      *     ),
      *     security={
      *         {"bearerAuth": {}}
@@ -1368,6 +1446,40 @@ class SampleController //This is a sample laravel Controller
      *     @OA\Response(
      *         response=200,
      *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /////////////// USER
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/auditTrail/list",
+     *     tags={"AuditTrail"}, 
+     *     summary="List AuditTrail",
+     *     description="List AuditTrail",
+     *     operationId="AuditTrail",
+     *     @OA\Parameter(
+     *          name="skip",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *          name="take",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
      *     ),
      *     security={
      *         {"bearerAuth": {}}
