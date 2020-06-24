@@ -10,11 +10,12 @@ class PermissionRepository
 {
   public static function getPositionPerm($idPosisi)
   {
+    $perm = [];
     $permissions = DB::table('gen_positionmenu')
       ->where('active', '1')
       ->where('position_id', $idPosisi)
       ->select(DB::raw("string_agg(permissions, ',') as permissions"))->first();
-    
+    if($permissions->permissions != null)
     $perm = explode(",",$permissions->permissions);
 
     return $perm;
