@@ -13,9 +13,9 @@ class PermissionRepository
     $permissions = DB::table('gen_positionmenu')
       ->where('active', '1')
       ->where('position_id', $idPosisi)
-      ->select(DB::raw('string_agg(permissions, \'|\') as permissions'))->first();
+      ->select(DB::raw("string_agg(permissions, ',') as permissions"))->first();
     
-    $perm = explode("|",$permissions->permissions);
+    $perm = explode(",",$permissions->permissions);
 
     return $perm;
   }
