@@ -78,6 +78,19 @@ class SuratKeluarRepository
     return $data;
   }
 
+  public static function checkSuratKeluar($id)
+  {
+    return SuratKeluar::where('active', '1')
+      ->where('id', $id)
+      ->select(
+        'approval_user',
+        'tujuan_surat',
+        'to_user',
+        'created_by'
+      )
+      ->first();
+  }
+
   public static function getById($respon, $id, $perms)
   {
     $header = DB::table('surat_keluar as sk')
@@ -167,9 +180,8 @@ class SuratKeluarRepository
         $result['state_code'] = 200;
         $inputs['file_id'] = $result['file_id'];
         $inputs['id'] = $result['id'];
-        unset($result['id'], $result['file_id'], $inputs['file']);
         array_push($result['messages'], trans('messages.successSaveSuratKeluar'));
-        //$result['data'] = $inputs;
+       // $result['data'] = $inputs;
       });
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
@@ -279,6 +291,7 @@ class SuratKeluarRepository
           if (!$valid) return;
           
           unset($respon['file_id']);
+          $respon['data'] = $sm;
           $respon['success'] = true;
           $respon['state_code'] = 200;
           array_push($respon['messages'], trans('messages.successUpdatedAgenda'));
@@ -305,8 +318,7 @@ class SuratKeluarRepository
       'modified_at' => DB::raw("now()"),
       'modified_by' => $loginid
     ]);
-
-    return true;
+    return $tes;
   }
 
   public static function approve($respon, $id, $loginid)
@@ -327,6 +339,7 @@ class SuratKeluarRepository
       
       $respon['success'] = true;
       $respon['state_code'] = 200;
+      $respon['data'] = $sk;
       array_push($respon['messages'], trans('messages.successApprovedSuratKeluar'));
     } else {
       $respon['state_code'] = 500;

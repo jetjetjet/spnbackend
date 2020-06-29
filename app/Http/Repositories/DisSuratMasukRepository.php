@@ -20,7 +20,7 @@ class DisSuratMasukRepository
 
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        //$respon['data'] = $inputs;
+        $respon['data'] = $valid;
         array_push($respon['messages'], trans('messages.successDispositionInMail'));
       });
     } catch (\Exception $e) {

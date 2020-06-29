@@ -235,7 +235,136 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
-     /////////////// Jabatan
+     /////////////// Klasifikasi
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/klasifikasi/list",
+     *     tags={"Klasifikasi Surat"}, 
+     *     summary="List Klasifikasi Surat",
+     *     description="List Klasifikasi Surat",
+     *     operationId="klasifikasi",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/klasifikasi/view",
+     *     tags={"Klasifikasi Surat"}, 
+     *     summary="Detail Klasifikasi Surat",
+     *     description="Klasifikasi Surat By ID",
+     *     operationId="viewKlasifikasi",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     
+     /**
+     * @OA\Get(
+     *     path="/spnbackend/public/api/klasifikasi/search",
+     *     tags={"Klasifikasi Surat"}, 
+     *     summary="Cari Klasifikasi Surat",
+     *     description="Cari Klasifikasi Surat",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/klasifikasi/save",
+     *     tags={"Klasifikasi Surat"}, 
+     *     summary="Tambah atau edit Klasifikasi Surat",
+     *     description="Tambah atau edit Klasifikasi Surat",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="kode_klasifikasi",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="nama_klasifikasi",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="detail",
+     *                     type="string"
+     *                 ),
+     *                 example={"kode_klasifikasi": "IT", "nama_klasifikasi": "Teknologi Informasi", "detail": "klasifikasi untuk"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/klasisfikasi/delete",
+     *     tags={"Klasifikasi Surat"}, 
+     *     summary="Hapus Klasifikasi Surat",
+     *     description="Hapus Klasifikasi Surat",
+     *     @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+
+      /////////////// Jabatan
     /**
      * @OA\GET(
      *     path="/spnbackend/public/api/jabatan/list",

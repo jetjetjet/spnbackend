@@ -144,7 +144,8 @@ class PositionRepository
   public static function searchPosition($respon)
   {
     $q = Position::where('active','1')
-      ->orderBy('position_name')
+
+      ->orderBy('position_name', 'ASC')
       ->select('id', DB::raw("position_name || ' - ' || position_type as text"))
       ->get();
     $respon['success'] = true;

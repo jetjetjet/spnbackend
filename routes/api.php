@@ -34,12 +34,22 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/jabatan/permission/granted/{idJabatan}', 'PermissionController@getPositionPermission');
     Route::post('/jabatan/permission/save/{idJabatan?}', 'PermissionController@savePositionPermission');
 
+    Route::get('/klasifikasi/list', 'KlasifikasiSuratController@getAll');
+    Route::get('/klasifikasi/view/{id?}', 'KlasifikasiSuratController@getById');
+    Route::post('/klasifikasi/save/{id?}', 'KlasifikasiSuratController@save');
+    Route::post('/klasifikasi/delete/{id?}', 'KlasifikasiSuratController@delete');
+    Route::get('/klasifikasi/search', 'KlasifikasiSuratController@searchKlasifikasi');
+
     Route::get('/menu/allMenuPermission', 'MenuController@getAllMenuPermission');
     Route::get('/menu/list', 'MenuController@getAll');
     Route::get('/menu/view/{id?}', 'MenuController@getById');
     Route::get('/menu/sidebar', 'MenuController@getMenuSideBar');
     Route::post('/menu/save/{id?}', 'MenuController@save');
     Route::post('/menu/delete/{id?}', 'MenuController@delete');
+    
+    Route::get('/notif/topbar/count', 'NotificationController@getCount');
+    Route::get('/notif/topbar/view', 'NotificationController@getNotif');
+    Route::get('/notif/all', 'NotificationController@getAll');
 
     Route::get('/suratKeluar/list', 'SuratKeluarController@getAll');
     Route::get('/suratKeluar/view/{id?}', 'SuratKeluarController@getById');

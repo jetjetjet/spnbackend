@@ -27,8 +27,7 @@ class DisSuratKeluarRepository
         $respon['success'] = true;
         $respon['state_code'] = 200;
         $inputs['file_id'] = $respon['file_id'];
-        unset($respon['file_id'], $inputs['file']);
-        $respon['data'] = $inputs;
+        $respon['data'] = $valid;
         array_push($respon['messages'], trans('messages.successDisposition'));
       });
     } catch (\Exception $e) {

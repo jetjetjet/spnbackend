@@ -284,6 +284,158 @@
                 ]
             }
         },
+        "/spnbackend/public/api/klasifikasi/list": {
+            "get": {
+                "tags": [
+                    "Klasifikasi Surat"
+                ],
+                "summary": "List Klasifikasi Surat",
+                "description": "List Klasifikasi Surat",
+                "operationId": "klasifikasi",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/klasifikasi/view": {
+            "get": {
+                "tags": [
+                    "Klasifikasi Surat"
+                ],
+                "summary": "Detail Klasifikasi Surat",
+                "description": "Klasifikasi Surat By ID",
+                "operationId": "viewKlasifikasi",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/klasifikasi/search": {
+            "get": {
+                "tags": [
+                    "Klasifikasi Surat"
+                ],
+                "summary": "Cari Klasifikasi Surat",
+                "description": "Cari Klasifikasi Surat",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/klasifikasi/save": {
+            "post": {
+                "tags": [
+                    "Klasifikasi Surat"
+                ],
+                "summary": "Tambah atau edit Klasifikasi Surat",
+                "description": "Tambah atau edit Klasifikasi Surat",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "kode_klasifikasi": {
+                                        "type": "string"
+                                    },
+                                    "nama_klasifikasi": {
+                                        "type": "string"
+                                    },
+                                    "detail": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "kode_klasifikasi": "IT",
+                                    "nama_klasifikasi": "Teknologi Informasi",
+                                    "detail": "klasifikasi untuk"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/klasisfikasi/delete": {
+            "post": {
+                "tags": [
+                    "Klasifikasi Surat"
+                ],
+                "summary": "Hapus Klasifikasi Surat",
+                "description": "Hapus Klasifikasi Surat",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/spnbackend/public/api/jabatan/list": {
             "get": {
                 "tags": [

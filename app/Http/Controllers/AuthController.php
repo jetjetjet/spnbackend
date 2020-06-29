@@ -12,7 +12,7 @@ use App\User;
 use App\Helpers\Helper;
 use Session;
 use Validator;
-use App\Notifications\CustomResetPasswordNotification;
+use App\Notifications\ResetPassword;
 use App\Http\Repositories\AuditTrailRepository;
 
 class AuthController extends Controller
@@ -179,7 +179,7 @@ class AuthController extends Controller
 
   private function sendResetEmail($email, $token)
   {
-    $link = config('base_url') . 'password/reset?konci=' . $token . '&email=' . urlencode($email);
+    $link = config('base_url') . 'reset-password?konci_pas=' . $token . '&email=' . urlencode($email);
     $details = [
       'body' => 'Reset Password',
       'thanks' => 'Admin',
@@ -187,7 +187,7 @@ class AuthController extends Controller
       'actionURL' => $link
   ];
     try {
-      User::where('email', $email)->first()->notify(new CustomResetPasswordNotification($details));
+      User::where('email', $email)->first()->notify(new ResetPassword($details));
         return true;
     } catch (\Exception $e) {
         return false;

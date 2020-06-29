@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CustomResetPasswordNotification extends Notification
+class ResetPassword extends Notification
 {
     use Queueable;
 
@@ -42,9 +42,9 @@ class CustomResetPasswordNotification extends Notification
     {
         //dd($this->details['actionURL'],$notifiable);
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
+                    ->line('Anda baru saja meminta reset password. Untuk melanjutkan perubahan password, abaikan email ini jika anda tidak meminta perubahan Password.')
                     ->action($this->details['actionText'], $this->details['actionURL'])
-                    ->line('Thank you for using our application!');
+                    ->line('Terima Kasih.');
     }
 
     /**

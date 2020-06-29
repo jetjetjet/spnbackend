@@ -159,7 +159,6 @@ class SuratMasukRepository
         $result['state_code'] = 200;
         $inputs['file_id'] = $result['file_id'];
         $inputs['id'] = $result['id'];
-        unset($result['id'], $result['file_id'], $inputs['file']);
         array_push($result['messages'], trans('messages.successSaveSuratMasuk'));
         //$result['data'] = $inputs;
       });
@@ -271,6 +270,7 @@ class SuratMasukRepository
       
       $respon['success'] = true;
       $respon['state_code'] = 200;
+      $respon['data'] = $sm;
       array_push($respon['messages'], trans('messages.successClosedSuratMasuk'));
     } else {
       $respon['state_code'] = 500;
