@@ -18,6 +18,7 @@ class CreatePositionMenusTable extends Migration
             $table->integer('position_id');
             $table->integer('menu_id');
             $table->string('permissions', 800)->nullable();
+
             $table->boolean('active');
             $table->timestamp('created_at');
             $table->integer('created_by');

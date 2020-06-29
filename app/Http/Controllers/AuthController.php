@@ -42,7 +42,6 @@ class AuthController extends Controller
       } else {
         $perm = User::getPermission($user->id);
         $sa = User::checkAdmin($user->id);
-
         if($sa)
           array_push($perm, 'is_admin');
           
@@ -62,7 +61,8 @@ class AuthController extends Controller
           "address" => $user->address,
           "phone" => $user->phone,
           "jenis_kelamin" => $user->jenis_kelamin,
-          "ttl" => $user->ttl
+          "ttl" => $user->ttl,
+          "perms" => $perm
         );
         $result['success'] = true;
         $result['state_code'] = 200;

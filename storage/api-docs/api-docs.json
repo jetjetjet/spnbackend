@@ -615,6 +615,12 @@
                                     },
                                     "detail": {
                                         "type": "string"
+                                    },
+                                    "is_parent": {
+                                        "type": "boolean"
+                                    },
+                                    "parent_id": {
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object",
@@ -622,7 +628,9 @@
                                     "group_id": "1",
                                     "position_name": "Kepala Dinas",
                                     "position_type": "Gol. III",
-                                    "detail": "Tanggung Jawab Untuk"
+                                    "detail": "Tanggung Jawab Untuk",
+                                    "is_parent": "1",
+                                    "parent_id": "null"
                                 }
                             }
                         }
@@ -670,12 +678,31 @@
             }
         },
         "/spnbackend/public/api/jabatan/search": {
-            "post": {
+            "get": {
                 "tags": [
                     "Jabatan"
                 ],
                 "summary": "Cari Jabatan",
                 "description": "Cari Jabatan",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/jabatan/searchParent": {
+            "get": {
+                "tags": [
+                    "Jabatan"
+                ],
+                "summary": "Cari Parent Jabatan",
+                "description": "Cari Parent Jabatan",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -910,11 +937,49 @@
             }
         },
         "/spnbackend/public/api/user/search": {
-            "post": {
+            "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Cari User",
+                "description": "Cari User",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/user/searchSM": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Cari User Untuk Surat Masuk",
+                "description": "Cari User",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/spnbackend/public/api/user/searchSK": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Cari User Untuk Surat Keluar",
                 "description": "Cari User",
                 "responses": {
                     "200": {

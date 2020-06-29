@@ -102,6 +102,15 @@ class UserController extends Controller
 
 		return response()->json($result, $result['state_code']);
   }
+  
+  public function searchUserSM(Request $request)
+  {
+    $respon = Helper::$responses;
+		$result = UserRepository::searchUserSuratMasuk($respon, Auth::user()->getAuthIdentifier());
+
+		return response()->json($result, $result['state_code']);
+  }
+  
 
   public function uploadFoto(Request $request, $id)
   {

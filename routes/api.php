@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/jabatan/save/{id?}', 'PositionController@save');
     Route::post('/jabatan/delete/{id?}', 'PositionController@delete');
     Route::get('/jabatan/search', 'PositionController@searchPosition');
+    Route::get('/jabatan/searchParent', 'PositionController@searchParentPosition');
     //PERMISSION
     Route::get('/jabatan/permission/all', 'PermissionController@getAllPermission');
     Route::get('/jabatan/permission/granted/{idJabatan}', 'PermissionController@getPositionPermission');
@@ -85,5 +86,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/user/delete/{id?}', 'UserController@delete');
     Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
     Route::get('/user/search', 'UserController@searchUser');
+    Route::get('/user/searchSM', 'UserController@searchUserSM');
     Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto');
 });

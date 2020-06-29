@@ -3,7 +3,7 @@ namespace App\Helpers;
 
 class Helper
 {
-  public static $responses = array( 'state_code' => "", 'success' => false, 'messages' => array(), 'data' => Array());
+  public static $responses = array( 'state_code' => 500, 'success' => false, 'messages' => array(), 'data' => Array());
 
   public static function mapFilter($req){
     $filter = new \stdClass();

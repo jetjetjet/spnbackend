@@ -135,14 +135,297 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
-        $p1 = Position::create([
-            'group_id' => $g1->id,
-            'position_name' => 'Super Admin',
-            'position_type' => 'Admin Aplikasi',
+        $kadin = Group::create([
+            'group_code' => 'KADIN',
+            'group_name' => 'Kepala Dinas',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
+
+        $sekre = Group::create([
+            'group_code' => 'SKR',
+            'group_name' => 'Sekretaris',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $BPD = Group::create([
+            'group_code' => 'BPD',
+            'group_name' => 'Bidang Pendidikan Dasar',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $BGTK = Group::create([
+            'group_code' => 'BGTK',
+            'group_name' => 'Bidang GTK',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $BPAUD = Group::create([
+            'group_code' => 'BPAUD',
+            'group_name' => 'Bidang PAUD',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $BSP = Group::create([
+            'group_code' => 'BSP',
+            'group_name' => 'Bidang Sarana Prasarana',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $p1 = Position::create([
+            'group_id' => $g1->id,
+            'position_name' => 'Super Admin',
+            'position_type' => 'Admin Aplikasi',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $kpl = Position::create([
+            'group_id' => $kadin->id,
+            'position_name' => 'Kepala Dinas',
+            'position_type' => 'Kepala Dinas',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $sekretaris = Position::create([
+            'group_id' => $sekre->id,
+            'position_name' => 'Sekretaris',
+            'position_type' => 'Sekretaris',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $sekretaris1 = Position::create([
+            'group_id' => $sekre->id,
+            'position_name' => 'Kasubbag Umum dan Kepegawaian',
+            'position_type' => 'KASUBBAG Umum dan Kepegawaian',
+            'is_parent' => '0',
+            'parent_id' => $sekretaris->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $sekretaris2 = Position::create([
+            'group_id' => $sekre->id,
+            'position_name' => 'Kasubbag Keuangan',
+            'position_type' => 'KASUBBAG Keuangan',
+            'is_parent' => '0',
+            'parent_id' => $sekretaris->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $sekretaris3 = Position::create([
+            'group_id' => $sekre->id,
+            'position_name' => 'Kasubbag Perencanaan, Evaluasi dan Pelaporan',
+            'position_type' => 'KASUBBAG Perencanaan, Evaluasi dan Pelaporan',
+            'is_parent' => '0',
+            'parent_id' => $sekretaris->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kabpd = Position::create([
+            'group_id' => $BPD->id,
+            'position_name' => 'Kepala Bidang Pendidikan Dasar',
+            'position_type' => 'Kepala Bidang Pendidikan Dasar',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasismp = Position::create([
+            'group_id' => $BPD->id,
+            'position_name' => 'Kasi Kurikulum SMP',
+            'position_type' => 'Kasi Kurikulum SMP',
+            'is_parent' => '0',
+            'parent_id' => $kabpd->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasisd = Position::create([
+            'group_id' => $BPD->id,
+            'position_name' => 'Kasi Kurikulum SD',
+            'position_type' => 'Kasi Kurikulum SD',
+            'is_parent' => '0',
+            'parent_id' => $kabpd->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasipmp = Position::create([
+            'group_id' => $BPD->id,
+            'position_name' => 'Kasi Penjaminan Mutu Pendidikan',
+            'position_type' => 'Kasi Penjaminan Mutu Pendidikan',
+            'is_parent' => '0',
+            'parent_id' => $kabpd->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kagtk = Position::create([
+            'group_id' => $BGTK->id,
+            'position_name' => 'Kepala Bidang GTK',
+            'position_type' => 'Kepala Bidang GTK',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasik = Position::create([
+            'group_id' => $BGTK->id,
+            'position_name' => 'Kasi Kesejahteraan',
+            'position_type' => 'Kasi Kesejahteraan',
+            'is_parent' => '0',
+            'parent_id' => $kagtk->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasisdm = Position::create([
+            'group_id' => $BGTK->id,
+            'position_name' => 'Kasi SDM',
+            'position_type' => 'Kasi SDM',
+            'is_parent' => '0',
+            'parent_id' => $kagtk->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasimp = Position::create([
+            'group_id' => $BGTK->id,
+            'position_name' => 'Kasi Mutasi Promosi',
+            'position_type' => 'Kasi Mutasi Promosi',
+            'is_parent' => '0',
+            'parent_id' => $kagtk->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kapaud = Position::create([
+            'group_id' => $BPAUD->id,
+            'position_name' => 'Kepala Bidang PAUD',
+            'position_type' => 'Kepala Bidang PAUD',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasipaud = Position::create([
+            'group_id' => $BPAUD->id,
+            'position_name' => 'Kasi PAUD',
+            'position_type' => 'Kasi PAUD',
+            'is_parent' => '0',
+            'parent_id' => $kapaud->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasiseja = Position::create([
+            'group_id' => $BPAUD->id,
+            'position_name' => 'Kasi Kesejahteraan',
+            'position_type' => 'Kasi Kesejahteraan',
+            'is_parent' => '0',
+            'parent_id' => $kapaud->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasipm = Position::create([
+            'group_id' => $BPAUD->id,
+            'position_name' => 'Kasi Pendidikan Masyarakat',
+            'position_type' => 'Kasi Pendidikan Masyarakat',
+            'is_parent' => '0',
+            'parent_id' => $kapaud->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kabsp = Position::create([
+            'group_id' => $BSP->id,
+            'position_name' => 'Kepala Bidang Sarana dan Prasarana',
+            'position_type' => 'Kepala Bidang Sarana dan Prasarana',
+            'is_parent' => '1',
+            'parent_id' => null,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasissmp = Position::create([
+            'group_id' => $BSP->id,
+            'position_name' => 'Kasi Sarana SMP',
+            'position_type' => 'Kasi Sarana SMP',
+            'is_parent' => '0',
+            'parent_id' => $kabsp->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasissd = Position::create([
+            'group_id' => $BSP->id,
+            'position_name' => 'Kasi Sarana SD',
+            'position_type' => 'Kasi Sarana SD',
+            'is_parent' => '0',
+            'parent_id' => $kabsp->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+        
+        $kasispaud = Position::create([
+            'group_id' => $BSP->id,
+            'position_name' => 'Kasi Sarana PAUD',
+            'position_type' => 'Kasi Sarana PAUD',
+            'is_parent' => '0',
+            'parent_id' => $kabsp->id,
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+
 
         // PositionMenu::truncate();
         // PositionMenu::create([

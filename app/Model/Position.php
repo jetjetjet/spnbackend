@@ -14,6 +14,8 @@ class Position extends Model
     'position_type',
     'active',
     'detail',
+    'is_parent',
+    'parent_id',
     'created_at',
     'created_by',
     'modified_at',

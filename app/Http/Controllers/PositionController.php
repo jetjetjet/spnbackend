@@ -98,4 +98,13 @@ class PositionController extends Controller
 
 		return response()->json($result, $result['state_code']);
   }
+
+  public function searchParentPosition(Request $request)
+  {
+    
+		$respon = Helper::$responses;
+		$result = PositionRepository::searchParentPosition($respon);
+
+		return response()->json($result, $result['state_code']);
+  }
 }

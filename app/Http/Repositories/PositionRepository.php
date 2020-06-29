@@ -89,6 +89,8 @@ class PositionRepository
           'group_id' => $inputs['group_id'] ?? null,
           'position_name' => $inputs['position_name'],
           'position_type' => $inputs['position_type'],
+          'is_parent' => $inputs['is_parent'] ?? null,
+          'parent_id' => $inputs['parent_id'] ?? null,
           'detail' => $inputs['detail'] ?? null,
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
@@ -101,6 +103,8 @@ class PositionRepository
           'position_name' => $inputs['position_name'],
           'position_type' => $inputs['position_type'],
           'detail' => $inputs['detail'] ?? null,
+          'is_parent' => $inputs['is_parent'] ?? null,
+          'parent_id' => $inputs['parent_id'] ?? null,
           'active' => '1',
           'created_at' => DB::raw('now()'),
           'created_by' => $loginid
@@ -144,7 +148,7 @@ class PositionRepository
   public static function searchPosition($respon)
   {
     $q = Position::where('active','1')
-
+      ->whereNotIn('id', DB::raw("select id from gen_user where active = '1'"))
       ->orderBy('position_name', 'ASC')
       ->select('id', DB::raw("position_name || ' - ' || position_type as text"))
       ->get();
@@ -155,14 +159,17 @@ class PositionRepository
     return $respon;
   }
 
-  public static function getPositionMenuById($respon, $id)
+  public static function searchParentPosition($respon)
   {
-    // $q = Position::join('gen_positionmenu as gpm', function($q){
-    //     $q->on('gpm.position_id', 'gen_position.id')
-    //       ->on('gpm.active', DB::raw("'1'"));
-    //   })->join('gen_menu as gm', function($q){
-    //     $q->on('gpm.menu_id', 'gm.id')
-    //       ->on('gm.active', DB::raw("'1'"));
-    //   )->select('menu_name')
+    $q = Position::where('active','1')
+      ->where('is_parent', '1')
+      ->orderBy('position_name', 'ASC')
+      ->select('id', DB::raw("position_name || ' - ' || position_type as text"))
+      ->get();
+    $respon['success'] = true;
+    $respon['state_code'] = 200;
+    $respon['data'] = $q;
+
+    return $respon;
   }
 }

@@ -519,7 +519,15 @@ class SampleController //This is a sample laravel Controller
      *                     property="detail",
      *                     type="string"
      *                 ),
-     *                 example={"group_id": "1", "position_name": "Kepala Dinas", "position_type": "Gol. III", "detail": "Tanggung Jawab Untuk"}
+     *                 @OA\Property(
+     *                     property="is_parent",
+     *                     type="boolean"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="parent_id",
+     *                     type="integer"
+     *                 ),
+     *                 example={"group_id": "1", "position_name": "Kepala Dinas", "position_type": "Gol. III", "detail": "Tanggung Jawab Untuk", "is_parent":"1", "parent_id": "null"}
      *             )
      *         )
      *     ),
@@ -558,11 +566,27 @@ class SampleController //This is a sample laravel Controller
      */
 
      /**
-     * @OA\Post(
+     * @OA\Get(
      *     path="/spnbackend/public/api/jabatan/search",
      *     tags={"Jabatan"}, 
      *     summary="Cari Jabatan",
      *     description="Cari Jabatan",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Get(
+     *     path="/spnbackend/public/api/jabatan/searchParent",
+     *     tags={"Jabatan"}, 
+     *     summary="Cari Parent Jabatan",
+     *     description="Cari Parent Jabatan",
      *     @OA\Response(
      *         response=200,
      *         description="OK"
@@ -770,10 +794,43 @@ class SampleController //This is a sample laravel Controller
      */
 
      /**
-     * @OA\Post(
+     * @OA\Get(
      *     path="/spnbackend/public/api/user/search",
      *     tags={"User"}, 
      *     summary="Cari User",
+     *     description="Cari User",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Get(
+     *     path="/spnbackend/public/api/user/searchSM",
+     *     tags={"User"}, 
+     *     summary="Cari User Untuk Surat Masuk",
+     *     description="Cari User",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     
+     /**
+     * @OA\Get(
+     *     path="/spnbackend/public/api/user/searchSK",
+     *     tags={"User"}, 
+     *     summary="Cari User Untuk Surat Keluar",
      *     description="Cari User",
      *     @OA\Response(
      *         response=200,

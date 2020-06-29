@@ -149,6 +149,9 @@ class UserRepository
     try{
       $user = User::where('active', '1')->where('id', $id)->firstOrFail();
 
+      if ($user->id == 1)
+        throw new exception;
+
       $user->update([
         'active' => '0',
         'modified_at' => \Carbon\Carbon::now(),
@@ -160,7 +163,6 @@ class UserRepository
       array_push($result['messages'], trans('messages.successDeleting', ["item" => $user->username]));
     }catch(\Exception $e){
       array_push($result['messages'], $e->getMessage());
-      return response()->json($result, 500);
     }
     return $result;
   }
@@ -196,6 +198,49 @@ class UserRepository
     $respon['state_code'] = 200;
     $respon['data'] = $q;
 
+    return $respon;
+  }
+
+  public static function searchUserSuratKeluar($respon, $loginid)
+  {
+
+  }
+
+  public static function searchUserSuratMasuk($respon, $loginid)
+  {
+    $qCek = User::join('gen_position as gp', 'gp.id', 'position_id')
+    ->where('gen_user.active', '1')->where('gen_user.id', $loginid)
+    ->where('gp.active', '1')
+    ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name')->first();
+
+    if ($qCek != null){
+      $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
+
+      switch ($qCek->position_id) {
+        case 1:
+          $query = $query;
+          break;
+        case 2 || 3:
+          $query = $query->where('gp.is_parent', '1');
+          break;
+        case 4:
+          $query = $query->whereIn('gp.id', [2,3]);
+          break;
+        default:
+          $query = $query->where('gp.parent_id', $qCek->position_id);
+      }
+
+      $data = $query->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
+        ->get();
+      $respon['success'] = true;
+      $respon['state_code'] = 200;
+      $respon['data'] = $data;
+
+      return $respon;
+    } else {
+      $respon['state_code'] = 200;
+      array_push($result['messages'], trans('messages.errorNotFound'));
+    }
     return $respon;
   }
 

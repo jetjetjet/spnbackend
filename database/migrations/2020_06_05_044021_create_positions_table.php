@@ -19,6 +19,8 @@ class CreatePositionsTable extends Migration
             $table->string('position_name');
             $table->string('position_type');
             $table->string('detail')->nullable();
+            $table->boolean('is_parent')->nullable();
+            $table->bigInteger('parent_id')->nullable();
 
             $table->boolean('active');
             $table->timestamp('created_at');

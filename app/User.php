@@ -78,6 +78,7 @@ class User extends Authenticatable
 
   public function scopeGetPermission($query, $id)
   {
+    $perm = [];
     $permissions = $query->join('gen_position as gp', 'gp.id', 'position_id')
     ->join('gen_positionmenu as gpm', 'gp.id', 'gpm.position_id')
     ->where([
@@ -87,9 +88,11 @@ class User extends Authenticatable
       'gen_user.id' => $id,
     ])
     ->where('permissions', '!=', "")
-    ->select(DB::raw('string_agg(permissions, \'|\') as permissions'))->first();
+    ->select(DB::raw('string_agg(permissions, \',\') as permissions'))->first();
 
-    $perm = explode("|",$permissions->permissions);
+    if($permissions->permissions != null)
+      $perm = explode(",",$permissions->permissions);
+      
     return $perm;
   }
 
