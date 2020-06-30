@@ -92,6 +92,8 @@ class SuratMasukRepository
         'gg.group_name',
         'file_id',
         'file_path',
+        'to_user_id',
+        DB::raw("full_name || ' - ' || coalesce(gp.position_name,'') as to_user_name"),
         'original_name as file_name',
         'perihal',
         'nomor_surat',

@@ -18,28 +18,28 @@ class PositionRepository
         'gen_position.active' => '1'
       ]);
 
-    if($filter->search){
-			foreach($filter->search as $qCol){
-				$sCol = explode('|', $qCol);
-				$fCol = str_replace('"', '', $sCol[0]);
-				$q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
-			}
-    }
+    // if($filter->search){
+		// 	foreach($filter->search as $qCol){
+		// 		$sCol = explode('|', $qCol);
+		// 		$fCol = str_replace('"', '', $sCol[0]);
+		// 		$q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
+		// 	}
+    // }
     
-    $qCount = $q->count();
+    // $qCount = $q->count();
 
-    if ($filter->sortColumns){
-			$order = $filter->sortColumns[0];
-			$q = $q->orderBy($order->column, $order->order);
-		} else {
-			$q = $q->orderBy('gen_position.created_at');
-    }
+    // if ($filter->sortColumns){
+		// 	$order = $filter->sortColumns[0];
+		// 	$q = $q->orderBy($order->column, $order->order);
+		// } else {
+		// 	$q = $q->orderBy('gen_position.created_at');
+    // }
     
-		$q = $q->skip($filter->offset);
-    $q = $q->take($filter->limit);
+		// $q = $q->skip($filter->offset);
+    // $q = $q->take($filter->limit);
     
-    $data->totalCount = $qCount;
-    $data->data = $q->select('gen_position.id', 
+    //$data->totalCount = $qCount;
+    $data = $q->select('gen_position.id', 
       'gg.group_name',
       'gg.id as group_id',
       'position_name', 
@@ -128,8 +128,11 @@ class PositionRepository
     try{
       $posisi = Position::where('active', '1')->where('id', $id)->firstOrFail();
 
+      if ($posisi->id == 1 || $posisi->id == 2)
+        throw new exception;
+
       $posisi->update([
-        'active' => '1',
+        'active' => '0',
         'modified_at' => DB::raw('now()'),
         'modified_by' => $loginid
       ]);

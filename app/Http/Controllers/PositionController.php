@@ -62,7 +62,7 @@ class PositionController extends Controller
     return response()->json($result, $result['state_code']);
 	}
 
-	public function delete($id)
+	public function delete(Request $request, $id)
 	{
 		$respon = Helper::$responses;
     $result = PositionRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());

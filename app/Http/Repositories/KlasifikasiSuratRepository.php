@@ -94,7 +94,7 @@ class KlasifikasiSuratRepository
       $klasifikasi = KlasifikasiSurat::where('active', '1')->where('id', $id)->firstOrFail();
 
       $klasifikasi->update([
-        'active' => '1',
+        'active' => '0',
         'modified_at' => DB::raw('now()'),
         'modified_by' => $loginid
       ]);
