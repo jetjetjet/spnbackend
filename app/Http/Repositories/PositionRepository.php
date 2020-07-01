@@ -62,7 +62,7 @@ class PositionRepository
         'position_type',
         'is_parent',
         'parent_id',
-        DB::raw("(select tgp.position_name || ' - ' || tgp.position_type from gen_position tgp where tgp.id = gp.parent_id) as parent_name"),
+        DB::raw("(select tgp.position_name || ' - ' || tgp.position_type from gen_position tgp where tgp.id = gen_position.parent_id) as parent_name"),
         'detail',
         'gen_position.created_at',
         'cr.username as created_by',
@@ -154,7 +154,7 @@ class PositionRepository
   public static function searchPosition($respon)
   {
     $q = Position::where('active','1')
-      ->whereNotIn('id', DB::raw("select id from gen_user where active = '1'"))
+      ->whereNotIn('id', [DB::raw("select id from gen_user where active = '1'")])
       ->orderBy('position_name', 'ASC')
       ->select('id', DB::raw("position_name || ' - ' || position_type as text"))
       ->get();

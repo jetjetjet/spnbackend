@@ -42,7 +42,7 @@ class UserRepository
     $data->totalCount = $qCount;
     $data->data = $q->select('gen_user.id', 
       'nip',
-      'ttl',
+      DB::raw("to_char(ttl, 'yyyy-mm-dd') as ttl"),
       'jenis_kelamin',
       'position_id',
       'gg.position_name',
@@ -79,7 +79,7 @@ class UserRepository
         'full_name',
         'path_foto',
         'email',
-        'ttl',
+        DB::raw("to_char(ttl, 'yyyy-mm-dd') as ttl"),
         'jenis_kelamin',
         'address',
         'phone')

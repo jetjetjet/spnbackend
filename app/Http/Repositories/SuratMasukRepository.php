@@ -98,8 +98,8 @@ class SuratMasukRepository
         'original_name as file_name',
         'perihal',
         'nomor_surat',
-        'tgl_surat',
-        'tgl_diterima',
+        DB::raw("to_char(tgl_surat, 'yyyy-mm-dd') as tgl_surat"),
+        DB::raw("to_char(tgl_diterima, 'yyyy-mm-dd') as tgl_diterima"),
         'lampiran',
         'sifat_surat',
         'klasifikasi_id',
@@ -196,7 +196,7 @@ class SuratMasukRepository
     $inputs['file_id'] = isset($result['file_id']) ? $result['file_id'] : $inputs['file_id'];
     if ($id){
       $tSurat = SuratMasuk::where('active', 1)->where('id', $id)->first();
-      if ($tSurat == null || $tsurat->created_by != $loginid){
+      if ($tSurat == null || $tSurat->created_by != $loginid){
         array_push($result['messages'], trans('messages.errorNotFoundInvalid'));
         return false;
       } else {
@@ -204,17 +204,17 @@ class SuratMasukRepository
           'asal_surat' => $inputs['asal_surat'] ?? null,
           'perihal' => $inputs['perihal'] ?? null,
           'nomor_surat' => $inputs['nomor_surat'] ?? null,
-          'tgl_surat' => $inputs['tgl_suratx'] ?? null,
+          'tgl_surat' => $inputs['tgl_surat'] ?? null,
           'lampiran' => $inputs['lampiran'] ?? null,
           'sifat_surat' => $inputs['sifat_surat'] ?? null,
-          'klasifikasi_id' => $inputs['klasifikasi'] ?? null,
+          'klasifikasi_id' => $inputs['klasifikasi_id'] ?? null,
           'prioritas' => $inputs['prioritas'] ?? null,
           'keterangan' => $inputs['keterangan'] ?? null,
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
         ]);
         
-        $result['id'] = $update->id ?: $id;
+        $result['id'] = $tSurat->id ?: $id;
         return true;
       }
     } else {
@@ -228,7 +228,7 @@ class SuratMasukRepository
         'tgl_diterima' => DB::raw('now()'),
         'lampiran' => $inputs['lampiran'] ?? null,
         'sifat_surat' => $inputs['sifat_surat'] ?? null,
-        'klasifikasi_id' => $inputs['klasifikasi'] ?? null,
+        'klasifikasi_id' => $inputs['klasifikasi_id'] ?? null,
         'prioritas' => $inputs['prioritas'] ?? null,
         'keterangan' => $inputs['keterangan'] ?? null,
         'is_closed' => '0',

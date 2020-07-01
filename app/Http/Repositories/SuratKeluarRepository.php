@@ -105,7 +105,7 @@ class SuratKeluarRepository
       ->select(
         DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
         DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
-        DB::raw("coalesce(tgl_surat::varchar, 'belum diisi') as tgl_surat"),
+        DB::raw("coalesce(to_char(tgl_diterima, 'yyyy-mm-dd'), 'belum diisi') as tgl_surat"),
         DB::raw("coalesce(file_id::varchar, 'belum diisi') as file_id"),
         'jenis_surat',
         'sifat_surat',
@@ -215,7 +215,7 @@ class SuratKeluarRepository
     $inputs['file_id'] = isset($result['file_id']) ? $result['file_id'] : $inputs['file_id'];
     if ($id){
       $tSurat = SuratKeluar::where('active', 1)->where('id', $id)->first();
-      if ($tSurat == null || $tsurat->created_by != $loginid){
+      if ($tSurat == null || $tSurat->created_by != $loginid){
         array_push($result['messages'], trans('messages.errorNotFoundInvalid'));
         return false;
       } else {
@@ -235,7 +235,7 @@ class SuratKeluarRepository
           'modified_by' => $loginid
         ]);
         
-        $result['id'] = $update->id ?: $id;
+        $result['id'] = $tSurat->id ?: $id;
         return true;
       }
     } else {
