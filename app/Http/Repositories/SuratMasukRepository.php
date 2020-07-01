@@ -81,6 +81,7 @@ class SuratMasukRepository
       ->join('gen_user as cr', 'cr.id', 'sm.created_by')
       ->join('gen_position as gp', 'gp.id', 'cr.position_id')
       ->join('gen_group as gg', 'gg.id', 'gp.group_id')
+      ->join('gen_klasifikasi_surat as gks', 'klasifikasi_id', 'gks.id')
       ->leftJoin('gen_file as gf', 'sm.file_id', 'gf.id')
       //->join('gen_user as cr', 'cr.id', 'sm.created_by')
       ->where('sm.active', '1')
@@ -101,7 +102,8 @@ class SuratMasukRepository
         'tgl_diterima',
         'lampiran',
         'sifat_surat',
-        'klasifikasi',
+        'klasifikasi_id',
+        'gks.nama_klasifikasi as klasifikasi_name',
         'keterangan',
         'prioritas',
         DB::raw($perms['suratMasuk_close'] . "as can_closed"),
@@ -205,7 +207,7 @@ class SuratMasukRepository
           'tgl_surat' => $inputs['tgl_suratx'] ?? null,
           'lampiran' => $inputs['lampiran'] ?? null,
           'sifat_surat' => $inputs['sifat_surat'] ?? null,
-          'klasifikasi' => $inputs['klasifikasi'] ?? null,
+          'klasifikasi_id' => $inputs['klasifikasi'] ?? null,
           'prioritas' => $inputs['prioritas'] ?? null,
           'keterangan' => $inputs['keterangan'] ?? null,
           'modified_at' => DB::raw('now()'),
@@ -226,7 +228,7 @@ class SuratMasukRepository
         'tgl_diterima' => DB::raw('now()'),
         'lampiran' => $inputs['lampiran'] ?? null,
         'sifat_surat' => $inputs['sifat_surat'] ?? null,
-        'klasifikasi' => $inputs['klasifikasi'] ?? null,
+        'klasifikasi_id' => $inputs['klasifikasi'] ?? null,
         'prioritas' => $inputs['prioritas'] ?? null,
         'keterangan' => $inputs['keterangan'] ?? null,
         'is_closed' => '0',

@@ -51,7 +51,7 @@ class PositionRepository
   public static function getById($respon, $id)
   {
     $q = Position::leftJoin('gen_group as gg', 'group_id', 'gg.id')
-      ->leftJoin('gen_user as cr', 'gen_position.created_by', 'cr.id')
+      ->join('gen_user as cr', 'gen_position.created_by', 'cr.id')
       ->leftJoin('gen_user as md', 'gen_position.modified_by', 'md.id')
       ->where('gen_position.id', $id)
       ->where('gen_position.active', '1')
@@ -60,6 +60,9 @@ class PositionRepository
         'gg.group_name',
         'position_name',
         'position_type',
+        'is_parent',
+        'parent_id',
+        DB::raw("(select tgp.position_name || ' - ' || tgp.position_type from gen_position tgp where tgp.id = gp.parent_id) as parent_name"),
         'detail',
         'gen_position.created_at',
         'cr.username as created_by',

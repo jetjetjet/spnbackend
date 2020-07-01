@@ -1231,7 +1231,7 @@ class SampleController //This is a sample laravel Controller
      *                     type="string"
      *                 ),
      *                 @OA\Property(
-     *                     property="klasifikasi_surat",
+     *                     property="klasifikasi_id",
      *                     type="string"
      *                 ),
      *                 @OA\Property(
@@ -1264,7 +1264,7 @@ class SampleController //This is a sample laravel Controller
      *                 ),
      *                 example={
      *                      "jenis_surat": "Penting", 
-     *                      "klasifikasi_surat": "IT", 
+     *                      "klasifikasi_id": "1", 
      *                      "sifat_surat": "Segera", 
      *                      "tujuan_surat": "Ikhwan Komputer",
      *                      "hal_surat": "-",
@@ -1525,8 +1525,8 @@ class SampleController //This is a sample laravel Controller
      *                     type="string"
      *                 ),
      *                 @OA\Property(
-     *                     property="klasifikasi",
-     *                     type="string"
+     *                     property="klasifikasi_id",
+     *                     type="integer"
      *                 ),
      *                 @OA\Property(
      *                     property="keterangan",
@@ -1544,7 +1544,7 @@ class SampleController //This is a sample laravel Controller
      *                      "sifat_surat": "Penting",
      *                      "lampiran": "-",
      *                      "prioritas": "Segera",
-     *                      "klasifikasi": "kla",
+     *                      "klasifikasi_id": "1",
      *                      "keterangan": "Mohon Atensinya",
      *                      "file": "[binary]"}
      *             )

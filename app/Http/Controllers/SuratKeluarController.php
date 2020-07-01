@@ -52,7 +52,7 @@ class SuratKeluarController extends Controller
     // Validation rules.
     $rules = array(
       'jenis_surat' => 'required',
-      'klasifikasi_surat' => 'required',
+      'klasifikasi_id' => 'required',
       'sifat_surat' => 'required',
       'tujuan_surat' => 'required',
       'hal_surat' => 'required',

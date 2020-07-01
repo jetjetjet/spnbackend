@@ -95,6 +95,7 @@ class SuratKeluarRepository
   {
     $header = DB::table('surat_keluar as sk')
       ->join('gen_user as cr', 'cr.id', 'sk.created_by')
+      ->join('gen_klasifikasi_surat as gks', 'klasifikasi_id', 'gks.id')
       ->join('gen_user as appr', 'appr.id', 'approval_user')
       ->leftJoin('gen_position as gp', 'gp.id', 'appr.position_id')
       ->join('gen_user as tu', 'tu.id', 'to_user')
@@ -107,13 +108,14 @@ class SuratKeluarRepository
         DB::raw("coalesce(tgl_surat::varchar, 'belum diisi') as tgl_surat"),
         DB::raw("coalesce(file_id::varchar, 'belum diisi') as file_id"),
         'jenis_surat',
-        'klasifikasi_surat',
         'sifat_surat',
         'tujuan_surat',
         'hal_surat',
         'lampiran_surat',
         'approval_user',
         'appr.full_name as approval_name',
+        'klasifikasi_id',
+        'gks.nama_klasifikasi as klasifikasi_name',
         'to_user',
         'tu.full_name as to_username',
         'gp.position_name',
@@ -222,7 +224,7 @@ class SuratKeluarRepository
           'nomor_surat' => $inputs['nomor_surat'] ?? null,
           'tgl_surat' => $inputs['tgl_surat'] ?? null,
           'jenis_surat' => $inputs['jenis_surat'],
-          'klasifikasi_surat' => $inputs['klasifikasi_surat'],
+          'klasifikasi_id' => $inputs['klasifikasi_id'],
           'sifat_surat' => $inputs['sifat_surat'],
           'tujuan_surat' => $inputs['tujuan_surat'],
           'hal_surat' => $inputs['hal_surat'],
@@ -241,7 +243,7 @@ class SuratKeluarRepository
         'nomor_agenda' => $inputs['nomor_agenda'] ?? null,
         'nomor_surat' => $inputs['nomor_surat'] ?? null,
         'tgl_surat' => $inputs['tgl_surat'] ?? null,
-        'klasifikasi_surat' => $inputs['klasifikasi_surat'],
+        'klasifikasi_id' => $inputs['klasifikasi_id'],
         'jenis_surat' => $inputs['jenis_surat'],
         'sifat_surat' => $inputs['sifat_surat'],
         'tujuan_surat' => $inputs['tujuan_surat'],

@@ -52,7 +52,7 @@ class SuratMasukController extends Controller
       'tgl_surat' => 'required',
       'to_user_id' => 'required',
       'sifat_surat' => 'required',
-      'klasifikasi' => 'required',
+      'klasifikasi_id' => 'required',
       'file' => 'required|file|max:5000|mimes:pdf,docx,doc',
     );
 

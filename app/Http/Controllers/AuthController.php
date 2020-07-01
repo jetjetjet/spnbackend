@@ -102,7 +102,7 @@ class AuthController extends Controller
     if ($validator->fails()) {
       $result['state_code'] = 500;
       $result['messages'] = $validator->messages();
-      $result['data'] = $inputs;
+      $result['data'] = $input;
     } else { 
       DB::table('password_resets')->insert([
         'email' => $input['email'],
