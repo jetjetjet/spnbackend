@@ -78,7 +78,12 @@ class UserRepository
         'username',
         'full_name',
         'ttd',
-        'path_foto',
+        DB::raw("
+          case when path_foto is not null then path_foto 
+          when path_foto is null and jenis_kelamin = 'Perempuan' then '/upload/photo/woman.png'
+          when path_foto is null and jenis_kelamin = 'Laki-laki' then '/upload/photo/man.png'
+          end as path_foto
+        "),
         'email',
         DB::raw("to_char(ttl, 'yyyy-mm-dd') as ttl"),
         'jenis_kelamin',
@@ -190,7 +195,7 @@ class UserRepository
 
   public static function searchUser($respon)
   {
-    $q = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')
+    $q = User::join('gen_position as gp', 'gp.id', 'position_id')
       ->where('gen_user.active','1')
       ->orderBy('full_name')
       ->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
@@ -285,6 +290,7 @@ class UserRepository
         ]);
 
         $respon['success'] = true;
+        $respon['state_code'] = 200;
         array_push($respon['messages'], trans('messages.successUpdatedTTD'), ["item" => $user->username]);
       } 
     }catch (\Exception $e){

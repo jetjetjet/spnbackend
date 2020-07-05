@@ -18,6 +18,11 @@ class Otorisasi
     {
       $responses = array( 'state_code' => "", 'success' => false, 'messages' => "", 'data' => Array());
       $user = Auth::user();
+
+      if($request->user()->tokenCan('is_admin')){
+        return $next($request);
+      }
+
       if (!$request->user()->tokenCan($actions[0])) 
       {
         $responses['messages'] = "You are not authorized to access this resource / execute the action!";

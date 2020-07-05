@@ -40,6 +40,7 @@ class HakAkses
     'templateSurat_edit',
     'templateSurat_delete',
 
+    'user_list',
     'user_view',
     'user_save',
     'user_edit',

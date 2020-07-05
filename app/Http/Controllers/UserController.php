@@ -152,7 +152,7 @@ class UserController extends Controller
   {
     $respon = Helper::$responses;
     $rules = array(
-      'ttd' => 'required',
+      'file' => 'required|image|mimes:png',
     );
 
     $inputs = $request->all();

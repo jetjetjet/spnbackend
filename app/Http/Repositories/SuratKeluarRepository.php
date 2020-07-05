@@ -23,9 +23,9 @@ class SuratKeluarRepository
         $query->on('dsk.surat_keluar_id', 'sk.id')
         ->on('dsk.active', DB::raw("'1'"));
       })
-      ->leftJoin('gen_user as cr', 'cr.id', 'dsk.created_by')
-      ->leftJoin('gen_position as gp', 'gp.id', 'cr.position_id')
-      ->leftJoin('gen_group as gg', 'gg.id', 'gp.group_id')
+      ->join('gen_user as cr', 'cr.id', 'dsk.created_by')
+      ->join('gen_position as gp', 'gp.id', 'cr.position_id')
+      ->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->where('sk.active', '1')
       ->where('dsk.active', '1');
       
@@ -64,7 +64,7 @@ class SuratKeluarRepository
       'position_name',
       DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
       DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
-      DB::raw("coalesce(tgl_surat::varchar, 'belum diisi') as tgl_surat"),
+      DB::raw("coalesce(to_char(tgl_surat, 'dd-mm-yyyy'), 'belum diisi') as tgl_surat"),
       DB::raw("case when dsk.is_approved = '1' then 'Disetujui'
         when dsk.is_approved = '0' then 'Ditolak'
         else 'Draft' end as status"),
@@ -107,7 +107,7 @@ class SuratKeluarRepository
       ->select(
         DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
         DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
-        DB::raw("coalesce(to_char(tgl_diterima, 'yyyy-mm-dd'), 'belum diisi') as tgl_surat"),
+        DB::raw("coalesce(to_char(tgl_surat, 'yyyy-mm-dd'), 'belum diisi') as tgl_surat"),
         DB::raw("coalesce(file_id::varchar, 'belum diisi') as file_id"),
         'jenis_surat',
         'sifat_surat',
@@ -301,6 +301,7 @@ class SuratKeluarRepository
           array_push($respon['messages'], trans('messages.successUpdatedAgenda'));
         });
       } catch (\Exception $e) {
+        dd($e);
         if ($e->getMessage() === 'rollbacked') return $result;
         $result['state_code'] = 500;
         array_push($result['messages'], $e->getMessage());
@@ -328,7 +329,7 @@ class SuratKeluarRepository
       'tujuan_user' => $sm->approval_user,
       'file_id' => $respon['file_id'],
       'log' => "agenda",
-      'keterangan' => $inputs['keterangan'],
+      'keterangan' => "" // $inputs['keterangan'],
     );
     $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
     if($dis == null){
@@ -396,44 +397,88 @@ class SuratKeluarRepository
     return $respon;
   }
 
-  public static function ttdSurat($id, $fullName, $inputs, $email)
+  public static function signSurat($respon, $id, $inputs, $loginid)
   {
-    $data = DB::table('dis_surat_keluar')
-      ->join('gen_file as gf', 'gf.id', 'file_id')
-      ->where('active', '1')
-      ->where('surat_keluar_id', $id)
-      ->where('log', 'agenda')
-      ->select('file_path, file_name')
-      ->first();
+    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNull('approved_at')->first();
+    if ($sk != null){
+      $data = DB::table('dis_surat_keluar as dsk')
+        ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
+        ->where('dsk.active', '1')
+        ->where('surat_keluar_id', $id)
+        ->where('log', 'agenda')
+        ->select('file_path', 'file_name', 'original_name')
+        ->first();
 
-
-    $pdf = new Fpdi();
-    $pdf->AddPage();
-    // set the source file
-    $pdf->setSourceFile(base_path() . $data->file_path); //'/upload/suratkeluar/aa.pdf');
-    // import page 1
-    $tplId = $pdf->importPage(1);
-    // use the imported page and place it at point 10,10 with a width of 100 mm
-    $pdf->useTemplate($tplId);
-
-    //set certificate file
-    //$certificate = 'file://'.realpath('../upload/surek/dummy.crt');
-    $certificate = 'file://'. realpath('../stack/certificates/public/'. $fullName .'.crt');
-    $private_key = 'file://'. realpath('../stack/certificates/private/'. $fullName .'.key');
-     //dd(file_get_contents($certificate));
-      $info = array(
-        'Name' => $fullName,
-        'Location' => 'Kerinci',
-        'Keterangan' => $inputs['Keterangan'],
-        'Email' => $email
-    );
-
-    $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
+      $user = DB::table('gen_user as gu')
+        ->where('active', '1')
+        ->where('id', $loginid)
+        ->select('ttd', 'email', 'username', 'full_name')
+        ->first();
     
-    $pdf->Image(base_path() . '/upload/spn.png', 180, 245, 15, 15, 'PNG');
-    $pdf->setSignatureAppearance(180, 245, 15, 15);
-    $pdf->Output(base_path() . '/upload/suratkeluar/ttds.pdf', 'F');
-    $pdf->reset();
-    dd('pdf created');
+      if($user->ttd != null && $data->file_path != null)
+      {
+        $pdf = new Fpdi();
+        $pdf->AddPage();
+        // set the source file
+        $pdf->setSourceFile(base_path() . $data->file_path);
+        // import page 1
+        $tplId = $pdf->importPage(1);
+        // use the imported page and place it at point 10,10 with a width of 100 mm
+        $pdf->useTemplate($tplId);
+    
+        //set certificate file
+        $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
+        $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
+        //dd(file_get_contents($certificate));
+        $info = array(
+          'Name' => $user->full_name,
+          'Location' => 'Kerinci',
+          'Keterangan' => $inputs['keterangan'],
+          'Email' => $user->email
+        );
+    
+        $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
+        
+        $pdf->Image(base_path() . $user->ttd, 180, 245, 15, 15, 'PNG');
+        $pdf->setSignatureAppearance(180, 245, 15, 15);
+        $signed = time()."_signed_". $data->original_name;
+        $signedPath = '/upload/suratkeluar/'. $signed;
+        $pdf->Output(base_path() . $signedPath, 'F');
+
+        $newFile = File::create([
+          'file_name' => $signed,
+          'file_path' => $signedPath,
+          'original_name' => $signed,
+          'active' => '1',
+          'created_at' => DB::raw('now()'),
+          'created_by' => $loginid
+        ]);
+
+        $update = $sk->update([
+          'file_id' => $newFile->id,
+          'is_approved' => '1',
+          'approved_by' => $loginid,
+          'approved_at' => DB::raw('now()'),
+          'modified_at' => DB::raw('now()'),
+          'modified_by' => $loginid
+        ]);
+
+        $dataDis = Array(
+          'surat_keluar_id' => $id,
+          'tujuan_user' => $sk->created_by,
+          'file_id' => $newFile->id,
+          'log' => "signed",
+          'keterangan' => $inputs['keterangan'],
+        );
+        $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+        //$pdf->reset();
+        $respon['success'] = true;
+        $respon['state_code'] = 200;
+        array_push($respon['messages'], trans('messages.successSignSuratKeluar'));
+      }
+    } else {
+      array_push($respon['messages'], trans('messages.suratAlreadySign'));
+    }
+    return $respon;
   }
 }

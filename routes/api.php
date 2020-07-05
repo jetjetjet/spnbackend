@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', 'AuthController@login');
 Route::post('/forgotPassword', 'AuthController@forgotPassword');
 Route::post('/resetPassword', 'AuthController@resetPassword');
-Route::get('/suratKeluar/sign', 'SuratKeluarController@signSurat');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
     
+Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
     Route::post('/logout', 'AuthController@logout');
 
     Route::get('/auditTrail/list', 'AuditTrailController@getAll');
@@ -81,15 +81,15 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/unit/delete/{id?}', 'GroupController@delete');
     Route::get('/unit/search', 'GroupController@searchGroup');
     
-    Route::get('/user/list', 'UserController@getAll');
-    Route::get('/user/view/{id?}', 'UserController@getById');
-    Route::get('/user/createTtdId/{id}', 'UserController@createIdTtd');
+    Route::get('/user/list', 'UserController@getAll')->middleware('can:user_list');
+    Route::get('/user/view/{id?}', 'UserController@getById')->middleware('can:user_view');
+    Route::get('/user/createTtdId/{id}', 'UserController@createIdTtd')->middleware('can:user_createttd');
     Route::get('/user/search', 'UserController@searchUser');
     Route::get('/user/searchSM', 'UserController@searchUserSM');
-    Route::post('/user/save/{id?}', 'UserController@save');
-    Route::post('/user/delete/{id?}', 'UserController@delete');
-    Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
-    Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto');
-    Route::post('/user/savettd/{id}', 'UserController@simpanTTD');
+    Route::post('/user/save/{id?}', 'UserController@save')->middleware('can:user_save');
+    Route::post('/user/delete/{id?}', 'UserController@delete')->middleware('can:user_delete');
+    Route::post('/user/changePassword/{id?}', 'UserController@changePassword')->middleware('can:user_save');
+    Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto')->middleware('can:user_save');
+    Route::post('/user/savettd/{id}', 'UserController@simpanTTD')->middleware('can:user_save');
     
 });

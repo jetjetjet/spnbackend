@@ -167,12 +167,14 @@ class SuratKeluarController extends Controller
     return response()->json($result, $result['state_code']);
   }
 
-  public function signSurat(Request $request)
+  public function signSurat(Request $request, $id)
   {
     $respon = Helper::$responses;
-    $result = SuratKeluarRepository::signSurat();
+    $inputs = $request->all();
+    $result = SuratKeluarRepository::signSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Sign', Auth::user()->getAuthIdentifier());
 
-    return response()->json("ok");
+    return response()->json($result, $result['state_code']);
   }
 
   
