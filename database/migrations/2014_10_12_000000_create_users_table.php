@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('password', 100);
             $table->string('phone', 15)->nullable();
             $table->string('address', 400)->nullable();
+            $table->string('ttd', 800)->nullable();
             $table->boolean('active');
             $table->dateTime('last_login')->nullable();
             $table->dateTime('created_at');

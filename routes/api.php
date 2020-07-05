@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', 'AuthController@login');
 Route::post('/forgotPassword', 'AuthController@forgotPassword');
 Route::post('/resetPassword', 'AuthController@resetPassword');
+Route::get('/suratKeluar/sign', 'SuratKeluarController@signSurat');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
     
@@ -82,10 +83,13 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     
     Route::get('/user/list', 'UserController@getAll');
     Route::get('/user/view/{id?}', 'UserController@getById');
+    Route::get('/user/createTtdId/{id}', 'UserController@createIdTtd');
+    Route::get('/user/search', 'UserController@searchUser');
+    Route::get('/user/searchSM', 'UserController@searchUserSM');
     Route::post('/user/save/{id?}', 'UserController@save');
     Route::post('/user/delete/{id?}', 'UserController@delete');
     Route::post('/user/changePassword/{id?}', 'UserController@changePassword');
-    Route::get('/user/search', 'UserController@searchUser');
-    Route::get('/user/searchSM', 'UserController@searchUserSM');
     Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto');
+    Route::post('/user/savettd/{id}', 'UserController@simpanTTD');
+    
 });

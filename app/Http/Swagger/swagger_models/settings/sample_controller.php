@@ -858,6 +858,34 @@ class SampleController //This is a sample laravel Controller
      * )
      */
 
+    /**
+     * @OA\Post(
+     *     path="/spnbackend/public/api/user/savettd/1",
+     *     tags={"User"}, 
+     *     summary="Simpan ttd User",
+     *     description="Simpan ttd User",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="ttd",
+     *                     type="string"
+     *                 ),
+     *                 example={"ttd": "asdawr4234234SJKAHQ@#AAHOWRHEWRKJERIUET"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
      /////////////// MENU
     /**
      * @OA\GET(

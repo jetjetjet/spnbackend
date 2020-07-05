@@ -138,5 +138,38 @@ class UserController extends Controller
 
     return response()->json($result, $result['state_code']);
   }
+  
+  public function createIdTtd(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $result = UserRepository::createIdTtd($respon, $id, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'CreateIDTTD', Auth::user()->getAuthIdentifier());
+
+    return response()->json($result, $result['state_code']);
+  }
+
+  public function simpanTTD(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $rules = array(
+      'ttd' => 'required',
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+		// Validation fails?
+		if ($validator->fails()){
+			$respon['state_code'] = 400;
+      $respon['messages'] = $validator->messages();
+      $respon['data'] = $inputs;
+      return response()->json($respon, 400);
+    }
+
+    $result = UserRepository::saveTTD($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'CreateTTD', Auth::user()->getAuthIdentifier());
+
+    return response()->json($result, $result['state_code']);
+  }
 
 }

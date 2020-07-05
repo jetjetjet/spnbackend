@@ -9,6 +9,8 @@ use App\Model\File;
 use App\Helpers\Helper;
 use DB;
 use Exception;
+use PDF;
+use setasign\Fpdi\Tcpdf\Fpdi;
 
 class SuratKeluarRepository
 {
@@ -316,10 +318,22 @@ class SuratKeluarRepository
       'nomor_agenda' => $inputs['nomor_agenda'],
       'nomor_surat' => $inputs['nomor_surat'],
       'tgl_surat' => $inputs['tgl_surat'],
-      'file_id' => $respon['file_id'],
+      //'file_id' => $respon['file_id'],
       'modified_at' => DB::raw("now()"),
       'modified_by' => $loginid
     ]);
+
+    $dataDis = Array(
+      'surat_keluar_id' => $sm->id,
+      'tujuan_user' => $sm->approval_user,
+      'file_id' => $respon['file_id'],
+      'log' => "agenda",
+      'keterangan' => $inputs['keterangan'],
+    );
+    $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+    if($dis == null){
+      throw new Exception('rollbacked');
+    }
     return $tes;
   }
 
@@ -380,5 +394,46 @@ class SuratKeluarRepository
       array_push($respon['messages'], trans('messages.successDeleteSuratKeluar'));
     }
     return $respon;
+  }
+
+  public static function ttdSurat($id, $fullName, $inputs, $email)
+  {
+    $data = DB::table('dis_surat_keluar')
+      ->join('gen_file as gf', 'gf.id', 'file_id')
+      ->where('active', '1')
+      ->where('surat_keluar_id', $id)
+      ->where('log', 'agenda')
+      ->select('file_path, file_name')
+      ->first();
+
+
+    $pdf = new Fpdi();
+    $pdf->AddPage();
+    // set the source file
+    $pdf->setSourceFile(base_path() . $data->file_path); //'/upload/suratkeluar/aa.pdf');
+    // import page 1
+    $tplId = $pdf->importPage(1);
+    // use the imported page and place it at point 10,10 with a width of 100 mm
+    $pdf->useTemplate($tplId);
+
+    //set certificate file
+    //$certificate = 'file://'.realpath('../upload/surek/dummy.crt');
+    $certificate = 'file://'. realpath('../stack/certificates/public/'. $fullName .'.crt');
+    $private_key = 'file://'. realpath('../stack/certificates/private/'. $fullName .'.key');
+     //dd(file_get_contents($certificate));
+      $info = array(
+        'Name' => $fullName,
+        'Location' => 'Kerinci',
+        'Keterangan' => $inputs['Keterangan'],
+        'Email' => $email
+    );
+
+    $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
+    
+    $pdf->Image(base_path() . '/upload/spn.png', 180, 245, 15, 15, 'PNG');
+    $pdf->setSignatureAppearance(180, 245, 15, 15);
+    $pdf->Output(base_path() . '/upload/suratkeluar/ttds.pdf', 'F');
+    $pdf->reset();
+    dd('pdf created');
   }
 }

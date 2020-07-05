@@ -1012,6 +1012,42 @@
                 ]
             }
         },
+        "/spnbackend/public/api/user/savettd/1": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Simpan ttd User",
+                "description": "Simpan ttd User",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ttd": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "ttd": "asdawr4234234SJKAHQ@#AAHOWRHEWRKJERIUET"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/spnbackend/public/api/menu/list": {
             "get": {
                 "tags": [
@@ -1437,7 +1473,7 @@
                                     "jenis_surat": {
                                         "type": "string"
                                     },
-                                    "klasifikasi_surat": {
+                                    "klasifikasi_id": {
                                         "type": "string"
                                     },
                                     "sifat_surat": {
@@ -1465,7 +1501,7 @@
                                 "type": "object",
                                 "example": {
                                     "jenis_surat": "Penting",
-                                    "klasifikasi_surat": "IT",
+                                    "klasifikasi_id": "1",
                                     "sifat_surat": "Segera",
                                     "tujuan_surat": "Ikhwan Komputer",
                                     "hal_surat": "-",
@@ -1750,8 +1786,8 @@
                                     "prioritas": {
                                         "type": "string"
                                     },
-                                    "klasifikasi": {
-                                        "type": "string"
+                                    "klasifikasi_id": {
+                                        "type": "integer"
                                     },
                                     "keterangan": {
                                         "type": "string"
@@ -1769,7 +1805,7 @@
                                     "sifat_surat": "Penting",
                                     "lampiran": "-",
                                     "prioritas": "Segera",
-                                    "klasifikasi": "kla",
+                                    "klasifikasi_id": "1",
                                     "keterangan": "Mohon Atensinya",
                                     "file": "[binary]"
                                 }

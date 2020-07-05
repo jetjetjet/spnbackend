@@ -166,4 +166,14 @@ class SuratKeluarController extends Controller
 
     return response()->json($result, $result['state_code']);
   }
+
+  public function signSurat(Request $request)
+  {
+    $respon = Helper::$responses;
+    $result = SuratKeluarRepository::signSurat();
+
+    return response()->json("ok");
+  }
+
+  
 }

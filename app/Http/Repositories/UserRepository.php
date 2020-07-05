@@ -269,4 +269,57 @@ class UserRepository
     }
     return $respon;
   }
+
+  public static function saveTTD($id, $respon, $inputs, $loginid)
+  {
+    try {
+      $user = User::where('active', '1')->where('id', $id)->firstOrFail();
+
+      $user->update([
+        'ttd' => $inputs['ttd'],
+        'modified_at' => \Carbon\Carbon::now(),
+        'modified_by' => $loginid
+      ]);
+
+      $respon['success'] = true;
+        $respon['state_code'] = 200;
+        array_push($respon['messages'], trans('messages.successUpdatedTTD'), ["item" => $user->username]);
+    } catch(\Exception $e) {
+      
+      $respon['state_code'] = 500;
+      array_push($result['messages'], $e->getMessage());
+    }
+    return $respon;
+  }
+
+  public static function createIdTtd($respon, $id, $loginid)
+  {
+    $cekData = DB::table('gen_user as gu')
+      ->where('active', '1')
+      ->where('id', $id)
+      ->select('username', 'email')
+      ->first();
+    
+    if($cekData != null){
+      $info = Array(
+        'name' => $cekData->username,
+        'email' => $cekData->email
+      );
+      try{
+        $createID = Helper::createCertificate($info);
+      
+        $respon['success'] = true;
+        $respon['state_code'] = 200;
+        array_push($respon['messages'], trans('messages.successCreateID'));
+      }catch(\Exception $e){
+        $respon['state_code'] = 500;
+        array_push($respon['messages'], $e->getMessage());
+      }
+    } else {
+      $respon['state_code'] = 400;
+      array_push($respon['messages'], trans('messages.dataNotFound'));
+    }
+
+    return $respon;
+  }
 }

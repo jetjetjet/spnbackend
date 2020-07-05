@@ -15,7 +15,7 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
 
     public $timestamps = false;
-    protected $hidden = ['password', 'active'];
+    protected $hidden = ['password', 'active', 'ttd'];
     protected $fillable = [
       'username'
       ,'nip'
@@ -24,6 +24,7 @@ class User extends Authenticatable
       ,'password'
       ,'full_name'
       ,'ttl'
+      ,'ttd'
       ,'jenis_kelamin'
       ,'path_foto'
       ,'password'

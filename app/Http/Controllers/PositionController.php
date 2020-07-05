@@ -60,8 +60,8 @@ class PositionController extends Controller
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
     
     return response()->json($result, $result['state_code']);
-	}
-
+  }
+  
 	public function delete(Request $request, $id)
 	{
 		$respon = Helper::$responses;
