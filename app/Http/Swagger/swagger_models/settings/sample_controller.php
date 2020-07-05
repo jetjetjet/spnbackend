@@ -869,10 +869,10 @@ class SampleController //This is a sample laravel Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="ttd",
-     *                     type="string"
+     *                     property="file",
+     *                     type="file"
      *                 ),
-     *                 example={"ttd": "asdawr4234234SJKAHQ@#AAHOWRHEWRKJERIUET"}
+     *                 example={"file": "[binary]"}
      *             )
      *         )
      *     ),

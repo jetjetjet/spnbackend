@@ -77,6 +77,7 @@ class UserRepository
         'nip',
         'username',
         'full_name',
+        'ttd',
         'path_foto',
         'email',
         DB::raw("to_char(ttl, 'yyyy-mm-dd') as ttl"),
@@ -272,20 +273,21 @@ class UserRepository
 
   public static function saveTTD($id, $respon, $inputs, $loginid)
   {
-    try {
-      $user = User::where('active', '1')->where('id', $id)->firstOrFail();
+    try{
+      $file = Helper::prepareFile($inputs, '/upload/ttd');
+      if ($file){
+        $user = User::where('active', '1')->where('id', $id)->firstOrFail();
 
-      $user->update([
-        'ttd' => $inputs['ttd'],
-        'modified_at' => \Carbon\Carbon::now(),
-        'modified_by' => $loginid
-      ]);
+        $user->update([
+          'ttd' => '/upload/ttd/'. $file->newName,
+          'modified_at' => \Carbon\Carbon::now(),
+          'modified_by' => $loginid
+        ]);
 
-      $respon['success'] = true;
-        $respon['state_code'] = 200;
+        $respon['success'] = true;
         array_push($respon['messages'], trans('messages.successUpdatedTTD'), ["item" => $user->username]);
-    } catch(\Exception $e) {
-      
+      } 
+    }catch (\Exception $e){
       $respon['state_code'] = 500;
       array_push($result['messages'], $e->getMessage());
     }
