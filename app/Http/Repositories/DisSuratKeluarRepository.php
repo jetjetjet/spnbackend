@@ -20,7 +20,7 @@ class DisSuratKeluarRepository
         if (!$valid) return;
 
         $inputs['file_id'] = isset($respon['file_id']) ? $respon['file_id'] : $inputs['file_id'];
-
+        $inputs['log'] = "disposition";
         $valid = self::saveDisSuratKeluar($inputs, $loginid);
         if($valid == null) return;
 

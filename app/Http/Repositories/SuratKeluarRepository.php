@@ -18,6 +18,9 @@ class SuratKeluarRepository
   public static function getList($filter, $loginid, $isAdmin)
   {
     $data = new \StdClass();
+    // $qdsk = DB::table('dis_surat_keluar')
+    //   ->where('active', '1')
+    //   ->orderBy 
     $q = DB::table('surat_keluar as sk')
       ->join('dis_surat_keluar as dsk',function($query){
         $query->on('dsk.surat_keluar_id', 'sk.id')
@@ -61,12 +64,14 @@ class SuratKeluarRepository
       'jenis_surat',
       'hal_surat',
       'group_name',
+      'dsk.log',
       'position_name',
       DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
       DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
       DB::raw("coalesce(to_char(tgl_surat, 'dd-mm-yyyy'), 'belum diisi') as tgl_surat"),
-      DB::raw("case when dsk.is_approved = '1' then 'Disetujui'
-        when dsk.is_approved = '0' then 'Ditolak'
+      DB::raw("case when dsk.log = 'signed' then 'Sudah ditandatangani'
+        when dsk.log = 'agenda' then 'Menunggu ditanda tangani'
+        when dsk.log = 'approve' then 'Disetujui'
         else 'Draft' end as status"),
       'sk.is_approved',
       DB::raw("
@@ -102,13 +107,16 @@ class SuratKeluarRepository
       ->leftJoin('gen_position as gp', 'gp.id', 'appr.position_id')
       ->join('gen_user as tu', 'tu.id', 'to_user')
       ->leftJoin('gen_user as md', 'md.id', 'sk.modified_by')
+      ->leftJoin('gen_file as gf', 'gf.id', 'sk.file_id')
       ->where('sk.active', '1')
       ->where('sk.id', $id)
       ->select(
         DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
         DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
         DB::raw("coalesce(to_char(tgl_surat, 'yyyy-mm-dd'), 'belum diisi') as tgl_surat"),
-        DB::raw("coalesce(file_id::varchar, 'belum diisi') as file_id"),
+        DB::raw("coalesce(file_id::varchar, 'belum diisi') as signed_file_id"),
+        'gf.file_name as signed_file_name',
+        'gf.file_path as signed_file_path',
         'jenis_surat',
         'sifat_surat',
         'tujuan_surat',
@@ -139,10 +147,12 @@ class SuratKeluarRepository
         ->leftJoin('gen_file as f', 'file_id', 'f.id')
         ->where('dsk.active', '1')
         ->where('dsk.surat_keluar_id', $id)
+        ->orderBy('dsk.created_at', 'ASC')
         ->select('dsk.id', 
           DB::raw("case when log = 'create' then 'Surat dibuat oleh: '
-            when log = 'disposition' then 'Surat Didisposisikan oleh: '
-            when log = 'finish' then 'Surat selesai'
+            when log = 'disposition' then 'Surat didisposisikan oleh: '
+            when log = 'agenda' then 'Surat diagenda oleh: '
+            when log = 'signed' then 'Surat ditandatangani oleh: '
             else '' end as label_disposisi"),
           'surat_keluar_id', 
           'dsk.created_by',
@@ -399,7 +409,7 @@ class SuratKeluarRepository
 
   public static function signSurat($respon, $id, $inputs, $loginid)
   {
-    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNull('approved_at')->first();
+    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNotNull('approved_at')->first();
     if ($sk != null){
       $data = DB::table('dis_surat_keluar as dsk')
         ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
@@ -439,7 +449,7 @@ class SuratKeluarRepository
     
         $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
         
-        $pdf->Image(base_path() . $user->ttd, 180, 245, 15, 15, 'PNG');
+        $pdf->Image(base_path() . $user->ttd, 180, 262, 15, 15, 'PNG');
         $pdf->setSignatureAppearance(180, 245, 15, 15);
         $signed = time()."_signed_". $data->original_name;
         $signedPath = '/upload/suratkeluar/'. $signed;
