@@ -78,7 +78,7 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
-        factory(User::class, 40)->create();
+        //factory(User::class, 40)->create();
 
         //Menu::truncate();
         // $hdr = Menu::create([
@@ -473,8 +473,57 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
+        $user = User::create([
+            'full_name' => 'Simba The Cat',
+            'position_id' => $kadin->id,
+            'username' => 'simba',
+            'email' => 'simba@ratafd.xyz',
+            'jenis_kelamin' => 'Laki-laki',
+            'nip' => '12345678',
+            'password' => bcrypt('simba'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
 
+        $user = User::create([
+            'full_name' => 'Oboy Kucing',
+            'position_id' => $kapaud->id,
+            'username' => 'boy',
+            'email' => 'boy@ratafd.xyz',
+            'jenis_kelamin' => 'Laki-laki',
+            'nip' => '12345678',
+            'password' => bcrypt('boy'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
 
+        $user = User::create([
+            'full_name' => 'Oren Kucing',
+            'position_id' => $sekretaris->id,
+            'username' => 'oren',
+            'email' => 'oren@ratafd.xyz',
+            'jenis_kelamin' => 'Perempuan',
+            'nip' => '12345678',
+            'password' => bcrypt('oren'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $user = User::create([
+            'full_name' => 'Puput Belang',
+            'position_id' => $kasipaud->id,
+            'username' => 'puput',
+            'email' => 'puput@ratafd.xyz',
+            'jenis_kelamin' => 'Perempuan',
+            'nip' => '12345678',
+            'password' => bcrypt('puput'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
         // PositionMenu::truncate();
         // PositionMenu::create([
         //     'position_id' => $p1->id ,
