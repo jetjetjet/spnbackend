@@ -6,6 +6,7 @@ use App\Model\Menu;
 use App\Model\Group;
 use App\Model\PositionMenu;
 use App\Model\Position;
+use App\Model\KlasifikasiSurat;
 
 class Userseed extends Seeder
 {
@@ -30,7 +31,54 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
-       // factory(User::class, 40)->create();
+        KlasifikasiSurat::truncate();
+
+        $kl1 = KlasifikasiSurat::create([
+            'kode_klasifikasi' => '000',
+            'nama_klasifikasi' => 'Umum',
+            'detail' => 'Umum',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $kl2 = KlasifikasiSurat::create([
+            'kode_klasifikasi' => '010',
+            'nama_klasifikasi' => 'Urusan Dalam',
+            'detail' => 'Urusan Dalam',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        KlasifikasiSurat::create([
+            'kode_klasifikasi' => '010',
+            'nama_klasifikasi' => 'Urusan Dalam',
+            'detail' => 'Urusan Dalam',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        KlasifikasiSurat::create([
+            'kode_klasifikasi' => '030',
+            'nama_klasifikasi' => 'Kekayaan Daerah',
+            'detail' => 'Kekayaan Daerah',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        KlasifikasiSurat::create([
+            'kode_klasifikasi' => '900',
+            'nama_klasifikasi' => 'Keuangan',
+            'detail' => 'Keuangan',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        factory(User::class, 40)->create();
 
         //Menu::truncate();
         // $hdr = Menu::create([
