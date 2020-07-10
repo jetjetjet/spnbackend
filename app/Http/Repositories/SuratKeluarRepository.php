@@ -49,8 +49,10 @@ class SuratKeluarRepository
     if ($filter->sortColumns){
       $order = $filter->sortColumns[0];
       $q = $q->orderBy($order->column, $order->order);
+      $q = $q->orderBy('dsk.created_at', 'DESC');
     } else {
       $q = $q->orderBy('sk.id', 'DESC');
+      $q = $q->orderBy('dsk.created_at', 'DESC');
     }
       
     $q = $q->skip($filter->offset);
@@ -409,7 +411,7 @@ class SuratKeluarRepository
 
   public static function signSurat($respon, $id, $inputs, $loginid)
   {
-    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNotNull('approved_at')->first();
+    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNull('approved_at')->first();
     if ($sk != null){
       $data = DB::table('dis_surat_keluar as dsk')
         ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
