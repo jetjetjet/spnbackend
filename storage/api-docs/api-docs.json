@@ -1024,13 +1024,13 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "ttd": {
-                                        "type": "string"
+                                    "file": {
+                                        "type": "file"
                                     }
                                 },
                                 "type": "object",
                                 "example": {
-                                    "ttd": "asdawr4234234SJKAHQ@#AAHOWRHEWRKJERIUET"
+                                    "file": "[binary]"
                                 }
                             }
                         }
