@@ -2,15 +2,19 @@
 
 namespace app\Http\Repositories;
 
-use App\Model\SuratKeluar;
-use App\Model\DisSuratKeluar;
+use setasign\Fpdi\Tcpdf\Fpdi;
+use Illuminate\Support\Str;
 use App\Http\Repositories\DisSuratKeluarRepository;
 use App\Model\File;
 use App\Helpers\Helper;
+
+use App\Model\SuratKeluar;
+use App\Model\DisSuratKeluar;
+use App\Model\EncSurat;
+
 use DB;
 use Exception;
 use PDF;
-use setasign\Fpdi\Tcpdf\Fpdi;
 
 class SuratKeluarRepository
 {
@@ -73,6 +77,8 @@ class SuratKeluarRepository
       DB::raw("coalesce(to_char(tgl_surat, 'dd-mm-yyyy'), 'belum diisi') as tgl_surat"),
       DB::raw("case when dsk.log = 'signed' then 'Sudah ditandatangani'
         when dsk.log = 'agenda' then 'Menunggu ditanda tangani'
+        when dsk.log = 'disposition' and dsk.is_approved = '1' then 'Disetujui'
+        when dsk.log = 'disposition' and dsk.is_approved = '0' then 'Ditolak'
         when dsk.log = 'approve' then 'Disetujui'
         else 'Draft' end as status"),
       'sk.is_approved',
@@ -135,9 +141,9 @@ class SuratKeluarRepository
         'sk.created_at',
         'md.full_name as modified_by',
         'sk.modified_by',
-        DB::raw($perms['suratKeluar_approve'] . "as can_approve"),
-        DB::raw($perms['suratKeluar_disposition'] . "as can_disposition"),
-        DB::raw($perms['suratKeluar_agenda'] . "as can_agenda")
+        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_approve'] . " then 1 else 0 end as can_approve"),
+        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_disposition'] . " then 1 else 0 end as can_disposition"),
+        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda")
       )->first();
     
     if($header != null){
@@ -411,8 +417,9 @@ class SuratKeluarRepository
 
   public static function signSurat($respon, $id, $inputs, $loginid)
   {
-    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNull('approved_at')->first();
+    $sk = SuratKeluar::where('id', $id)->where('active', '1')->whereNull('approved_at')->first(); 
     if ($sk != null){
+      $isiKode = Str::random(12);
       $data = DB::table('dis_surat_keluar as dsk')
         ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
         ->where('dsk.active', '1')
@@ -427,8 +434,9 @@ class SuratKeluarRepository
         ->select('ttd', 'email', 'username', 'full_name')
         ->first();
     
-      if($user->ttd != null && $data->file_path != null)
+      if($data->file_path != null)
       {
+
         $pdf = new Fpdi();
         $pdf->AddPage();
         // set the source file
@@ -451,8 +459,23 @@ class SuratKeluarRepository
     
         $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
         
-        $pdf->Image(base_path() . $user->ttd, 180, 262, 15, 15, 'PNG');
-        $pdf->setSignatureAppearance(180, 245, 15, 15);
+        //$pdf->Image(base_path() . $user->ttd, 175, 262, 15, 15, 'PNG');
+
+        $style = array(
+          'border' => 1,
+          'vpadding' => 'auto',
+          'hpadding' => 'auto',
+          'fgcolor' => array(0,0,0),
+          'bgcolor' => false, //array(255,255,255)
+          'module_width' => 1, // width of a single module in points
+          'module_height' => 1 // height of a single module in points
+      );
+      // $isiKode = Crypt::encryptString('Surat No. ' . $sk->nomor_surat . ' ditandatangani digital oleh ' . $user->full_name);
+     
+      // QRCODE,L : QR-CODE Low error correction
+       $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
+
+        $pdf->setSignatureAppearance(170, 260, 15, 15);
         $signed = time()."_signed_". $data->original_name;
         $signedPath = '/upload/suratkeluar/'. $signed;
         $pdf->Output(base_path() . $signedPath, 'F');
@@ -461,6 +484,14 @@ class SuratKeluarRepository
           'file_name' => $signed,
           'file_path' => $signedPath,
           'original_name' => $signed,
+          'active' => '1',
+          'created_at' => DB::raw('now()'),
+          'created_by' => $loginid
+        ]);
+
+        $encSurat = EncSurat::create([
+          'key' => $isiKode,
+          'surat_keluar_id' => $sk->id,
           'active' => '1',
           'created_at' => DB::raw('now()'),
           'created_by' => $loginid

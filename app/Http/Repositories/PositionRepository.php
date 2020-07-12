@@ -154,7 +154,7 @@ class PositionRepository
   public static function searchPosition($respon)
   {
     $q = Position::where('active','1')
-      ->whereNotIn('id', [DB::raw("select id from gen_user where active = '1'")])
+      ->whereNotIn('id', [DB::raw("select position_id from gen_user where active = '1' and position_id is not null")])
       ->orderBy('position_name', 'ASC')
       ->select('id', DB::raw("position_name || ' - ' || position_type as text"))
       ->get();
