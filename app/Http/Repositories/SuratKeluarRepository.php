@@ -79,7 +79,7 @@ class SuratKeluarRepository
         when dsk.log = 'agenda' then 'Menunggu ditanda tangani'
         when dsk.log = 'disposition' and dsk.is_approved = '1' then 'Disetujui'
         when dsk.log = 'disposition' and dsk.is_approved = '0' then 'Ditolak'
-        when dsk.log = 'approve' then 'Disetujui'
+        when dsk.log = 'signed' then 'Ditandatangani'
         else 'Draft' end as status"),
       'sk.is_approved',
       DB::raw("

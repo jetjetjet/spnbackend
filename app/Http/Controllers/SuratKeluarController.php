@@ -33,7 +33,7 @@ class SuratKeluarController extends Controller
     $responses = Helper::$responses;
     $user = request()->user();
     $permissions = Array(
-      'suratKeluar_disposition' => $user->tokenCan('') ? 1 : 0,
+      'suratKeluar_disposition' => $user->tokenCan('suratKeluar_disposition') ? 1 : 0,
       'suratKeluar_agenda' => $user->tokenCan('suratKeluar_agenda') ? 1 : 0,
       'suratKeluar_approve' => $user->tokenCan('suratKeluar_approve') ? 1 : 0
     );
