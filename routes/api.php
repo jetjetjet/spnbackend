@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', 'AuthController@login');
 Route::post('/forgotPassword', 'AuthController@forgotPassword');
 Route::post('/resetPassword', 'AuthController@resetPassword');
+Route::get('/cekSurat', 'EncSuratController@cekKode');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
     

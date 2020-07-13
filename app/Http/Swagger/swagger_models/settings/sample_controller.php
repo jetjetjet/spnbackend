@@ -1700,5 +1700,28 @@ class SampleController //This is a sample laravel Controller
      *     }
      * )
      */
+
+     /////////////// Validasi Surat
+     /**
+     * @OA\GET(
+     *     path="/spnbackend/public/api/cekSurat",
+     *     tags={"Cek Surat"}, 
+     *     summary="Validasi keaslian Surat",
+     *     description="Validasi",
+     *     operationId="cekSurat",
+     *     @OA\Parameter(
+     *          name="key",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     )
+     * )
+     */
 }
 

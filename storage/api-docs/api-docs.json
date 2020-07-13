@@ -1954,6 +1954,31 @@
                     }
                 ]
             }
+        },
+        "/spnbackend/public/api/cekSurat": {
+            "get": {
+                "tags": [
+                    "Cek Surat"
+                ],
+                "summary": "Validasi keaslian Surat",
+                "description": "Validasi",
+                "operationId": "cekSurat",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
         }
     },
     "components": {
