@@ -17,10 +17,9 @@ class PermissionController extends Controller
   {
     $responses = Helper::$responses;
 
-    array_push($responses['data'], HakAkses::all());
+    $responses['data'] = HakAkses::arrAll();
     $responses['success'] = true;
     $responses['state_code'] = 200;
-
     return response()->json($responses, $responses['state_code']);
   }
 

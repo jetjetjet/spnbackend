@@ -32,6 +32,44 @@ class UserController extends Controller
     return response()->json($result, $result['state_code']);
   }
 
+  public function getProfile(Request $request, $id)
+  {
+    $results = Helper::$responses;
+
+    if($id == Auth::user()->getAuthIdentifier()){
+      $result = UserRepository::getUserById($id, $results);
+    }
+
+    return response()->json($result, $result['state_code']);
+  }
+
+  public function saveProfile(Request $request, $id)
+  {
+    $results = Helper::$responses;
+
+    if($id == Auth::user()->getAuthIdentifier()){
+      $rules = array(
+        'jenis_kelamin' => 'required',
+        'phone' => 'max:15',
+      );
+  
+      $inputs = $request->all();
+      $validator = Validator::make($inputs, $rules);
+      
+      if ($validator->fails()){
+        $results['state_code'] = 400;
+        $results['messages'] = $validator->messages();
+        $results['data'] = $inputs;
+        return response()->json($results, 400);
+      }
+  
+      $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+      $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+    }
+
+    return response()->json($result, $result['state_code']);
+  }
+
   public function save(Request $request, $id = null)
   {
     $results = Helper::$responses;

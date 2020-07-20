@@ -158,7 +158,8 @@ class SuratKeluarRepository
         ->orderBy('dsk.created_at', 'ASC')
         ->select('dsk.id', 
           DB::raw("case when log = 'create' then 'Surat dibuat oleh: '
-            when log = 'disposition' then 'Surat didisposisikan oleh: '
+            when log = 'disposition' and is_approved = '0' then 'Surat ditolak dan dikembalikan oleh: '
+            when log = 'disposition' and is_approved = '1' then 'Surat disetujui dan diteruskan oleh: '
             when log = 'agenda' then 'Surat diagenda oleh: '
             when log = 'signed' then 'Surat ditandatangani oleh: '
             else '' end as label_disposisi"),

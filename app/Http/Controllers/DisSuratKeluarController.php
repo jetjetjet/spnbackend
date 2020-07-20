@@ -15,16 +15,17 @@ class DisSuratKeluarController extends Controller
   public static function disposisiSuratKeluar(Request $request)
   {
     $respon = Helper::$responses;
+    $inputs = $request->all();
+    
     $rules = array(
       'surat_keluar_id' => 'required',
-      'tujuan_user' => 'required',
-      'file' => 'mimes:pdf,docx,doc'
+      'tujuan_user' => 'required'
     );
 
-    $inputs = $request->all();
-    if(isset($inputs['file'])){
-
+    if($inputs['file'] != "null"){
+      $rules['file'] = 'mimes:docx,doc';
     }
+
     $validator = Validator::make($inputs, $rules);
 
     if ($validator->fails()){
@@ -43,13 +44,13 @@ class DisSuratKeluarController extends Controller
         'type' => 'SURATKELUAR',
         'to_user_id' => $result['data']['tujuan_user'] ?? 0,
         'id' => $result['data']['surat_keluar_id'] ?? 0,
-        'display' => 'Surat Keluar - Disposisi',
+        'display' => 'Surat Keluar - ' . $result['notif'],
         'url' => '/outgoing-mail-detail/' . $result['data']['surat_keluar_id']
       );
       
       $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
     }
-    unset($result['file_id'], $result['file']);
+    unset($result['file_id'], $result['file'], $result['notif']);
     $result['data'] = [];
 
     return response()->json($result, $result['state_code']);

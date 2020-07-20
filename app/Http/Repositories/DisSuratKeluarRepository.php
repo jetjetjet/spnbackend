@@ -16,18 +16,23 @@ class DisSuratKeluarRepository
     $inputs['log'] = "disposition";
     try{
       DB::transaction(function () use (&$respon, $inputs, $loginid){
-        $valid = SuratKeluarRepository::saveFile($respon, $inputs, $loginid);
-        if (!$valid) return;
+        if($inputs['file'] != "null"){
+          $valid = SuratKeluarRepository::saveFile($respon, $inputs, $loginid);
+          $inputs['file_id'] = isset($respon['file_id']) ? $respon['file_id'] : $inputs['file_id'];
+          if (!$valid) return;
+        } 
+        
+        if($inputs['tujuan_user'] == null)
+          $inputs['tujuan_user'] = self::getCreatedSurat($inputs['surat_keluar_id']);
 
-        $inputs['file_id'] = isset($respon['file_id']) ? $respon['file_id'] : $inputs['file_id'];
-        $inputs['log'] = "disposition";
         $valid = self::saveDisSuratKeluar($inputs, $loginid);
         if($valid == null) return;
 
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        $inputs['file_id'] = $respon['file_id'];
+        $inputs['file_id'] = $inputs['file'] != "null" ? $respon['file_id'] : 0;
         $respon['data'] = $valid;
+        $respon['notif'] = $valid->is_approved ? "Disetujui dan diteruskan untuk ttd" : "Ditolak dan dikembalikan untuk revisi";
         array_push($respon['messages'], trans('messages.successDisposition'));
       });
     } catch (\Exception $e) {
@@ -44,7 +49,7 @@ class DisSuratKeluarRepository
     return DisSuratKeluar::create([
       'surat_keluar_id' => $inputs['surat_keluar_id'],
       'tujuan_user' => $inputs['tujuan_user'],
-      'file_id' => $inputs['file_id'],
+      'file_id' => $inputs['file_id'] ?? null,
       'keterangan' => $inputs['keterangan'],
       'log' => $inputs['log'],
       'is_approved' => json_decode($appr),
@@ -67,5 +72,12 @@ class DisSuratKeluarRepository
       ]);
     }
     return $surat;
+  }
+
+  private static function getCreatedSurat($id)
+  {
+    $q = DB::table('surat_keluar')->where('active', '1')->where('id', $id)->select('created_by')->first();
+
+    return $q->created_by;
   }
 }

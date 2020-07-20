@@ -16,7 +16,7 @@ class CreateDisSuratKeluarsTable extends Migration
         Schema::create('dis_surat_keluar', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('surat_keluar_id');
-            $table->bigInteger('tujuan_user');
+            $table->bigInteger('tujuan_user')->nullable();
             $table->bigInteger('file_id')->nullable();
             $table->boolean('is_read');
             $table->dateTime('last_read')->nullable();

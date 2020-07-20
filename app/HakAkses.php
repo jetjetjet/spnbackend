@@ -25,7 +25,7 @@ class HakAkses
     'suratKeluar_delete',
     'suratKeluar_disposition',
     'suratKeluar_agenda',
-    'suratKeluar_approve',
+    'suratKeluar_ttd',
 
     'suratMasuk_list',
     'suratMasuk_view',
@@ -63,8 +63,17 @@ class HakAkses
       $action->text = $values[1];
       array_push($result[$values[0]]->actions, $action);
     }
-
     ksort($result);
     return $result;
+  }
+
+  public static function arrAll()
+  {
+    $perms = self::all();
+    $result = array();
+    foreach($perms as $val){
+      array_push($result, $val);
+    }
+    return $result; 
   }
 }
