@@ -212,17 +212,16 @@ class UserRepository
     $qCek = User::join('gen_position as gp', 'gp.id', 'position_id')
     ->where('gen_user.active', '1')->where('gen_user.id', $loginid)
     ->where('gp.active', '1')
-    ->select('gen_user.id as id', 'gp.parent_id', 'gp.position_name')->first();
+    ->select('gen_user.id as id', DB::raw("coalesce(gp.parent_id, 0) as parent_id") , 'gp.position_name')->first();
 
     if ($qCek != null){
       $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
-
       switch ($qCek->parent_id) {
+        case 0:
+          $query = $query->whereIn('gp.id', [2,3]);
+        break;
         case $qCek->parent_id > 3:
           $query = $query->where('gp.id', $qCek->parent_id);
-          break;
-        case $qCek->parent_id = null:
-          $query = $query->whereIn('gp.id', [2,3]);
           break;
         default:
           $query = $query;
