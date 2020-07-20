@@ -90,6 +90,8 @@ Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
     Route::get('/user/createTtdId/{id}', 'UserController@createIdTtd')->middleware('can:user_createttd');
     Route::get('/user/search', 'UserController@searchUser');
     Route::get('/user/searchSM', 'UserController@searchUserSM');
+    Route::get('/user/searchSK', 'UserController@searchUserSK');
+    Route::get('/user/searchTtd', 'UserController@searchUserTtd');
     Route::post('/user/save/{id?}', 'UserController@save')->middleware('can:user_save');
     Route::post('/user/delete/{id?}', 'UserController@delete')->middleware('can:user_delete');
     Route::post('/user/changePassword/{id?}', 'UserController@changePassword')->middleware('can:user_save');
