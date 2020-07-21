@@ -23,9 +23,19 @@ class SuratKeluar extends Model
     'to_user',
     'lampiran_surat',
     'approval_user',
+    
     'approved_by',
     'approved_at',
     'is_approved',
+    
+    'is_disposition',
+    'disposition_by',
+    'disposition_at',
+    
+    'is_agenda',
+    'agenda_by',
+    'agenda_at',
+
     'file_id',
     'active',
     'created_at',

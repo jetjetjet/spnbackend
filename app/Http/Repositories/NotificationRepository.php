@@ -99,6 +99,7 @@ class NotificationRepository
     ->leftJoin('dis_surat_keluar as dsk', function($q){
       $q->on('dsk.surat_keluar_id', 'sk.id')
         ->on('dsk.tujuan_user', 'gn.to_user_id')
+        ->on('dsk.is_read', DB::raw("null"))
         ->on('dsk.active',  DB::raw("'1'"));})    
     ->leftJoin('surat_masuk as sm', function($q){
       $q->on('gn.type', DB::raw("'SURATMASUK'"))
@@ -106,11 +107,10 @@ class NotificationRepository
         ->on('sm.active', DB::raw("'1'"));})
     ->leftJoin('dis_surat_masuk as dsm', function($q){
       $q->on('dsm.surat_masuk_id', 'sk.id')
-      ->on('dsk.tujuan_user', 'gn.to_user_id')
-      ->on('dsk.active',  DB::raw("'1'"));})
+        ->on('dsm.to_user_id', 'gn.to_user_id')
+        ->on('dsk.is_read', DB::raw("null"))
+        ->on('dsm.active',  DB::raw("'1'"));})
     ->where('gn.active', '1')
-    ->where('gn.to_user_id', $loginid)
-    ->whereNotNull('dsk.is_read')
-    ->whereNotNull('dsm.is_read');
+    ->where('gn.to_user_id', $loginid);
   }
 }

@@ -25,14 +25,17 @@ class DisSuratKeluarRepository
         if($inputs['tujuan_user'] == null)
           $inputs['tujuan_user'] = self::getCreatedSurat($inputs['surat_keluar_id']);
 
-        $valid = self::saveDisSuratKeluar($inputs, $loginid);
+        $valid = self::updateSuratKeluar($inputs, $loginid);
         if($valid == null) return;
 
+        $valid = self::saveDisSuratKeluar($inputs, $loginid);
+        if($valid == null) return;
+        
+        $respon['notif'] = $valid->is_approved ? "Disetujui dan diteruskan untuk ttd" : "Ditolak dan dikembalikan untuk revisi";
         $respon['success'] = true;
         $respon['state_code'] = 200;
         $inputs['file_id'] = $inputs['file'] != "null" ? $respon['file_id'] : 0;
         $respon['data'] = $valid;
-        $respon['notif'] = $valid->is_approved ? "Disetujui dan diteruskan untuk ttd" : "Ditolak dan dikembalikan untuk revisi";
         array_push($respon['messages'], trans('messages.successDisposition'));
       });
     } catch (\Exception $e) {
@@ -41,6 +44,20 @@ class DisSuratKeluarRepository
       array_push($respon['messages'], $e->getMessage());
     }
     return $respon;
+  }
+
+  public static function updateSuratKeluar($inputs, $loginid)
+  {
+    return DB::table('surat_keluar')
+      ->where('id', $inputs['surat_keluar_id'])
+      ->where('active', '1')
+      ->where('is_agenda', '0')
+      ->where('is_approved', '0')
+      ->update([
+        'is_disposition' => '1',
+        'disposition_at' => DB::raw('now()'),
+        'disposition_by' => $loginid
+      ]);
   }
 
   public static function saveDisSuratKeluar($inputs, $loginid)

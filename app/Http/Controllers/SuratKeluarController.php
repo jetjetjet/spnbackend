@@ -35,7 +35,7 @@ class SuratKeluarController extends Controller
     $permissions = Array(
       'suratKeluar_disposition' => $user->tokenCan('suratKeluar_disposition') ? 1 : 0,
       'suratKeluar_agenda' => $user->tokenCan('suratKeluar_agenda') ? 1 : 0,
-      'suratKeluar_approve' => $user->tokenCan('suratKeluar_approve') ? 1 : 0
+      'suratKeluar_ttd' => $user->tokenCan('suratKeluar_ttd') ? 1 : 0
     );
 
     $result = SuratKeluarRepository::getById($responses, $id, $permissions);

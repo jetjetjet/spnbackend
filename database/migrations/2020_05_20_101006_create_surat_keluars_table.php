@@ -27,6 +27,14 @@ class CreateSuratKeluarsTable extends Migration
             $table->integer('to_user');
             $table->integer('file_id')->nullable();
 
+            $table->boolean('is_disposition')->nullable();
+            $table->bigInteger('disposition_by')->nullable();
+            $table->dateTime('disposition_at')->nullable();
+
+            $table->boolean('is_agenda')->nullable();
+            $table->bigInteger('agenda_by')->nullable();
+            $table->dateTime('agenda_at')->nullable();
+
             $table->integer('approval_user');
             $table->bigInteger('approved_by')->nullable();
             $table->dateTime('approved_at')->nullable();

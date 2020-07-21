@@ -141,9 +141,9 @@ class SuratKeluarRepository
         'sk.created_at',
         'md.full_name as modified_by',
         'sk.modified_by',
-        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_approve'] . " then 1 else 0 end as can_approve"),
-        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_disposition'] . " then 1 else 0 end as can_disposition"),
-        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda")
+        DB::raw("case when sk.is_approved = '0' and 1 =" . $perms['suratKeluar_ttd'] . " then 1 else 0 end as can_approve"),
+        DB::raw("case when sk.is_approved = '0' and sk.is_disposition = '0' and 1 =" . $perms['suratKeluar_disposition'] . " then 1 else 0 end as can_disposition"),
+        DB::raw("case when sk.is_approved = '0'  and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda")
       )->first();
     
     if($header != null){
@@ -273,6 +273,8 @@ class SuratKeluarRepository
         'lampiran_surat' => $inputs['lampiran_surat'],
         'approval_user' => $inputs['approval_user'],
         'is_approved' => '0',
+        'is_disposition' => '0',
+        'is_agenda' => '0',
         //'file_id' => $inputs['file_id'],
         'active' => '1',
         'created_at' => DB::raw('now()'),
@@ -302,6 +304,7 @@ class SuratKeluarRepository
     $sm = SuratKeluar::where('active', '1')
       ->where('id', $id)
       ->where('is_approved', '0')
+      ->where('is_disposition', '1')
       ->first();
     
     if($sm != null){
@@ -320,7 +323,6 @@ class SuratKeluarRepository
           array_push($respon['messages'], trans('messages.successUpdatedAgenda'));
         });
       } catch (\Exception $e) {
-        dd($e);
         if ($e->getMessage() === 'rollbacked') return $result;
         $result['state_code'] = 500;
         array_push($result['messages'], $e->getMessage());
@@ -340,7 +342,10 @@ class SuratKeluarRepository
       'tgl_surat' => $inputs['tgl_surat'],
       //'file_id' => $respon['file_id'],
       'modified_at' => DB::raw("now()"),
-      'modified_by' => $loginid
+      'modified_by' => $loginid,
+      'agenda_at' => DB::raw("now()"),
+      'agenda_by' => $loginid,
+      'is_agenda' => '1'
     ]);
 
     $dataDis = Array(
@@ -426,6 +431,7 @@ class SuratKeluarRepository
         ->where('dsk.active', '1')
         ->where('surat_keluar_id', $id)
         ->where('log', 'agenda')
+        ->orderBy('dsk.created_at', 'desc')
         ->select('file_path', 'file_name', 'original_name')
         ->first();
 
