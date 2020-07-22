@@ -48,7 +48,7 @@ class TemplateSuratRepository
         ->join('gen_file as gf', 'gf.id', 'file_id')
         ->where('gdt.active', '1')
         ->where('template_id', $q->id)
-        ->select('gdt.id as id','file_id','original_name', 'file_path')
+        ->select('gdt.id as id','file_id', DB::raw('original_name as name'), 'file_path')
         ->get();
       $tmp = $q;
       $tmp->detail = $detail;
