@@ -119,39 +119,45 @@ class TemplateSuratRepository
 
   public static function saveDetailTemplate(&$result, $id, $inputs, $loginid)
   {
-    $files = $inputs['file'];
-    $id = isset($id) ? $id : $result['id'];
-    foreach($files as $file){
-      $prepareFile = Helper::prepFile($file, '/upload/templatesurat');
-      $newFile = File::create([
-        'file_name' => $prepareFile->newName,
-        'file_path' => '/upload/templatesurat/'.$prepareFile->newName,
-        'original_name' => $prepareFile->originalName,
-        'active' => '1',
-        'created_at' => DB::raw('now()'),
-        'created_by' => $loginid
-      ]);
-      $saveDetail = DetailTemplate::create([
-        'template_id' => $id,
-        'file_id' => $newFile->id,
-        'active' => '1',
-        'created_at' => DB::raw('now()'),
-        'created_by' => $loginid
-      ]);
+    if(isset($inputs["file"])){
+      $files = $inputs['file'];
+      $id = isset($id) ? $id : $result['id'];
+      foreach($files as $file){
+        $prepareFile = Helper::prepFile($file, '/upload/templatesurat');
+        $newFile = File::create([
+          'file_name' => $prepareFile->newName,
+          'file_path' => '/upload/templatesurat/'.$prepareFile->newName,
+          'original_name' => $prepareFile->originalName,
+          'active' => '1',
+          'created_at' => DB::raw('now()'),
+          'created_by' => $loginid
+        ]);
+        $saveDetail = DetailTemplate::create([
+          'template_id' => $id,
+          'file_id' => $newFile->id,
+          'active' => '1',
+          'created_at' => DB::raw('now()'),
+          'created_by' => $loginid
+        ]);
+      }
     }
     return true;
   }
 
   public static function removeMissingTemplate(&$result, $id, $inputs, $loginid)
   {
-    $data = DetailTemplate::where('active', '1')
+    if(isset($inputs['existing_file'])){
+      $fileId = array_map(function($item) { return $item['id']; }, $inputs['existing_file']);
+      $data = DetailTemplate::where('active', '1')
       ->where('template_id', $id)
-      ->whereNotIn('id', $inputs['file_id'])
+      ->whereNotIn('id', $fileId)
       ->update([
         'active' => '0',
-        'modified_by' => $loginId,
+        'modified_by' => $loginid,
         'modified_at' => now()->toDateTimeString()
         ]);
+    }
+    
     return true;
   }
 
