@@ -147,7 +147,7 @@ class TemplateSuratRepository
   public static function removeMissingTemplate(&$result, $id, $inputs, $loginid)
   {
     if(isset($inputs['existing_file'])){
-      $fileId = array_map(function($item) { return $item['id']; }, $inputs['existing_file']);
+      $fileId = array_map(function($item) { return $item->id; }, json_decode($inputs['existing_file']));
       $data = DetailTemplate::where('active', '1')
       ->where('template_id', $id)
       ->whereNotIn('id', $fileId)
