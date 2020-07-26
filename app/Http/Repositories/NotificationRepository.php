@@ -2,7 +2,7 @@
 
 namespace app\Http\Repositories;
 
-use App\Model\Notification;
+use App\Model\GenNotif;
 use DB;
 use Exception;
 
@@ -11,7 +11,7 @@ class NotificationRepository
   public static function save($data, $loginid)
   {
     $result = false;
-    $save = Notification::create([
+    $save = GenNotif::create([
       'type' => $data['type'],
       'to_user_id' => $data['to_user_id'],
       'reference_id' => $data['id'],
@@ -64,14 +64,10 @@ class NotificationRepository
     return $data;
   }
 
-  public static function countNotif($respon, $loginid)
+  public static function countNotif($loginid)
   {
     $notif = self::selectNotif($loginid)->count();
-    
-    $respon['data'] = $notif;
-    $respon['success'] = true;
-    $respon['state_code'] = 200;
-    return $respon;
+    return $notif;
   }
 
   public static function getNotif($respon, $loginid)

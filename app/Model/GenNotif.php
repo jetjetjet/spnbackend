@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Notification extends Model
+class GenNotif extends Model
 {
   protected $table = 'gen_notif';
   public $timestamps = false;
