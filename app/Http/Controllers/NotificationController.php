@@ -43,6 +43,9 @@ class NotificationController extends Controller
     if($notification) {
         $notification->markAsRead();
     }
-    return response()->json(["OK"]);
-}
+    
+    $respon = Helper::$responses;
+    $result = NotificationRepository::countNotif($respon, Auth::user()->getAuthIdentifier());
+    return response()->json($result, $result['state_code']);
+  }
 }
