@@ -174,6 +174,7 @@ class Userseed extends Seeder
 
         Position::truncate();
         Group::truncate();
+        PositionMenu::truncate();
 
         $g1 = Group::create([
             'group_code' => 'SA',
@@ -473,114 +474,114 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
-        $user = User::create([
-            'full_name' => 'Simba The Cat',
+        $afif = User::create([
+            'full_name' => 'Heriadian Afif',
             'position_id' => $kadin->id,
-            'username' => 'simba',
-            'email' => 'simba@ratafd.xyz',
+            'username' => 'h_afif',
+            'email' => 'h_afif@ratafd.xyz',
             'jenis_kelamin' => 'Laki-laki',
-            'nip' => '12345678',
-            'password' => bcrypt('simba'),
+            'nip' => '123456789012345678',
+            'password' => bcrypt('password'),
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
 
-        $user = User::create([
-            'full_name' => 'Oboy Kucing',
+        $septian = User::create([
+            'full_name' => 'Septian Permana',
             'position_id' => $kapaud->id,
-            'username' => 'boy',
-            'email' => 'boy@ratafd.xyz',
+            'username' => 'septian_p',
+            'email' => 'septian_p@ratafd.xyz',
             'jenis_kelamin' => 'Laki-laki',
-            'nip' => '12345678',
-            'password' => bcrypt('boy'),
+            'nip' => '123456789087654321',
+            'password' => bcrypt('password'),
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
 
-        $user = User::create([
-            'full_name' => 'Oren Kucing',
+        $yuda = User::create([
+            'full_name' => 'Yudha Prasetyo',
             'position_id' => $sekretaris->id,
-            'username' => 'oren',
-            'email' => 'oren@ratafd.xyz',
-            'jenis_kelamin' => 'Perempuan',
-            'nip' => '12345678',
-            'password' => bcrypt('oren'),
+            'username' => 'yudha_p',
+            'email' => 'yudha_p@ratafd.xyz',
+            'jenis_kelamin' => 'Laki-laki',
+            'nip' => '123456789056784321',
+            'password' => bcrypt('password'),
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
 
-        $user = User::create([
-            'full_name' => 'Puput Belang',
+        $vera = User::create([
+            'full_name' => 'Vera',
             'position_id' => $kasipaud->id,
-            'username' => 'puput',
-            'email' => 'puput@ratafd.xyz',
+            'username' => 'vera',
+            'email' => 'vera@ratafd.xyz',
             'jenis_kelamin' => 'Perempuan',
-            'nip' => '12345678',
-            'password' => bcrypt('puput'),
+            'nip' => '123456789056784390',
+            'password' => bcrypt('password'),
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
-        // PositionMenu::truncate();
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $hdr->id,
-        //     'permissions' => null,
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $m0->id,
-        //     'permissions' => 'user_view|user_save|user_delete|user_add',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $m1->id,
-        //     'permissions' => 'menu_read|menu_save|menu_delete|menu_add',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $m2->id,
-        //     'permissions' => 'jabatan_read|jabatan_save|jabatan_delete|jabatan_add',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $hdr2->id,
-        //     'permissions' => null ,
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $m3->id,
-        //     'permissions' => 'sm_read|sm_save|sm_delete|sm_add|sk_disposisi',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-        // PositionMenu::create([
-        //     'position_id' => $p1->id ,
-        //     'menu_id' => $m4->id,
-        //     'permissions' => 'sk_read|sk_save|sk_delete|sk_add|sk_disposisi',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
+        
+        $evi = User::create([
+            'full_name' => 'Evi Nurhayati',
+            'position_id' => $sekretaris1->id,
+            'username' => 'evi_n',
+            'email' => 'evi_n@ratafd.xyz',
+            'jenis_kelamin' => 'Perempuan',
+            'nip' => '123456789056634390',
+            'password' => bcrypt('password'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
 
+        $gpkadin = PositionMenu::create([
+            'position_id' => $kadin->id,
+            'menu_id' => '0',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_ttd,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $gpkasubbag = PositionMenu::create([
+            'position_id' => $sekretaris1->id,
+            'menu_id' => '0',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratMasuk_list,suratMasuk_view,suratMasuk_save,suratMasuk_delete,suratMasuk_disposition,suratMasuk_close',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $gpSekretaris = PositionMenu::create([
+            'position_id' => $sekretaris->id,
+            'menu_id' => '0',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_agenda,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $gpkapaud = PositionMenu::create([
+            'position_id' => $kapaud->id,
+            'menu_id' => '0',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_save,suratKeluar_delete,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $gpKasiPaud = PositionMenu::create([
+            'position_id' => $kasipaud->id,
+            'menu_id' => '0',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_save,suratKeluar_delete,suratMasuk_list,suratMasuk_view',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
     }
 }

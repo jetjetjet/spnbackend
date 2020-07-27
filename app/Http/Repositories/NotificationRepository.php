@@ -3,7 +3,6 @@
 namespace app\Http\Repositories;
 
 use App\Notifications\NotifCount;
-use App\Model\GenNotif;
 use App\User;
 use DB;
 use Exception;
