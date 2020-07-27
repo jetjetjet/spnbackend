@@ -53,6 +53,7 @@ Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
     Route::get('/notif/topbar/count', 'NotificationController@getCount');
     Route::get('/notif/topbar/view', 'NotificationController@getNotif');
     Route::get('/notif/all', 'NotificationController@getAll');
+    Route::post('/notif/read/{id}', 'NotificationController@read');
 
     Route::get('/profile/get', 'UserController@getProfile');
     Route::post('/profile/save', 'UserController@saveProfile');

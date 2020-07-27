@@ -88,6 +88,7 @@ class NotificationRepository
   {
     return DB::table('notifications')
       ->where('notifiable_id', $loginid)
-      ->whereNull('read_at');
+      ->whereNull('read_at')
+      ->orderBy('created_at', 'DESC');
   }
 }
