@@ -287,7 +287,8 @@ class SuratKeluarRepository
           'tujuan_user' => $inputs['to_user'],
           'file_id' => $inputs['file_id'],
           'log' => "create",
-          'keterangan' => null,
+          'tujuan_surat' => $inputs['tujuan_surat'],
+          'keterangan' => 'Draft',
         );
         $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
         if($dis == null){

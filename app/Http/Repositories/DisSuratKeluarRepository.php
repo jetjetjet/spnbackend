@@ -4,6 +4,7 @@ namespace app\Http\Repositories;
 
 use App\Model\DisSuratKeluar;
 use App\Http\Repositories\SuratKeluarRepository;
+use App\Http\Repositories\NotificationRepository;
 use App\Helpers\Helper;
 use DB;
 use Exception;
@@ -63,7 +64,7 @@ class DisSuratKeluarRepository
   public static function saveDisSuratKeluar($inputs, $loginid)
   {
     $appr = $inputs['is_approved']  ?? "false";
-    return DisSuratKeluar::create([
+    $q = DisSuratKeluar::create([
       'surat_keluar_id' => $inputs['surat_keluar_id'],
       'tujuan_user' => $inputs['tujuan_user'],
       'file_id' => $inputs['file_id'] ?? null,
@@ -76,6 +77,17 @@ class DisSuratKeluarRepository
       'created_at' => DB::raw('now()'),
       'created_by' => $loginid
     ]);
+
+    if($q != null){
+      $sk = DB::table('surat_keluar')->where('active', '1')->where('id', $inputs['surat_keluar_id'])->select('tujuan_surat')->first();
+      $notif = array(
+        'id_reference' =>  $inputs['surat_keluar_id'],
+        'display' => 'Surat Keluar - ' . ($sk->tujuan_surat ?? $inputs['tujuan_surat']),
+        'type' => 'SURATKELUAR'
+      );
+      $createNotif = NotificationRepository::createNotif($notif, $inputs['tujuan_user']);
+    }
+    return $q;
   }
 
   public static function readDis($id)

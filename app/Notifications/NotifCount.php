@@ -17,10 +17,18 @@ class NotifCount extends Notification implements ShouldQueue
      * @return void
      */
 
+    protected $full_name;
+    protected $id_reference;
+    protected $display;
+    protected $type;
     protected $totalCount;
-    public function __construct($totalCount)
+    public function __construct($data)
     {
-        $this->totalCount = $totalCount;
+        $this->id_reference = $data['id_reference'];
+        $this->display = $data['display'];
+        $this->fullname = $data['full_name'];
+        $this->type = $data['type'];
+        $this->totalCount = $data['totalCount'];
     }
 
     /**
@@ -43,6 +51,10 @@ class NotifCount extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
+            'id_reference' => $this->id_reference,
+            'display' => $this->display,
+            'full_name' => $this->full_name,
+            'type' => $this->type,
             'totalCount' => $this->totalCount
         ];
     }

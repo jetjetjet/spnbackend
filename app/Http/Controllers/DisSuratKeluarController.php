@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Repositories\DisSuratKeluarRepository;
 use App\Http\Repositories\AuditTrailRepository;
-use App\Http\Repositories\NotificationRepository;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 use Auth;
@@ -37,19 +36,7 @@ class DisSuratKeluarController extends Controller
 
     $result = DisSuratKeluarRepository::disSuratKeluar($respon, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Disposition', Auth::user()->getAuthIdentifier());
-    //NOTIFICATION
-    if($result['success'])
-    {
-      $dataNotif = Array(
-        'type' => 'SURATKELUAR',
-        'to_user_id' => $result['data']['tujuan_user'] ?? 0,
-        'id' => $result['data']['surat_keluar_id'] ?? 0,
-        'display' => 'Surat Keluar - ' . $result['notif'],
-        'url' => '/outgoing-mail-detail/' . $result['data']['surat_keluar_id']
-      );
-      
-      $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
-    }
+
     unset($result['file_id'], $result['file'], $result['notif']);
     $result['data'] = [];
 

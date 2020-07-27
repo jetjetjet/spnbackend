@@ -73,19 +73,6 @@ class SuratKeluarController extends Controller
     }
     $result = SuratKeluarRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
-    //Notif
-    if($result['success'])
-    {
-      $dataNotif = Array(
-        'type' => 'SURATKELUAR',
-        'to_user_id' => $inputs['to_user'],
-        'id' => $result['id'] ?? 0,
-        'display' => 'Surat Keluar - '. $inputs['tujuan_surat'],
-        'url' => '/outgoing-mail-detail/' . $result['id']
-      );
-      unset($result['id'], $result['file_id']);
-      $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
-    }
     $result['data'] = [];
     return response()->json($result, $result['state_code']);
   }

@@ -2,32 +2,14 @@
 
 namespace app\Http\Repositories;
 
+use App\Notifications\NotifCount;
 use App\Model\GenNotif;
+use App\User;
 use DB;
 use Exception;
 
 class NotificationRepository
 {
-  public static function save($data, $loginid)
-  {
-    $result = false;
-    $save = GenNotif::create([
-      'type' => $data['type'],
-      'to_user_id' => $data['to_user_id'],
-      'reference_id' => $data['id'],
-      'url' => $data['url'],
-      'display' => $data['display'],
-      'active' => '1',
-      'created_at' => DB::raw("now()"),
-      'created_by' => $loginid
-    ]);
-
-    if($save != null)
-      $result = true;
-    
-    return $result;
-  }
-
   public static function getNotifList($filter, $loginid)
   {
     $data = new \stdClass();
@@ -47,7 +29,7 @@ class NotificationRepository
 			$order = $filter->sortColumns[0];
 			$q = $q->orderBy($order->column, $order->order);
 		} else {
-			$q = $q->orderBy('gn.id', 'DESC');
+			$q = $q->orderBy('created_at', 'ASC');
     }
     
 		$q = $q->skip($filter->offset);
@@ -55,29 +37,46 @@ class NotificationRepository
     
     $data->totalCount = $qCount;
     $data->data = $q->select(
-      'gn.id',
-      'gn.display',
-      'gn.reference_id',
-      'gn.type'
+      'id',
+      'data'
     )->get();
 
     return $data;
   }
 
-  public static function countNotif($loginid)
+  public static function createNotif($data, $toUserId)
+  {
+    $user = User::where('active', '1')->where('id', $toUserId)->first();
+    $notif = DB::table('notifications')->where('notifiable_id', $toUserId)->whereNull('read_at')->count();
+    if($user != null){
+      $notif = Array(
+        'id_reference' => $data['id_reference'],
+        'display' => $data['display'],
+        'full_name' =>$user->full_name,
+        'type' => $data['type'],
+        'totalCount' => $notif + 1
+      );
+  
+      $user->notify(new NotifCount($notif));
+    }
+    return true;
+  }
+
+  public static function countNotif($respon, $loginid)
   {
     $notif = self::selectNotif($loginid)->count();
-    return $notif;
+    $respon['data'] = $notif;
+    $respon['success'] = true;
+    $respon['state_code'] = 200;
+    return $respon;
   }
 
   public static function getNotif($respon, $loginid)
   {
     $notif = self::selectNotif($loginid)
       ->select(
-        'gn.id',
-        'gn.display',
-        'gn.reference_id',
-        'gn.type'
+        'id',
+        'data'
       )->skip(0)->take(5)->get();
     $respon['data'] = $notif;
     $respon['success'] = true;
@@ -87,26 +86,8 @@ class NotificationRepository
 
   private static function selectNotif($loginid)
   {
-    return db::table('gen_notif as gn')
-    ->leftJoin('surat_keluar as sk', function($q){
-      $q->on('gn.type', DB::raw("'SURATKELUAR'"))
-        ->on('gn.reference_id', 'sk.id')
-        ->on('sk.active', DB::raw("'1'"));})
-    ->leftJoin('dis_surat_keluar as dsk', function($q){
-      $q->on('dsk.surat_keluar_id', 'sk.id')
-        ->on('dsk.tujuan_user', 'gn.to_user_id')
-        ->on('dsk.is_read', DB::raw("null"))
-        ->on('dsk.active',  DB::raw("'1'"));})    
-    ->leftJoin('surat_masuk as sm', function($q){
-      $q->on('gn.type', DB::raw("'SURATMASUK'"))
-        ->on('gn.reference_id', 'sm.id')
-        ->on('sm.active', DB::raw("'1'"));})
-    ->leftJoin('dis_surat_masuk as dsm', function($q){
-      $q->on('dsm.surat_masuk_id', 'sk.id')
-        ->on('dsm.to_user_id', 'gn.to_user_id')
-        ->on('dsk.is_read', DB::raw("null"))
-        ->on('dsm.active',  DB::raw("'1'"));})
-    ->where('gn.active', '1')
-    ->where('gn.to_user_id', $loginid);
+    return DB::table('notifications')
+      ->where('notifiable_id', $loginid)
+      ->whereNull('read_at');
   }
 }

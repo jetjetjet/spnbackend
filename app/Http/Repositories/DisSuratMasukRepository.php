@@ -3,6 +3,7 @@ namespace app\Http\Repositories;
 
 use App\Model\DisSuratMasuk;
 use App\Model\SuratMasuk;
+use App\Http\Repositories\NotificationRepository;
 use App\Helpers\Helper;
 use DB;
 use Exception;
@@ -34,7 +35,7 @@ class DisSuratMasukRepository
   public static function saveDisSuratMasuk($inputs, $loginid)
   {
     //$appr = $inputs['is_approved']  ?? "false";
-    return DisSuratMasuk::create([
+    $q = DisSuratMasuk::create([
       'surat_masuk_id' => $inputs['surat_masuk_id'],
       'to_user_id' => $inputs['to_user_id'],
       'arahan' => $inputs['arahan'] ?? null,
@@ -46,6 +47,17 @@ class DisSuratMasukRepository
       'created_at' => DB::raw('now()'),
       'created_by' => $loginid
     ]);
+
+    if($q != null){
+      $notif = array(
+        'id_reference' => $inputs['surat_masuk_id'],
+        'display' => 'Surat Masuk - ' . ($inputs['nomor_surat'] ?? "_"),
+        'type' => 'SURATMASUK'
+      );
+      $createNotif = NotificationRepository::createNotif($notif, $inputs['to_user_id']);
+    }
+
+    return $q;
   }
 
   public static function readDis($id, $loginid)

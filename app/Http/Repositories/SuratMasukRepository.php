@@ -243,6 +243,7 @@ class SuratMasukRepository
           'to_user_id' => $inputs['to_user_id'],
           'arahan' => null,
           'log' => 'create',
+          'nomor_surat' => $inputs['nomor_surat'],
           'is_tembusan' => null,
           'is_private' => null
         );
