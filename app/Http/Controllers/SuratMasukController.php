@@ -70,17 +70,6 @@ class SuratMasukController extends Controller
     $result = SuratMasukRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
 
-    //Notif
-    if($result['success']){
-      $dataNotif = Array(
-        'type' => 'SURATMASUK',
-        'to_user_id' => $inputs['to_user_id'],
-        'id' => $result['id'] ?? 0,
-        'display' => 'Surat Masuk - '. $inputs['asal_surat'],
-        'url' => '/incoming-mail-detail/' . $result['id']
-      );
-      $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
-    }
     unset($result['id'], $result['file_id'], $inputs['file']);
     $result['data'] = [];    
     
@@ -100,17 +89,6 @@ class SuratMasukController extends Controller
     $result = SuratMasukRepository::tutup($respon, $id, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Close', Auth::user()->getAuthIdentifier());
 
-    //NOTIFICATION
-    if($result['success']){
-      $dataNotif = Array(
-        'type' => 'SURATMASUK',
-        'to_user_id' => $result['data']['created_by'] ?? 0,
-        'id' => $result['id'] ?? 0,
-        'display' => 'Surat Masuk Ditutup - '. $result['data']['asal_surat'],
-        'url' => '/incoming-mail-detail/' . $result['data']['id']
-      );
-      $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
-    }
     $result['data'] = [];
     
     return response()->json($result, $result['state_code']);

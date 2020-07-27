@@ -107,19 +107,6 @@ class SuratKeluarController extends Controller
     }
     $result = SuratKeluarRepository::agenda($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Agenda', Auth::user()->getAuthIdentifier());
-    //NOTIFICATION
-    if($result['success'])
-    {
-      $dataNotif = Array(
-        'type' => 'SURATKELUAR',
-        'to_user_id' => $result['data']['approval_user'] ?? 0,
-        'id' => $result['data']['id'] ?? 0,
-        'display' => 'Butuh persetujuan Surat Keluar - '. $result['data']['nomor_surat'],
-        'url' => '/outgoing-mail-detail/' . $result['data']['id']
-      );
-      
-      $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
-    }
     return response()->json($result, $result['state_code']);
   }
 
@@ -129,18 +116,6 @@ class SuratKeluarController extends Controller
     $result = SuratKeluarRepository::approve($respon, $id, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Approve', Auth::user()->getAuthIdentifier());
 
-    //NOTIFICATION
-    if($result['success'])
-    {
-      $dataNotif = Array(
-        'type' => 'SURATKELUAR',
-        'to_user_id' => $result['data']['created_by'] ?? 0,
-        'id' => $result['data']['id'] ?? 0,
-        'display' => 'Surat Keluar Disetujui- '. $result['data']['nomor_surat'],
-        'url' => '/outgoing-mail-detail/' . $result['data']['id']
-      );
-      $notif = NotificationRepository::save($dataNotif, Auth::user()->getAuthIdentifier());
-    }
     $result['data'] = [];
     return response()->json($result, $result['state_code']);
   }
