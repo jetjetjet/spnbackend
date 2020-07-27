@@ -263,16 +263,16 @@ class UserRepository
 
     if ($qCek != null){
       $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
-
       switch ($qCek->position_id) {
         case 1:
           $query = $query;
           break;
-        case 2 || 3:
-          $query = $query->where('gp.is_parent', '1');
-          break;
         case 4:
           $query = $query->whereIn('gp.id', [2,3]);
+          break;
+        case 2:
+        case 3:
+          $query = $query->where('gp.is_parent', '1');
           break;
         default:
           $query = $query->where('gp.parent_id', $qCek->position_id);
