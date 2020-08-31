@@ -11,10 +11,15 @@ use App\Helpers\Helper;
 use App\Model\SuratKeluar;
 use App\Model\DisSuratKeluar;
 use App\Model\EncSurat;
+use App\Model\NomorSurat;
+use Carbon\Carbon;
 
 use DB;
 use Exception;
 use PDF;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
 
 class SuratKeluarRepository
 {
@@ -116,6 +121,7 @@ class SuratKeluarRepository
       ->join('gen_user as tu', 'tu.id', 'to_user')
       ->leftJoin('gen_user as md', 'md.id', 'sk.modified_by')
       ->leftJoin('gen_file as gf', 'gf.id', 'sk.file_id')
+      ->leftJoin('gen_file as agf', 'agf.id', 'sk.agenda_file_id')
       ->where('sk.active', '1')
       ->where('sk.id', $id)
       ->select(
@@ -125,6 +131,8 @@ class SuratKeluarRepository
         DB::raw("coalesce(file_id::varchar, 'belum diisi') as signed_file_id"),
         'gf.file_name as signed_file_name',
         'gf.file_path as signed_file_path',
+        'agf.file_path as agenda_file_path',
+        'is_agenda',
         'jenis_surat',
         'sifat_surat',
         'tujuan_surat',
@@ -165,6 +173,7 @@ class SuratKeluarRepository
             else '' end as label_disposisi"),
           'surat_keluar_id', 
           'dsk.created_by',
+          'dsk.is_approved',
           'to.full_name as created_by',
           'gp.position_name',
           'file_id',
@@ -338,14 +347,12 @@ class SuratKeluarRepository
   private static function updateAgenda(&$respon, $sm, $inputs, $loginid)
   {
     $tes = $sm->update([
-      'nomor_agenda' => $inputs['nomor_agenda'],
-      'nomor_surat' => $inputs['nomor_surat'],
-      'tgl_surat' => $inputs['tgl_surat'],
+      //'nomor_agenda' => $inputs['nomor_agenda'],
+      //'nomor_surat' => $inputs['nomor_surat'],
+     // 'tgl_surat' => $inputs['tgl_surat'],
       //'file_id' => $respon['file_id'],
       'modified_at' => DB::raw("now()"),
       'modified_by' => $loginid,
-      'agenda_at' => DB::raw("now()"),
-      'agenda_by' => $loginid,
       'is_agenda' => '1'
     ]);
 
@@ -448,42 +455,70 @@ class SuratKeluarRepository
         $pdf = new Fpdi();
         $pdf->AddPage();
         // set the source file
-        $pdf->setSourceFile(base_path() . $data->file_path);
-        // import page 1
-        $tplId = $pdf->importPage(1);
-        // use the imported page and place it at point 10,10 with a width of 100 mm
-        $pdf->useTemplate($tplId);
-    
-        //set certificate file
-        $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
-        $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
-        //dd(file_get_contents($certificate));
-        $info = array(
-          'Name' => $user->full_name,
-          'Location' => 'Kerinci',
-          'Keterangan' => $inputs['keterangan'],
-          'Email' => $user->email
-        );
-    
-        $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
-        
-        //$pdf->Image(base_path() . $user->ttd, 175, 262, 15, 15, 'PNG');
+        $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
+        for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
+          $tplId = $pdf->importPage(1);
+          $pdf->useTemplate($tplId);
 
-        $style = array(
-          'border' => 1,
-          'vpadding' => 'auto',
-          'hpadding' => 'auto',
-          'fgcolor' => array(0,0,0),
-          'bgcolor' => false, //array(255,255,255)
-          'module_width' => 1, // width of a single module in points
-          'module_height' => 1 // height of a single module in points
-      );
-      // $isiKode = Crypt::encryptString('Surat No. ' . $sk->nomor_surat . ' ditandatangani digital oleh ' . $user->full_name);
-     
-      // QRCODE,L : QR-CODE Low error correction
-       $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
+          if($pageNo == 1){
+            //set certificate file
+            $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
+            $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
 
-        $pdf->setSignatureAppearance(170, 260, 15, 15);
+            $info = array(
+              'Name' => $user->full_name,
+              'Location' => 'Kerinci',
+              'Keterangan' => $inputs['keterangan'],
+              'Email' => $user->email
+            );
+
+            $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
+            $pdf->setSignatureAppearance(170, 260, 15, 15);
+          }
+
+          $style = array(
+            'border' => 1,
+            'vpadding' => 'auto',
+            'hpadding' => 'auto',
+            'fgcolor' => array(0,0,0),
+            'bgcolor' => false, //array(255,255,255)
+            'module_width' => 1, // width of a single module in points
+            'module_height' => 1 // height of a single module in points
+          );
+
+          // QRCODE,L : QR-CODE Low error correction
+          $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
+        }
+
+
+              //   // import page 1
+              //   $tplId = $pdf->importPage(1);
+              //   // use the imported page and place it at point 10,10 with a width of 100 mm
+              //   $pdf->useTemplate($tplId);
+            
+              //   //set certificate file
+              //   $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
+              //   $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
+              //   //dd(file_get_contents($certificate));
+              //   $info = array(
+              //     'Name' => $user->full_name,
+              //     'Location' => 'Kerinci',
+              //     'Keterangan' => $inputs['keterangan'],
+              //     'Email' => $user->email
+              //   );
+            
+              //   $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
+                
+              //   //$pdf->Image(base_path() . $user->ttd, 175, 262, 15, 15, 'PNG');
+
+                
+              // // $isiKode = Crypt::encryptString('Surat No. ' . $sk->nomor_surat . ' ditandatangani digital oleh ' . $user->full_name);
+            
+              // // QRCODE,L : QR-CODE Low error correction
+              //  $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
+
+              //   $pdf->setSignatureAppearance(170, 260, 15, 15);
+
         $signed = time()."_signed_". $data->original_name;
         $signedPath = '/upload/suratkeluar/'. $signed;
         $pdf->Output(base_path() . $signedPath, 'F');
@@ -529,6 +564,152 @@ class SuratKeluarRepository
       }
     } else {
       array_push($respon['messages'], trans('messages.suratAlreadySign'));
+    }
+    return $respon;
+  }
+
+  public static function replaceString()
+  {
+
+
+// Path to directory with tcpdf.php file.
+// Rigth now `TCPDF` writer is depreacted. Consider to use `DomPDF` or `MPDF` instead.
+
+    $path = base_path() . '/upload/suratkeluar/';
+    // $docx = new \PhpOffice\PhpWord\TemplateProcessor($path . 'tes.docx');
+    // $docx->setValue('{NAME}', 'Simba');
+    // $docx->saveAs($path . 'tes1.docx');
+    Settings::setPdfRendererPath(base_path() .'/vendor/dompdf/dompdf');
+
+    Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
+    $phpWord = IOFactory::load($path . 'tes1.docx', 'Word2007');
+    $xmlWriter = IOFactory::createWriter($phpWord, 'PDF');
+    $xmlWriter->save($path . 'tes1.pdf');  
+    
+    dd("OK");
+  }
+
+  public static function generateNomorSurat($respon, $id, $inputs, $loginid)
+  {
+    $kKlasifikasi = DB::table('surat_keluar as sk')
+      ->join('gen_klasifikasi_surat as gks', 'sk.klasifikasi_id', 'gks.id')
+      ->join('gen_user as gu', 'gu.id', 'sk.created_by')
+      ->join('gen_position as gp', 'gp.id', 'gu.position_id')
+      ->join('gen_group as gg', 'gg.id', 'gp.group_id')
+      ->where('sk.id', $id)
+      ->where('sk.active', '1')
+      ->select('gks.kode_klasifikasi', 'gks.nama_klasifikasi', 'gks.id as klasifikasi_id', 'gg.group_code')
+      ->first();
+    
+    $getFile = DB::table("dis_surat_keluar as dsk")
+      ->leftJoin('gen_file as gf', 'gf.id', 'dsk.file_id')
+      ->where('dsk.active', '1')
+      ->where('log', DB::raw("'disposition'"))
+      ->where('surat_keluar_id', $id)
+      ->whereNotNull('is_approved')
+      ->select('file_path', 'file_name', 'original_name', 'is_approved')
+      ->first();
+
+      //nanti diriview
+      if($getFile->file_path == null && $getFile->is_approved){
+        $getFile = DB::table("dis_surat_keluar as dsk")
+          ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
+          ->where('dsk.active', '1')
+          ->where('log', 'create')
+          ->where('surat_keluar_id', $id)
+          ->orderBy('dsk.created_at', 'DESC')
+          ->select('file_path', 'file_name', 'original_name', 'is_approved')
+          ->first();
+      }
+      
+    if($kKlasifikasi && $getFile){
+      $getNomor = DB::table('gen_nomor_surat_keluar as gns')
+      ->where('klasifikasi_id', $kKlasifikasi->klasifikasi_id)
+      ->where('prefix', $kKlasifikasi->kode_klasifikasi)
+      ->where('active', '1')
+      ->select(DB::raw('coalesce(urut_surat,0) + 1 as nomor'), DB::raw('coalesce(urut_agenda,0) + 1 as agenda'))
+      ->first();
+
+      $latNo = $getNomor ? $getNomor->nomor : 1;
+      $latAg = $getNomor ? $getNomor->agenda : 1;
+      $GroupCode = $kKlasifikasi->kode_klasifikasi == "Surat Perintah Tugas" ? "SPPD" : $kKlasifikasi->group_code;
+      
+      $tahun = Carbon::now();
+      $noSurat = $kKlasifikasi->kode_klasifikasi . "/" .  $latNo . "/" . $GroupCode ."/PDK/". $tahun->format('Y');
+      $noAgenda = $kKlasifikasi->kode_klasifikasi . "/" .  $latAg . "/" . $GroupCode ."/PDK/". $tahun->format('Y');
+
+      //Mulai Transaction
+      DB::beginTransaction();
+      //Replace Nomor Surat
+      try{
+        $path = base_path();
+        $newFile = time()."_". $getFile->original_name .'_agenda';
+        $newFilePath = '/upload/suratkeluar/' . $newFile.'.docx';
+        
+        $docx = new \PhpOffice\PhpWord\TemplateProcessor($path . $getFile->file_path);
+        //$docx->setValue(array('{NOMOR_SURAT}' => $noSurat, '{TANGGAL_SURAT}' => $inputs['tgl_teks']));
+            
+        $docx->setValue('{NOMOR_SURAT}', $noSurat);
+        $docx->setValue('{TGL_SURAT}', $inputs['tgl_teks']);
+        $docx->saveAs( $path . $newFilePath);
+
+        $saveFileToDb = File::create([
+          'file_name' => $newFile.'.docx',
+          'file_path' => $newFilePath,
+          'original_name' => $newFile,
+          'active' => '1',
+          'created_at' => DB::raw('now()'),
+          'created_by' => $loginid
+        ]);
+
+        $saveNomor = NomorSurat::create([
+          'periode' => $tahun->format('Y'),
+          'prefix'=> $kKlasifikasi->kode_klasifikasi,
+          'urut_surat' => $latNo,
+          'urut_agenda' => $latAg,
+          'no_surat' => $noSurat,
+          'no_agenda' => $noSurat,
+          'surat_keluar_id' => $id,
+          'klasifikasi_id' => $kKlasifikasi->klasifikasi_id,
+          'active' => '1',
+          'created_at' => DB::raw('now()'),
+          'created_by' => $loginid
+        ]);
+
+        $updateSK = SuratKeluar::where('id', $id)
+          ->where('active', '1')
+          ->update([
+            'nomor_surat' => $noSurat,
+            'nomor_agenda' => $noAgenda,
+            'tgl_surat' => $inputs['tgl_agenda'],
+            'agenda_at' => DB::raw("now()"),
+            'agenda_by' => $loginid,
+            'modified_at' => DB::raw('now()'),
+            'agenda_file_id' => $saveFileToDb->id,
+            'modified_by' => $loginid
+          ]);
+        
+        DB::commit();
+
+        // if($dis == null){
+        //   throw new Exception('rollbacked');
+        // }
+        $respon['success'] = true;
+        $respon['state_code'] = 200;
+        array_push($respon['messages'], trans('messages.succeedGenerateNomorSurat'));
+
+      } catch(\Exception $e){
+        // lewat
+        DB::rollback();
+        dd($e);
+        $respon['success'] = false;
+        $respon['state_code'] = 500;
+        array_push($respon['messages'], trans('messages.errorAdministrator'));
+      }
+    } else {
+      $respon['success'] = false;
+      $respon['state_code'] = 500;
+      array_push($respon['messages'], trans('messages.dataNotFound'));
     }
     return $respon;
   }

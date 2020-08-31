@@ -34,6 +34,7 @@ class CreateSuratKeluarsTable extends Migration
             $table->boolean('is_agenda')->nullable();
             $table->bigInteger('agenda_by')->nullable();
             $table->dateTime('agenda_at')->nullable();
+            $table->integer('agenda_file_id')->nullable();
 
             $table->integer('approval_user');
             $table->bigInteger('approved_by')->nullable();

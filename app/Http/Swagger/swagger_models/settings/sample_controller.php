@@ -1387,6 +1387,40 @@ class SampleController //This is a sample laravel Controller
 
      /**
      * @OA\Post(
+     *     path="/spnbackend/public/api/suratKeluar/generate/{id}",
+     *     tags={"Surat Keluar"}, 
+     *     summary="Generate nomor Surat Keluar",
+     *     description="Generate nomor Surat Keluar",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="tgl_teks",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tgl_agenda",
+     *                     type="date"
+     *                 ),
+     *                 example={ 
+     *                      "tgl_teks": "01 September 2020", 
+     *                      "tgl_agenda": "2020-10-01"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     /**
+     * @OA\Post(
      *     path="/spnbackend/public/api/suratKeluar/agenda/{id}",
      *     tags={"Surat Keluar"}, 
      *     summary="Edit Agenda Surat Keluar",
@@ -1396,26 +1430,10 @@ class SampleController //This is a sample laravel Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="nomor_surat",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="nomor_agenda",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="tgl_surat",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
      *                     property="file",
      *                     type="file"
      *                 ),
-     *                 example={ 
-     *                      "nomor_surat": "1A/VI/2020", 
-     *                      "nomor_agenda": "1AA/2BB/2020", 
-     *                      "tgl_surat": "2020-06-19", 
-     *                      "file": "[binnary]"}
+     *                 example={ "file": "[binnary]"}
      *             )
      *         )
      *     ),

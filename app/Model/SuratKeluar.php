@@ -35,6 +35,7 @@ class SuratKeluar extends Model
     'is_agenda',
     'agenda_by',
     'agenda_at',
+    'agenda_file_id',
 
     'file_id',
     'active',

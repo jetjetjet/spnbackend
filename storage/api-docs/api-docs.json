@@ -1607,6 +1607,46 @@
                 ]
             }
         },
+        "/spnbackend/public/api/suratKeluar/generate/{id}": {
+            "post": {
+                "tags": [
+                    "Surat Keluar"
+                ],
+                "summary": "Generate nomor Surat Keluar",
+                "description": "Generate nomor Surat Keluar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tgl_teks": {
+                                        "type": "string"
+                                    },
+                                    "tgl_agenda": {
+                                        "type": "date"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "tgl_teks": "01 September 2020",
+                                    "tgl_agenda": "2020-10-01"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/spnbackend/public/api/suratKeluar/agenda/{id}": {
             "post": {
                 "tags": [
@@ -1619,24 +1659,12 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "nomor_surat": {
-                                        "type": "string"
-                                    },
-                                    "nomor_agenda": {
-                                        "type": "string"
-                                    },
-                                    "tgl_surat": {
-                                        "type": "string"
-                                    },
                                     "file": {
                                         "type": "file"
                                     }
                                 },
                                 "type": "object",
                                 "example": {
-                                    "nomor_surat": "1A/VI/2020",
-                                    "nomor_agenda": "1AA/2BB/2020",
-                                    "tgl_surat": "2020-06-19",
                                     "file": "[binnary]"
                                 }
                             }

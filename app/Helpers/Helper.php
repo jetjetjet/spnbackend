@@ -35,7 +35,7 @@ class Helper
       $file = isset($inputs['file']) ? $inputs['file'] : null;
       $file->path = base_path() . $subFolder;
       $file->newName = time()."_".$file->getClientOriginalName();
-      $file->originalName = $file->getClientOriginalName();
+      $file->originalName = explode('.',$file->getClientOriginalName())[0];
       $file->move($file->path ,$file->newName);
     } catch (Exception $e){
         // supress
@@ -49,7 +49,7 @@ class Helper
     try {
       $newFile->path = base_path() . $subFolder;
       $newFile->newName = time()."_".$file->getClientOriginalName();
-      $newFile->originalName = $file->getClientOriginalName();
+      $newFile->originalName = explode('.',$file->getClientOriginalName())[0];
       $file->move($newFile->path ,$newFile->newName);
     } catch (Exception $e){
         // supress

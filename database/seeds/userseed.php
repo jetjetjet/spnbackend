@@ -200,8 +200,32 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
+        $subumum = Group::create([
+            'group_code' => 'UMUM',
+            'group_name' => 'Umum dan Kepegawaian',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $subpep = Group::create([
+            'group_code' => 'PEP',
+            'group_name' => 'Perencanaan, Evaluasi dan Pelaporan',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $subkeu = Group::create([
+            'group_code' => 'KEU',
+            'group_name' => 'Keuangan',
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
         $BPD = Group::create([
-            'group_code' => 'BPD',
+            'group_code' => 'DIKDAS',
             'group_name' => 'Bidang Pendidikan Dasar',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
@@ -209,7 +233,7 @@ class Userseed extends Seeder
         ]);
 
         $BGTK = Group::create([
-            'group_code' => 'BGTK',
+            'group_code' => 'GTK',
             'group_name' => 'Bidang GTK',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
@@ -217,7 +241,7 @@ class Userseed extends Seeder
         ]);
 
         $BPAUD = Group::create([
-            'group_code' => 'BPAUD',
+            'group_code' => 'PAUD',
             'group_name' => 'Bidang PAUD',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
@@ -225,7 +249,7 @@ class Userseed extends Seeder
         ]);
 
         $BSP = Group::create([
-            'group_code' => 'BSP',
+            'group_code' => 'SARPRAS',
             'group_name' => 'Bidang Sarana Prasarana',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
@@ -235,7 +259,7 @@ class Userseed extends Seeder
         $p1 = Position::create([
             'group_id' => $g1->id,
             'position_name' => 'Super Admin',
-            'position_type' => 'Admin Aplikasi',
+            'position_type' => 'SA',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -246,7 +270,7 @@ class Userseed extends Seeder
         $kpl = Position::create([
             'group_id' => $kadin->id,
             'position_name' => 'Kepala Dinas',
-            'position_type' => 'Kepala Dinas',
+            'position_type' => 'Gol. ',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -257,7 +281,7 @@ class Userseed extends Seeder
         $sekretaris = Position::create([
             'group_id' => $sekre->id,
             'position_name' => 'Sekretaris',
-            'position_type' => 'Sekretaris',
+            'position_type' => 'Gol. ',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -265,10 +289,10 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
         
-        $sekretaris1 = Position::create([
-            'group_id' => $sekre->id,
+        $sumum = Position::create([
+            'group_id' => $subumum->id,
             'position_name' => 'Kasubbag Umum dan Kepegawaian',
-            'position_type' => 'KASUBBAG Umum dan Kepegawaian',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $sekretaris->id,
             'active' => '1',
@@ -276,10 +300,10 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
         
-        $sekretaris2 = Position::create([
-            'group_id' => $sekre->id,
+        $skeu = Position::create([
+            'group_id' => $subkeu->id,
             'position_name' => 'Kasubbag Keuangan',
-            'position_type' => 'KASUBBAG Keuangan',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $sekretaris->id,
             'active' => '1',
@@ -287,10 +311,10 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
         
-        $sekretaris3 = Position::create([
-            'group_id' => $sekre->id,
-            'position_name' => 'Kasubbag Perencanaan, Evaluasi dan Pelaporan',
-            'position_type' => 'KASUBBAG Perencanaan, Evaluasi dan Pelaporan',
+        $spep = Position::create([
+            'group_id' => $subpep->id,
+            'position_name' => 'Perencanaan, Evaluasi dan Pelaporan',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $sekretaris->id,
             'active' => '1',
@@ -301,7 +325,7 @@ class Userseed extends Seeder
         $kabpd = Position::create([
             'group_id' => $BPD->id,
             'position_name' => 'Kepala Bidang Pendidikan Dasar',
-            'position_type' => 'Kepala Bidang Pendidikan Dasar',
+            'position_type' => 'Gol. ',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -312,7 +336,7 @@ class Userseed extends Seeder
         $kasismp = Position::create([
             'group_id' => $BPD->id,
             'position_name' => 'Kasi Kurikulum SMP',
-            'position_type' => 'Kasi Kurikulum SMP',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kabpd->id,
             'active' => '1',
@@ -323,7 +347,7 @@ class Userseed extends Seeder
         $kasisd = Position::create([
             'group_id' => $BPD->id,
             'position_name' => 'Kasi Kurikulum SD',
-            'position_type' => 'Kasi Kurikulum SD',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kabpd->id,
             'active' => '1',
@@ -334,7 +358,7 @@ class Userseed extends Seeder
         $kasipmp = Position::create([
             'group_id' => $BPD->id,
             'position_name' => 'Kasi Penjaminan Mutu Pendidikan',
-            'position_type' => 'Kasi Penjaminan Mutu Pendidikan',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kabpd->id,
             'active' => '1',
@@ -345,7 +369,7 @@ class Userseed extends Seeder
         $kagtk = Position::create([
             'group_id' => $BGTK->id,
             'position_name' => 'Kepala Bidang GTK',
-            'position_type' => 'Kepala Bidang GTK',
+            'position_type' => 'Gol. ',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -356,7 +380,7 @@ class Userseed extends Seeder
         $kasik = Position::create([
             'group_id' => $BGTK->id,
             'position_name' => 'Kasi Kesejahteraan',
-            'position_type' => 'Kasi Kesejahteraan',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kagtk->id,
             'active' => '1',
@@ -367,7 +391,7 @@ class Userseed extends Seeder
         $kasisdm = Position::create([
             'group_id' => $BGTK->id,
             'position_name' => 'Kasi SDM',
-            'position_type' => 'Kasi SDM',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kagtk->id,
             'active' => '1',
@@ -378,7 +402,7 @@ class Userseed extends Seeder
         $kasimp = Position::create([
             'group_id' => $BGTK->id,
             'position_name' => 'Kasi Mutasi Promosi',
-            'position_type' => 'Kasi Mutasi Promosi',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kagtk->id,
             'active' => '1',
@@ -389,7 +413,7 @@ class Userseed extends Seeder
         $kapaud = Position::create([
             'group_id' => $BPAUD->id,
             'position_name' => 'Kepala Bidang PAUD',
-            'position_type' => 'Kepala Bidang PAUD',
+            'position_type' => 'Gol. ',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -400,7 +424,7 @@ class Userseed extends Seeder
         $kasipaud = Position::create([
             'group_id' => $BPAUD->id,
             'position_name' => 'Kasi PAUD',
-            'position_type' => 'Kasi PAUD',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kapaud->id,
             'active' => '1',
@@ -411,7 +435,7 @@ class Userseed extends Seeder
         $kasiseja = Position::create([
             'group_id' => $BPAUD->id,
             'position_name' => 'Kasi Kesejahteraan',
-            'position_type' => 'Kasi Kesejahteraan',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kapaud->id,
             'active' => '1',
@@ -422,7 +446,7 @@ class Userseed extends Seeder
         $kasipm = Position::create([
             'group_id' => $BPAUD->id,
             'position_name' => 'Kasi Pendidikan Masyarakat',
-            'position_type' => 'Kasi Pendidikan Masyarakat',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kapaud->id,
             'active' => '1',
@@ -433,7 +457,7 @@ class Userseed extends Seeder
         $kabsp = Position::create([
             'group_id' => $BSP->id,
             'position_name' => 'Kepala Bidang Sarana dan Prasarana',
-            'position_type' => 'Kepala Bidang Sarana dan Prasarana',
+            'position_type' => 'Gol. ',
             'is_parent' => '1',
             'parent_id' => null,
             'active' => '1',
@@ -444,7 +468,7 @@ class Userseed extends Seeder
         $kasissmp = Position::create([
             'group_id' => $BSP->id,
             'position_name' => 'Kasi Sarana SMP',
-            'position_type' => 'Kasi Sarana SMP',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kabsp->id,
             'active' => '1',
@@ -455,7 +479,7 @@ class Userseed extends Seeder
         $kasissd = Position::create([
             'group_id' => $BSP->id,
             'position_name' => 'Kasi Sarana SD',
-            'position_type' => 'Kasi Sarana SD',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kabsp->id,
             'active' => '1',
@@ -466,7 +490,7 @@ class Userseed extends Seeder
         $kasispaud = Position::create([
             'group_id' => $BSP->id,
             'position_name' => 'Kasi Sarana PAUD',
-            'position_type' => 'Kasi Sarana PAUD',
+            'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $kabsp->id,
             'active' => '1',
@@ -502,7 +526,7 @@ class Userseed extends Seeder
 
         $yuda = User::create([
             'full_name' => 'Yudha Prasetyo',
-            'position_id' => $sekretaris->id,
+            'position_id' => $sumum->id,
             'username' => 'yudha_p',
             'email' => 'yudha_p@ratafd.xyz',
             'jenis_kelamin' => 'Laki-laki',
@@ -528,7 +552,7 @@ class Userseed extends Seeder
         
         $evi = User::create([
             'full_name' => 'Evi Nurhayati',
-            'position_id' => $sekretaris1->id,
+            'position_id' => $sumum->id,
             'username' => 'evi_n',
             'email' => 'evi_n@ratafd.xyz',
             'jenis_kelamin' => 'Perempuan',
@@ -549,7 +573,7 @@ class Userseed extends Seeder
         ]);
 
         $gpkasubbag = PositionMenu::create([
-            'position_id' => $sekretaris1->id,
+            'position_id' => $sumum->id,
             'menu_id' => '0',
             'permissions' => 'suratKeluar_list,suratKeluar_view,suratMasuk_list,suratMasuk_view,suratMasuk_save,suratMasuk_delete,suratMasuk_disposition,suratMasuk_close',
             'active' => '1',

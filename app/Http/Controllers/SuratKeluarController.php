@@ -89,9 +89,6 @@ class SuratKeluarController extends Controller
   {
     $respon = Helper::$responses;
     $rules = array(
-      'nomor_agenda' => 'required',
-      'nomor_surat' => 'required',
-      'tgl_surat' => 'required',
       'file' => 'required|file|max:5000|mimes:pdf',
     );
 
@@ -139,5 +136,59 @@ class SuratKeluarController extends Controller
     return response()->json($result, $result['state_code']);
   }
 
+  public function gantiKata(Request $request)
+  {
+    $result = SuratKeluarRepository::replaceString();
+    
+    return response()->json($result, 200);
+  }
+
+  public function generateNomorSuratKeluar(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $rules = array(
+      'tgl_agenda' => 'required',
+      'tgl_teks' => 'required'
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+		// Validation fails?
+		if ($validator->fails()){
+			$respon['state_code'] = 400;
+      $respon['messages'] = $validator->messages();
+      $respon['data'] = $inputs;
+      return response()->json($respon, 400);
+    }
+
+    $result = SuratKeluarRepository::generateNomorSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Generate Nomor', Auth::user()->getAuthIdentifier());
+
+    return response()->json($result, $result['state_code']);
+  }
   
+  public function generateNomorSurat(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $rules = array(
+      'tgl_agenda' => 'required',
+      'tgl_teks' => 'required'
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+		// Validation fails?
+		if ($validator->fails()){
+			$respon['state_code'] = 400;
+      $respon['messages'] = $validator->messages();
+      $respon['data'] = $inputs;
+      return response()->json($respon, 400);
+    }
+
+    $result = SuratKeluarRepository::generateNomorSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Generate Nomor', Auth::user()->getAuthIdentifier());
+    return response()->json($result, $result['state_code']);
+  }
 }

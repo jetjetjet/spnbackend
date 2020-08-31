@@ -218,9 +218,9 @@ class UserRepository
       $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
       switch ($qCek->parent_id) {
         case 0:
-          $query = $query->whereIn('gp.id', [2,3]);
+          $query = $query->whereIn('gp.id', [2,4]);
         break;
-        case $qCek->parent_id > 3:
+        case $qCek->parent_id > 4:
           $query = $query->where('gp.id', $qCek->parent_id);
           break;
         default:
