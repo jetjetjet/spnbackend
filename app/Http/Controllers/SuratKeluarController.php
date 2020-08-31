@@ -143,7 +143,7 @@ class SuratKeluarController extends Controller
     return response()->json($result, 200);
   }
 
-  public function generateNomorSuratKeluar(Request $request, $id)
+  public function cetakNomor(Request $request, $id)
   {
     $respon = Helper::$responses;
     $rules = array(
@@ -162,8 +162,7 @@ class SuratKeluarController extends Controller
       return response()->json($respon, 400);
     }
 
-    $result = SuratKeluarRepository::generateNomorSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Generate Nomor', Auth::user()->getAuthIdentifier());
+    $result = SuratKeluarRepository::generateNomorSurat($respon, $id, $inputs, 1);
 
     return response()->json($result, $result['state_code']);
   }

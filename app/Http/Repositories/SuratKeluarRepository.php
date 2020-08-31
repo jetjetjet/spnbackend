@@ -132,6 +132,7 @@ class SuratKeluarRepository
         'gf.file_name as signed_file_name',
         'gf.file_path as signed_file_path',
         'agf.file_path as agenda_file_path',
+        'agf.file_name as agenda_file_name',
         'is_agenda',
         'jenis_surat',
         'sifat_surat',
@@ -644,14 +645,14 @@ class SuratKeluarRepository
       try{
         $path = base_path();
         $newFile = time()."_". $getFile->original_name .'_agenda';
-        $newFilePath = '/upload/suratkeluar/' . $newFile.'.docx';
+        $newFilePath = '/upload/suratkeluar/' . $newFile.'.pdf';
         
         $docx = new \PhpOffice\PhpWord\TemplateProcessor($path . $getFile->file_path);
         //$docx->setValue(array('{NOMOR_SURAT}' => $noSurat, '{TANGGAL_SURAT}' => $inputs['tgl_teks']));
             
         $docx->setValue('{NOMOR_SURAT}', $noSurat);
         $docx->setValue('{TGL_SURAT}', $inputs['tgl_teks']);
-        $docx->saveAs( $path . $newFilePath);
+        $docx->saveAs( $path . $newFilePath, TRUE);
 
         $saveFileToDb = File::create([
           'file_name' => $newFile.'.docx',
@@ -701,7 +702,6 @@ class SuratKeluarRepository
       } catch(\Exception $e){
         // lewat
         DB::rollback();
-        dd($e);
         $respon['success'] = false;
         $respon['state_code'] = 500;
         array_push($respon['messages'], trans('messages.errorAdministrator'));
