@@ -552,7 +552,7 @@ class Userseed extends Seeder
         
         $evi = User::create([
             'full_name' => 'Evi Nurhayati',
-            'position_id' => $sumum->id,
+            'position_id' => $sekretaris->id,
             'username' => 'evi_n',
             'email' => 'evi_n@ratafd.xyz',
             'jenis_kelamin' => 'Perempuan',
