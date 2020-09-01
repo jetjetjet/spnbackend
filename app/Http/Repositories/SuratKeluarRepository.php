@@ -645,7 +645,7 @@ class SuratKeluarRepository
       try{
         $path = base_path();
         $newFile = time()."_". $getFile->original_name .'_agenda';
-        $newFilePath = '/upload/suratkeluar/' . $newFile.'.pdf';
+        $newFilePath = '/upload/suratkeluar/' . $newFile.'.docx';
         
         $docx = new \PhpOffice\PhpWord\TemplateProcessor($path . $getFile->file_path);
         //$docx->setValue(array('{NOMOR_SURAT}' => $noSurat, '{TANGGAL_SURAT}' => $inputs['tgl_teks']));
