@@ -27,23 +27,26 @@ class SuratKeluarRepository
   public static function getList($filter, $loginid, $isAdmin)
   {
     $data = new \StdClass();
-    // $qdsk = DB::table('dis_surat_keluar')
-    //   ->where('active', '1')
-    //   ->orderBy 
+    
+    $dispSub = DB::table('dis_surat_keluar as dsk')
+      ->join('surat_keluar as sk', 'sk.id', 'dsk.surat_keluar_id')
+      ->where('dsk.active','1')
+      ->where('sk.active', '1')
+      ->whereRaw('sk.modified_at = dsk.created_at')
+      ->select('surat_keluar_id', 'dsk.id', 'dsk.is_approved', 'dsk.log', 'dsk.created_by', 'dsk.created_at', 'dsk.tujuan_user');
+
     $q = DB::table('surat_keluar as sk')
-      ->join('dis_surat_keluar as dsk',function($query){
-        $query->on('dsk.surat_keluar_id', 'sk.id')
-        ->on('dsk.active', DB::raw("'1'"));
+      ->joinSub($dispSub, 'dsk', function ($join) {
+        $join->on('sk.id', 'dsk.surat_keluar_id');
       })
+      ->join('dis_surat_keluar as dsk1', 'dsk1.surat_keluar_id', 'sk.id')
       ->join('gen_user as cr', 'cr.id', 'dsk.created_by')
       ->join('gen_position as gp', 'gp.id', 'cr.position_id')
       ->join('gen_group as gg', 'gg.id', 'gp.group_id')
-      ->where('sk.active', '1')
-      ->where('dsk.active', '1');
-      
+      ->where('sk.active', '1');
     if(!$isAdmin)
-      $q = $q->where('dsk.tujuan_user', $loginid)
-        ->orWhere('dsk.created_by', $loginid);
+      $q = $q->where('dsk1.tujuan_user', $loginid)
+        ->orWhere('dsk1.created_by', $loginid);
     
     if($filter->search){
       foreach($filter->search as $qCol){
@@ -58,10 +61,8 @@ class SuratKeluarRepository
     if ($filter->sortColumns){
       $order = $filter->sortColumns[0];
       $q = $q->orderBy($order->column, $order->order);
-      $q = $q->orderBy('dsk.created_at', 'DESC');
     } else {
       $q = $q->orderBy('sk.id', 'DESC');
-      $q = $q->orderBy('dsk.created_at', 'DESC');
     }
       
     $q = $q->skip($filter->offset);
@@ -70,6 +71,8 @@ class SuratKeluarRepository
     $data->totalCount = $qCount;
     $data->data =  $q->select(
       'sk.id',
+      'dsk.created_at',
+      'sk.modified_at',
       'dsk.id as disposisi_id',
       'tujuan_surat',
       'jenis_surat',
@@ -84,7 +87,6 @@ class SuratKeluarRepository
         when dsk.log = 'agenda' then 'Menunggu ditanda tangani'
         when dsk.log = 'disposition' and dsk.is_approved = '1' then 'Disetujui'
         when dsk.log = 'disposition' and dsk.is_approved = '0' then 'Ditolak'
-        when dsk.log = 'signed' then 'Ditandatangani'
         else 'Draft' end as status"),
       'sk.is_approved',
       DB::raw("
@@ -454,6 +456,9 @@ class SuratKeluarRepository
       {
 
         $pdf = new Fpdi();
+        
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
         $pdf->AddPage();
         // set the source file
         $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
@@ -490,35 +495,6 @@ class SuratKeluarRepository
           // QRCODE,L : QR-CODE Low error correction
           $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
         }
-
-
-              //   // import page 1
-              //   $tplId = $pdf->importPage(1);
-              //   // use the imported page and place it at point 10,10 with a width of 100 mm
-              //   $pdf->useTemplate($tplId);
-            
-              //   //set certificate file
-              //   $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
-              //   $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
-              //   //dd(file_get_contents($certificate));
-              //   $info = array(
-              //     'Name' => $user->full_name,
-              //     'Location' => 'Kerinci',
-              //     'Keterangan' => $inputs['keterangan'],
-              //     'Email' => $user->email
-              //   );
-            
-              //   $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
-                
-              //   //$pdf->Image(base_path() . $user->ttd, 175, 262, 15, 15, 'PNG');
-
-                
-              // // $isiKode = Crypt::encryptString('Surat No. ' . $sk->nomor_surat . ' ditandatangani digital oleh ' . $user->full_name);
-            
-              // // QRCODE,L : QR-CODE Low error correction
-              //  $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
-
-              //   $pdf->setSignatureAppearance(170, 260, 15, 15);
 
         $signed = time()."_signed_". $data->original_name;
         $signedPath = '/upload/suratkeluar/'. $signed;
