@@ -78,6 +78,11 @@ class AuthController extends Controller
     return response()->json($result, $result['state_code']);
   }
 
+  public function getAuthUser()
+  {
+    return response()->json(Array("message" => "OK"), 200);
+  }
+
   public function logout(Request $request)
   {
     //$user = User::where('email', Auth::user()->getEmail())->first();

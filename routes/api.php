@@ -23,7 +23,8 @@ Route::post('/suratKeluar/cetak/{id?}', 'SuratKeluarController@cetakNomor');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
     
-Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
+    Route::get('/cekUser', 'AuthController@getAuthUser');
+    Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
     Route::post('/logout', 'AuthController@logout');
 
     Route::get('/auditTrail/list', 'AuditTrailController@getAll');

@@ -35,7 +35,7 @@ class SuratMasukController extends Controller
       'suratMasuk_disposition' => $user->tokenCan('suratMasuk_disposition') ? 1 : 0
     );
     $responses = Helper::$responses;
-    $result = SuratMasukRepository::getById($responses, $id, $permissions);
+    $result = SuratMasukRepository::getById($responses, $id, $permissions, Auth::user()->getAuthIdentifier());
     
     return response()->json($result, $result['state_code']);
   }

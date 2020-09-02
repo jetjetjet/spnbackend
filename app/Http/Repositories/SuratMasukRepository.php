@@ -75,18 +75,34 @@ class SuratMasukRepository
     return $data;
   }
 
-  public static function getById($respon, $id, $perms)
+  public static function getById($respon, $id, $perms, $loginid)
   {
+    $dispSub = DB::table('dis_surat_masuk as dsm')
+      // ->join('gen_user as dp', 'dp.id', 'dsm.to_user_id')
+      // ->join('gen_position as gp', 'gp.id', 'dp.position_id')
+      ->leftJoin('gen_user as dc', 'dc.id', 'dsm.created_by')
+      ->leftJoin('gen_position as gpc', 'gpc.id', 'dc.position_id')
+      ->where('dsm.active','1')
+      ->where('dsm.log', 'disposition')
+      ->where('surat_masuk_id', $id)
+      ->where('to_user_id', $loginid)
+      ->orderBy('dsm.created_at', 'DESC')
+      ->select('surat_masuk_id', 'gpc.position_name', 'arahan', 'dc.full_name', 'dsm.created_at');
+
     $header = DB::table('surat_masuk as sm')
       ->join('gen_user as cr', 'cr.id', 'sm.created_by')
       ->join('gen_position as gp', 'gp.id', 'cr.position_id')
       ->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->join('gen_klasifikasi_surat as gks', 'klasifikasi_id', 'gks.id')
       ->leftJoin('gen_file as gf', 'sm.file_id', 'gf.id')
+      ->leftJoinSub($dispSub, 'disp', function ($join) {
+        $join->on('sm.id', 'disp.surat_masuk_id');
+      })
       //->join('gen_user as cr', 'cr.id', 'sm.created_by')
       ->where('sm.active', '1')
       ->where('sm.id', $id)
-      ->select('sm.id',
+      ->select(
+        'sm.id',
         'asal_surat',
         'cr.full_name as created_by',
         'gp.position_name',
@@ -94,7 +110,7 @@ class SuratMasukRepository
         'file_id',
         'file_path',
         'to_user_id',
-        DB::raw("full_name || ' - ' || coalesce(gp.position_name,'') as to_user_name"),
+        DB::raw("cr.full_name || ' - ' || coalesce(gp.position_name,'') as to_user_name"),
         'original_name as file_name',
         'perihal',
         'nomor_surat',
@@ -106,8 +122,16 @@ class SuratMasukRepository
         'gks.nama_klasifikasi as klasifikasi_name',
         'keterangan',
         'prioritas',
-        DB::raw($perms['suratMasuk_close'] . "as can_closed"),
-        DB::raw($perms['suratMasuk_disposition'] . "as can_disposition")
+        'is_closed',
+        'closed_at',
+        //Disposition if any
+        'disp.position_name as disposition_position_name',
+        'disp.arahan as disposition_arahan',
+        'disp.full_name as disposition_name',
+        'disp.created_at as disposition_created_at',
+        //permissions
+        DB::raw("case when sm.is_closed = '0' and 1 =" . $perms['suratMasuk_close'] . " then 1 else 0 end as can_closed"),
+        DB::raw("case when sm.is_closed = '0' and 1 =" . $perms['suratMasuk_disposition'] . " then 1 else 0 end as can_disposition")
       )
       ->first();
     
@@ -116,22 +140,18 @@ class SuratMasukRepository
       
       $detail = DB::table('dis_surat_masuk as dsm')
         ->join('gen_user as cr', 'dsm.created_by', 'cr.id')
-        ->leftJoin('gen_position as cgp', 'cr.position_id', 'cgp.id')
-        ->leftJoin('gen_group as cgg', 'cgg.id', 'cgp.group_id')
+        //->leftJoin('gen_position as cgp', 'cr.position_id', 'cgp.id')
+        //->leftJoin('gen_group as cgg', 'cgg.id', 'cgp.group_id')
+        ->join('gen_user as dp', 'dsm.created_by', 'dp.id')
         ->where('dsm.active', '1')
         ->where('dsm.surat_masuk_id', $id)
+        ->orderBy('dsm.created_at', 'ASC')
         ->select(
           'dsm.id as disposisi_id',
-          DB::raw("case when log = 'create' then 'Surat dibuat oleh: '
-            when log = 'disposition' then 'Surat Didisposisikan oleh: '
-            when log = 'finish' then 'Surat selesai'
-            else '' end as label_disposisi"),
-          'cr.full_name as created_by',
-          'cgp.position_name',
-          'cgg.group_name',
-          'arahan',
-          'is_tembusan',
-          'is_private',
+          DB::raw("case when log = 'create' then 'Dibuat oleh: ' || cr.full_name
+            when log = 'disposition' then 'Diteruskan kepada: ' || dp.full_name
+            when log = 'finish' then 'Surat diselesaikan oleh: ' || cr.full_name
+            else '' end as label_history"),
           DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
           'last_read'
         )->get();
