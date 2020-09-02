@@ -260,7 +260,7 @@ class SuratMasukRepository
       if($insert != null){
         $dataDis = Array(
           'surat_masuk_id' => $insert['id'],
-          'to_user_id' => $inputs['to_user_id'],
+          'to_user_id' => Array($inputs['to_user_id']),
           'arahan' => null,
           'log' => 'create',
           'nomor_surat' => $inputs['nomor_surat'],
