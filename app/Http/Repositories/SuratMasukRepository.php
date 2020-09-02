@@ -142,7 +142,7 @@ class SuratMasukRepository
         ->join('gen_user as cr', 'dsm.created_by', 'cr.id')
         //->leftJoin('gen_position as cgp', 'cr.position_id', 'cgp.id')
         //->leftJoin('gen_group as cgg', 'cgg.id', 'cgp.group_id')
-        ->join('gen_user as dp', 'dsm.created_by', 'dp.id')
+        ->join('gen_user as dp', 'dsm.to_user_id', 'dp.id')
         ->where('dsm.active', '1')
         ->where('dsm.surat_masuk_id', $id)
         ->orderBy('dsm.created_at', 'ASC')
