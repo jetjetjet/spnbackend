@@ -27,7 +27,6 @@ class CreateSuratKeluarsTable extends Migration
             $table->string('lampiran_surat');
             $table->bigInteger('approval_user_id');
             $table->bigInteger('file_id')->nullable();
-            $table->string('status');
             $table->string('surat_log')->nullable();
 
             $table->boolean('is_approve')->nullable();
@@ -43,7 +42,7 @@ class CreateSuratKeluarsTable extends Migration
             $table->dateTime('agenda_at')->nullable();
             $table->integer('agenda_file_id')->nullable();
 
-            $table->boolean('is_sign');
+            $table->boolean('is_sign')->nullable();
             $table->bigInteger('signed_by')->nullable();
             $table->dateTime('signed_at')->nullable();
 

@@ -31,7 +31,7 @@ class SuratKeluarRepository
     $q = DB::table('surat_keluar as sk')
       ->join('dis_surat_keluar as dsk', 'dsk.surat_keluar_id', 'sk.id')
       ->leftJoin('gen_user as cr', 'cr.id', 'sk.created_by')
-      //->leftJoin('gen_position as pcr', 'cr.position_id', 'pcr.id')
+      ->leftJoin('gen_position as pcr', 'cr.position_id', 'pcr.id')
 
       ->leftJoin('gen_user as app', 'app.id', 'sk.approved_by')
       ->leftJoin('gen_position as papp', 'app.position_id', 'papp.id')
@@ -47,7 +47,7 @@ class SuratKeluarRepository
       //->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->where('sk.active', '1');
     if(!$isAdmin)
-      $q = $q->where('dsk.tujuan_user', $loginid)
+      $q = $q->where('dsk.tujuan_user_id', $loginid)
         ->orWhere('dsk.created_by', $loginid);
     
     if($filter->search){
@@ -80,7 +80,8 @@ class SuratKeluarRepository
       DB::raw("coalesce(nomor_agenda, 'belum diisi') as nomor_agenda"),
       DB::raw("coalesce(nomor_surat, 'belum diisi') as nomor_surat"),
       DB::raw("coalesce(to_char(tgl_surat, 'dd-mm-yyyy'), 'belum diisi') as tgl_surat"),
-      DB::raw("case when is_approve = '1' and surat_log = 'DRAFT' then 'Konsep - '|| cr.full_name
+      DB::raw("case when is_approve = '1' and surat_log = 'CREATED' then 'Konsep - '|| cr.full_name
+        case when is_approve = '1' and surat_log = 'REVISED' then 'Revisi - '|| cr.full_name
         when is_approve = '1' and coalesce(is_verify,'0') = '0' and surat_log = 'REJECT' then 'Ditolak - ' ||  app.full_name
         when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then 'Disetujui - ' ||  app.full_name
         when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then 'Ditolak - ' ||  ver.full_name
@@ -90,7 +91,7 @@ class SuratKeluarRepository
         when is_agenda = '1' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then 'Ditolak - ' || sign.full_name
         else '' end as status_surat
       "),
-      DB::raw("case when is_approve = '1' and surat_log = 'DRAFT' then papp.position_name
+      DB::raw("case when is_approve = '1' and (surat_log = 'CREATED' or surat_log = 'REVISED') then pcr.position_name
       when is_approve = '1' and is_verify = '0' and surat_log = 'REJECT' then papp.position_name
       when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then papp.position_name
       when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then pver.position_name
@@ -276,6 +277,7 @@ class SuratKeluarRepository
           'lampiran_surat' => $inputs['lampiran_surat'],
           'approval_user_id' => $inputs['approval_user_id'],
           'sign_user_id' => $inputs['sign_user_id'],
+          'log' => 'REVISED',
           'is_approve' => '1',
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
@@ -295,6 +297,7 @@ class SuratKeluarRepository
         'lampiran_surat' => $inputs['lampiran_surat'],
         'approval_user_id' => $inputs['approval_user_id'],
         'is_approve' => '1',
+        'log' => 'CREATED',
         'active' => '1',
         'created_at' => DB::raw('now()'),
         'created_by' => $loginid
@@ -342,7 +345,7 @@ class SuratKeluarRepository
 
         $dataDis = Array(
           'surat_keluar_id' => $sk->id,
-          'tujuan_user' => $inputs['to_user_id'],
+          'tujuan_user_id' => $inputs['to_user_id'],
           'log' => $inputs['log'],
           'keterangan' => $inputs['keterangan']
         );
@@ -417,7 +420,7 @@ class SuratKeluarRepository
 
     $dataDis = Array(
       'surat_keluar_id' => $sm->id,
-      'tujuan_user' => $sm->sign_user_id,
+      'tujuan_user_id' => $sm->sign_user_id,
       'file_id' => $respon['file_id'],
       'log' => "AGENDA",
       'keterangan' => "" // $inputs['keterangan'],
@@ -585,7 +588,7 @@ class SuratKeluarRepository
   
           $dataDis = Array(
             'surat_keluar_id' => $id,
-            'tujuan_user' => $sk->created_by,
+            'tujuan_user_id' => $sk->created_by,
             'file_id' => $newFile->id,
             'log' => $inputs['log'],
             'keterangan' => $inputs['keterangan'],
@@ -607,7 +610,7 @@ class SuratKeluarRepository
 
         $dataDis = Array(
           'surat_keluar_id' => $id,
-          'tujuan_user' => $sk->created_by,
+          'tujuan_user_id' => $sk->created_by,
           'file_id' => null,
           'log' => $inputs['log'],
           'keterangan' => $inputs['keterangan'],

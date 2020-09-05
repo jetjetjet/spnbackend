@@ -91,7 +91,7 @@ class DisSuratKeluarRepository
       );
       
       $ins = true;
-      $createNotif = NotificationRepository::createNotif($notif, $inputs['tujuan_user']);
+      $createNotif = NotificationRepository::createNotif($notif, $inputs['tujuan_user_id']);
     } else {
       throw new Exception('rollbacked');
     }
