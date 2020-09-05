@@ -23,9 +23,10 @@ class HakAkses
     'suratKeluar_view',
     'suratKeluar_save',
     'suratKeluar_delete',
-    'suratKeluar_disposition',
+    'suratKeluar_approve',
+    'suratKeluar_verify',
     'suratKeluar_agenda',
-    'suratKeluar_ttd',
+    'suratKeluar_sign',
 
     'suratMasuk_list',
     'suratMasuk_view',

@@ -12,15 +12,12 @@ class DisSuratKeluar extends Model
   public $timestamps = false;
   protected $fillable = [
     'surat_keluar_id',
-    'tujuan_user',
+    'tujuan_user_id',
     'file_id',
     'is_read',
     'last_read',
     'keterangan',
     'log',
-    'is_approved',
-    'approved_by',
-    'approved_at',
     'active',
     'created_at',
     'created_by',

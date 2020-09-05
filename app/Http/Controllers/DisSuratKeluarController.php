@@ -34,10 +34,11 @@ class DisSuratKeluarController extends Controller
       return response()->json($respon, 400);
     }
 
+    $inputs['log'] = json_decode($inputs['approved']) ? "APPROVED" : "REJECTED";
     $result = DisSuratKeluarRepository::disSuratKeluar($respon, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Disposition', Auth::user()->getAuthIdentifier());
+    $logTrail = Helper::convertLogForAuditTrail($inputs['log']);
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, $logTrail .' Surat Keluar', Auth::user()->getAuthIdentifier());
 
-    unset($result['file_id'], $result['file'], $result['notif']);
     $result['data'] = [];
 
     return response()->json($result, $result['state_code']);

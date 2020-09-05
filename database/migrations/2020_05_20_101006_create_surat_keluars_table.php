@@ -15,31 +15,37 @@ class CreateSuratKeluarsTable extends Migration
     {
         Schema::create('surat_keluar', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('klasifikasi_id');
             $table->string('nomor_agenda')->nullable();
             $table->string('nomor_surat')->nullable();
             $table->dateTime('tgl_surat')->nullable();
             $table->string('jenis_surat');
-            $table->bigInteger('klasifikasi_id');
             $table->string('sifat_surat');
             $table->string('tujuan_surat');
             $table->string('hal_surat');
+            $table->bigInteger('sign_user_id');
             $table->string('lampiran_surat');
-            $table->integer('to_user');
-            $table->integer('file_id')->nullable();
+            $table->bigInteger('approval_user_id');
+            $table->bigInteger('file_id')->nullable();
+            $table->string('status');
+            $table->string('surat_log')->nullable();
 
-            $table->boolean('is_disposition')->nullable();
-            $table->bigInteger('disposition_by')->nullable();
-            $table->dateTime('disposition_at')->nullable();
+            $table->boolean('is_approve')->nullable();
+            $table->bigInteger('approved_by')->nullable();
+            $table->dateTime('approved_at')->nullable();
+
+            $table->boolean('is_verify')->nullable();
+            $table->bigInteger('verified_by')->nullable();
+            $table->dateTime('verified_at')->nullable();
 
             $table->boolean('is_agenda')->nullable();
             $table->bigInteger('agenda_by')->nullable();
             $table->dateTime('agenda_at')->nullable();
             $table->integer('agenda_file_id')->nullable();
 
-            $table->integer('approval_user');
-            $table->bigInteger('approved_by')->nullable();
-            $table->dateTime('approved_at')->nullable();
-            $table->boolean('is_approved');
+            $table->boolean('is_sign');
+            $table->bigInteger('signed_by')->nullable();
+            $table->dateTime('signed_at')->nullable();
 
             $table->boolean('active');
             $table->timestamp('created_at');
@@ -56,6 +62,6 @@ class CreateSuratKeluarsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('surat_keluars');
+        Schema::dropIfExists('surat_keluar');
     }
 }

@@ -33,9 +33,10 @@ class SuratKeluarController extends Controller
     $responses = Helper::$responses;
     $user = request()->user();
     $permissions = Array(
-      'suratKeluar_disposition' => $user->tokenCan('suratKeluar_disposition') ? 1 : 0,
+      'suratKeluar_approve' => $user->tokenCan('suratKeluar_approve') ? 1 : 0,
       'suratKeluar_agenda' => $user->tokenCan('suratKeluar_agenda') ? 1 : 0,
-      'suratKeluar_ttd' => $user->tokenCan('suratKeluar_ttd') ? 1 : 0
+      'suratKeluar_sign' => $user->tokenCan('suratKeluar_sign') ? 1 : 0,
+      'suratKeluar_verify' => $user->tokenCan('suratKeluar_verify') ? 1 :0
     );
 
     $result = SuratKeluarRepository::getById($responses, $id, $permissions);
@@ -57,8 +58,8 @@ class SuratKeluarController extends Controller
       'tujuan_surat' => 'required',
       'hal_surat' => 'required',
       'lampiran_surat' => 'required',
-      'approval_user' => 'required',
-      'to_user' => 'required',
+      'sign_user_id' => 'required',
+      'approval_user_id' => 'required',
       'file' => 'required|file|max:5000|mimes:docx,doc',
     );
 
@@ -72,7 +73,7 @@ class SuratKeluarController extends Controller
       return response()->json($result, 400);
     }
     $result = SuratKeluarRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update Surat Keluar', Auth::user()->getAuthIdentifier());
     $result['data'] = [];
     return response()->json($result, $result['state_code']);
   }
@@ -103,7 +104,7 @@ class SuratKeluarController extends Controller
       return response()->json($respon, 400);
     }
     $result = SuratKeluarRepository::agenda($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Agenda', Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Agenda Surat Keluar', Auth::user()->getAuthIdentifier());
     return response()->json($result, $result['state_code']);
   }
 
@@ -111,7 +112,36 @@ class SuratKeluarController extends Controller
   {
     $respon = Helper::$responses;
     $result = SuratKeluarRepository::approve($respon, $id, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Approve', Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Approve Surat Keluar', Auth::user()->getAuthIdentifier());
+
+    $result['data'] = [];
+    return response()->json($result, $result['state_code']);
+  }
+
+  public static function verifySuratKeluar(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $rules = array(
+      'approved' => 'required',
+      'to_user_id' => 'required',
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+		// Validation fails?
+		if ($validator->fails()){
+			$respon['state_code'] = 400;
+      $respon['messages'] = $validator->messages();
+      $respon['data'] = $inputs;
+      return response()->json($respon, 400);
+    }
+    
+    $inputs['log'] = json_decode($inputs['approved']) ? "VERIFIED" : "VERIFY_REJECTED";
+    $result = SuratKeluarRepository::verify($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
+
+    $logTrail = Helper::convertLogForAuditTrail($inputs['log']);
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, $logTrail .' Surat Keluar', Auth::user()->getAuthIdentifier());
 
     $result['data'] = [];
     return response()->json($result, $result['state_code']);
@@ -121,7 +151,7 @@ class SuratKeluarController extends Controller
   {
     $respon = Helper::$responses;
     $result = SuratKeluarRepository::delete($respon, $id, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete', Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Delete Surat Keluar', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
   }
@@ -130,8 +160,13 @@ class SuratKeluarController extends Controller
   {
     $respon = Helper::$responses;
     $inputs = $request->all();
+    
+    $inputs['log'] = json_decode($inputs['approved']) ? "SIGNED" : "SIGN_REJECTED";
+    $inputs['approved'] = json_decode($inputs['approved']);
     $result = SuratKeluarRepository::signSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Sign', Auth::user()->getAuthIdentifier());
+    
+    $logTrail = Helper::convertLogForAuditTrail($inputs['log']);
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result,  $logTrail .' Surat Keluar', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
   }
@@ -187,7 +222,7 @@ class SuratKeluarController extends Controller
     }
 
     $result = SuratKeluarRepository::generateNomorSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Generate Nomor', Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Generate Nomor Surat', Auth::user()->getAuthIdentifier());
     return response()->json($result, $result['state_code']);
   }
 }

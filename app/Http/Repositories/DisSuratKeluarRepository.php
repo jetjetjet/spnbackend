@@ -14,7 +14,6 @@ class DisSuratKeluarRepository
 
   public static function disSuratKeluar($respon, $inputs, $loginid)
   {
-    $inputs['log'] = "disposition";
     try{
       DB::transaction(function () use (&$respon, $inputs, $loginid){
         if($inputs['file'] != "null"){
@@ -23,21 +22,19 @@ class DisSuratKeluarRepository
           if (!$valid) return;
         } 
         
-        if($inputs['tujuan_user'] == null)
-          $inputs['tujuan_user'] = self::getCreatedSurat($inputs['surat_keluar_id']);
+        if($inputs['tujuan_user_id'] == null)
+          $inputs['tujuan_user_id'] = self::getCreatedSurat($inputs['surat_keluar_id']);
 
         $valid = self::updateSuratKeluar($inputs, $loginid);
-        if($valid == null) return;
+        if(!$valid) return;
 
         $valid = self::saveDisSuratKeluar($inputs, $loginid);
-        if($valid == null) return;
+        if(!$valid) return;
         
-        $respon['notif'] = $valid->is_approved ? "Disetujui dan diteruskan untuk ttd" : "Ditolak dan dikembalikan untuk revisi";
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        $inputs['file_id'] = $inputs['file'] != "null" ? $respon['file_id'] : 0;
-        $respon['data'] = $valid;
-        array_push($respon['messages'], trans('messages.successDisposition'));
+        $respon['data'] = [];
+        array_push($respon['messages'], trans('messages.successApprovedSK'));
       });
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
@@ -49,29 +46,35 @@ class DisSuratKeluarRepository
 
   public static function updateSuratKeluar($inputs, $loginid)
   {
-    return DB::table('surat_keluar')
+    $q = DB::table('surat_keluar')
       ->where('id', $inputs['surat_keluar_id'])
       ->where('active', '1')
       ->where('is_agenda', '0')
       ->where('is_approved', '0')
       ->update([
-        'is_disposition' => '1',
-        'disposition_at' => DB::raw('now()'),
-        'disposition_by' => $loginid
+        'is_approve' => '1',
+        'is_verify' => $inputs['log'] == "APPROVED" ? '1' : '0',
+        'surat_log' => $inputs['log'],
+        'approved_at' => DB::raw('now()'),
+        'approved_by' => $loginid
       ]);
+    if($q = null){
+      throw new Exception('rollbacked');
+      return false;
+    } else {
+      return true;
+    }
   }
 
   public static function saveDisSuratKeluar($inputs, $loginid)
   {
-    $appr = $inputs['is_approved']  ?? "false";
+    $ins = false;
     $q = DisSuratKeluar::create([
       'surat_keluar_id' => $inputs['surat_keluar_id'],
-      'tujuan_user' => $inputs['tujuan_user'],
+      'tujuan_user_id' => $inputs['tujuan_user_id'],
       'file_id' => $inputs['file_id'] ?? null,
       'keterangan' => $inputs['keterangan'],
       'log' => $inputs['log'],
-      'is_approved' => json_decode($appr),
-      'approved_by' => $appr = "true" ? $loginid : null,
       'is_read' => '0',
       'active' => '1',
       'created_at' => DB::raw('now()'),
@@ -79,15 +82,20 @@ class DisSuratKeluarRepository
     ]);
 
     if($q != null){
+      $log = Helper::convertLogForNotif($inputs['log']);
       $sk = DB::table('surat_keluar')->where('active', '1')->where('id', $inputs['surat_keluar_id'])->select('tujuan_surat')->first();
       $notif = array(
         'id_reference' =>  $inputs['surat_keluar_id'],
-        'display' => 'Surat Keluar - ' . ($sk->tujuan_surat ?? $inputs['tujuan_surat']),
+        'display' => 'Surat Keluar - ' . $sk->tujuan_surat . ' - ' . $log,
         'type' => 'SURATKELUAR'
       );
+      
+      $ins = true;
       $createNotif = NotificationRepository::createNotif($notif, $inputs['tujuan_user']);
+    } else {
+      throw new Exception('rollbacked');
     }
-    return $q;
+    return $ins;
   }
 
   public static function readDis($id)

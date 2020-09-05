@@ -16,15 +16,11 @@ class CreateDisSuratKeluarsTable extends Migration
         Schema::create('dis_surat_keluar', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('surat_keluar_id');
-            $table->bigInteger('tujuan_user')->nullable();
+            $table->bigInteger('tujuan_user_id')->nullable();
             $table->bigInteger('file_id')->nullable();
             $table->boolean('is_read');
             $table->dateTime('last_read')->nullable();
             $table->string('keterangan')->nullable();
-
-            $table->boolean('is_approved')->nullable();
-            $table->integer('approved_by')->nullable();
-            $table->dateTime('approved_at')->nullable();
             $table->string('log')->nullable();
 
             $table->boolean('active');

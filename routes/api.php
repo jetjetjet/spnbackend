@@ -24,7 +24,6 @@ Route::post('/suratKeluar/cetak/{id?}', 'SuratKeluarController@cetakNomor');
 Route::group(['middleware' => 'auth:sanctum'], function() {
     
     Route::get('/cekUser', 'AuthController@getAuthUser');
-    Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
     Route::post('/logout', 'AuthController@logout');
 
     Route::get('/auditTrail/list', 'AuditTrailController@getAll');
@@ -66,10 +65,11 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/suratKeluar/save/{id?}', 'SuratKeluarController@save');
     Route::post('/suratKeluar/delete/{id}', 'SuratKeluarController@delete');
     Route::post('/suratKeluar/read/{idDisposisi?}', 'SuratKeluarController@read');
-    Route::post('/suratKeluar/disposisi', 'DisSuratKeluarController@disposisiSuratKeluar');
-    Route::post('/suratKeluar/agenda/{id?}', 'SuratKeluarController@agendaSuratKeluar');
-    Route::post('/suratKeluar/approve/{id?}', 'SuratKeluarController@approveSuratKeluar');
+    Route::post('/suratKeluar/approve', 'DisSuratKeluarController@disposisiSuratKeluar');
+    Route::post('/suratKeluar/verify/{id?}', 'SuratKeluarController@verifySuratKeluar');
     Route::post('/suratKeluar/generate/{id?}', 'SuratKeluarController@generateNomorSurat');
+    Route::post('/suratKeluar/agenda/{id?}', 'SuratKeluarController@agendaSuratKeluar');
+    Route::post('/suratKeluar/sign/{id}', 'SuratKeluarController@signSurat');
 
     Route::get('/suratMasuk/list', 'SuratMasukController@getAll');
     Route::get('/suratMasuk/view/{id?}', 'SuratMasukController@getById');

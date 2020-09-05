@@ -12,32 +12,38 @@ class SuratKeluar extends Model
   protected $table = 'surat_keluar';
   public $timestamps = false;
   protected $fillable = [
+    'klasifikasi_id',
     'nomor_agenda',
     'nomor_surat',
-    'jenis_surat',
     'tgl_surat',
-    'klasifikasi_id',
+    'jenis_surat',
     'sifat_surat',
     'tujuan_surat',
     'hal_surat',
-    'to_user',
     'lampiran_surat',
-    'approval_user',
-    
+    'sign_user_id',
+    'approval_user_id',
+    'file_id',
+    'status',
+    'surat_log',
+
+    'is_approve',
     'approved_by',
     'approved_at',
-    'is_approved',
-    
-    'is_disposition',
-    'disposition_by',
-    'disposition_at',
-    
+
+    'is_verify',
+    'verified_by',
+    'verified_at',
+
     'is_agenda',
     'agenda_by',
     'agenda_at',
     'agenda_file_id',
 
-    'file_id',
+    'is_sign',
+    'signed_by',
+    'signed_at',
+    
     'active',
     'created_at',
     'created_by',

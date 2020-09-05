@@ -566,7 +566,7 @@ class Userseed extends Seeder
         $gpkadin = PositionMenu::create([
             'position_id' => $kadin->id,
             'menu_id' => '0',
-            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_ttd,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_sign,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
@@ -593,7 +593,7 @@ class Userseed extends Seeder
         $gpkapaud = PositionMenu::create([
             'position_id' => $kapaud->id,
             'menu_id' => '0',
-            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_disposition,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_approve,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'

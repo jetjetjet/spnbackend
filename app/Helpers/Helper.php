@@ -57,6 +57,76 @@ class Helper
     return $newFile;
   }
 
+  public static function convertLogForNotif($log)
+  {
+    $return = "";
+    switch($log){
+      case "CREATED":
+        $return = "Dibuat";
+        break;
+      case "REJECTED":
+      case "SIGN_REJECTED":
+        $return = "Ditolak";
+        break;
+      case "REVISED":
+        $return = "Direvisi";
+        break;
+      case "APPROVED":
+        $return = "Mohon Diverifikasi";
+        break;
+      case "VERIFIED":
+        $return = "Mohon Diagendakan";
+        break;
+      case "VERIFY_REJECTED":
+        $return = "Verifikasi ditolak";
+        break;
+      case "AGENDA":
+        $return = "Mohon Ditandatangani";
+        break;
+      case "SIGNED":
+        $return = "Ditandatangani";
+        break;
+      default:
+        $return = '';
+    }
+    return $return;
+  }
+
+  public static function convertLogForAuditTrail($log)
+  {
+    $return = "";
+    switch($log){
+      case "CREATED":
+        $return = "Dibuat";
+        break;
+      case "REJECTED":
+      case "SIGN_REJECTED":
+        $return = "Ditolak";
+        break;
+      case "REVISED":
+        $return = "Direvisi";
+        break;
+      case "APPROVED":
+        $return = "Disetujui";
+        break;
+      case "VERIFIED":
+        $return = "Diverifikasi";
+        break;
+      case "VERIFY_REJECTED":
+        $return = "Verifikasi ditolak";
+        break;
+      case "AGENDA":
+        $return = "Diagendakan";
+        break;
+      case "SIGNED":
+        $return = "Ditandatangani";
+        break;
+      default:
+        $return = '';
+    }
+    return $return;
+  }
+
   public static function createCertificate($info)
   {
     $rootdir=base_path() .'/stack';
