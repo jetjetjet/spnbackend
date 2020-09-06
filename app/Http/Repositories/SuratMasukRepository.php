@@ -83,7 +83,7 @@ class SuratMasukRepository
       ->leftJoin('gen_user as dc', 'dc.id', 'dsm.created_by')
       ->leftJoin('gen_position as gpc', 'gpc.id', 'dc.position_id')
       ->where('dsm.active','1')
-      ->where('dsm.log', 'disposition')
+      ->where('dsm.log', 'DISPOSITION')
       ->where('surat_masuk_id', $id)
       ->where('to_user_id', $loginid)
       ->orderBy('dsm.created_at', 'DESC')
@@ -92,6 +92,8 @@ class SuratMasukRepository
     $header = DB::table('surat_masuk as sm')
       ->join('gen_user as cr', 'cr.id', 'sm.created_by')
       ->join('gen_position as gp', 'gp.id', 'cr.position_id')
+      ->join('gen_user as tuj', 'tuj.id', 'sm.to_user_id')
+      ->join('gen_position as ptuj', 'ptuj.id', 'tuj.position_id')
       ->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->join('gen_klasifikasi_surat as gks', 'klasifikasi_id', 'gks.id')
       ->leftJoin('gen_file as gf', 'sm.file_id', 'gf.id')
@@ -110,7 +112,9 @@ class SuratMasukRepository
         'file_id',
         'file_path',
         'to_user_id',
-        DB::raw("cr.full_name || ' - ' || coalesce(gp.position_name,'') as to_user_name"),
+        'tuj.full_name as to_user_name',
+        'ptuj.position_name as to_position_name',
+        //DB::raw("tuj.full_name || ' - ' || coalesce(ptuj.position_name,'') as to_user_name"),
         'original_name as file_name',
         'perihal',
         'nomor_surat',
@@ -147,9 +151,9 @@ class SuratMasukRepository
         ->orderBy('dsm.created_at', 'ASC')
         ->select(
           'dsm.id as disposisi_id',
-          DB::raw("case when log = 'create' then 'Dibuat oleh: ' || cr.full_name
-            when log = 'disposition' then 'Diteruskan kepada: ' || dp.full_name
-            when log = 'finish' then 'Surat diselesaikan oleh: ' || cr.full_name
+          DB::raw("case when log = 'CREATED' then 'Dibuat oleh: ' || cr.full_name || ' - ' || pcr.position_name
+            when log = 'DISPOSITION' then 'Diteruskan kepada: ' || dp.full_name || ' - ' || pcr.position_name
+            when log = 'CLOSED' then 'Surat diselesaikan oleh: ' || cr.full_name || ' - ' || pcr.position_name
             else '' end as label_history"),
           DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
           'pcr.position_name',
@@ -263,7 +267,7 @@ class SuratMasukRepository
           'surat_masuk_id' => $insert['id'],
           'to_user_id' => Array($inputs['to_user_id']),
           'arahan' => $inputs['keterangan'],
-          'log' => 'create',
+          'log' => 'CREATED',
           'nomor_surat' => $inputs['nomor_surat'],
           'is_tembusan' => null,
           'is_private' => null
@@ -335,5 +339,10 @@ class SuratMasukRepository
       array_push($respon['messages'], trans('messages.successDeleteSuratMasuk'));
     }
     return $respon;
+  }
+
+  public static function createDispositionFile($id, $loginid)
+  {
+    $q = "";
   }
 }

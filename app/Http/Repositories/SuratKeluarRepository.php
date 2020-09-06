@@ -37,7 +37,7 @@ class SuratKeluarRepository
       ->leftJoin('gen_position as papp', 'app.position_id', 'papp.id')
 
       ->leftJoin('gen_user as ver', 'ver.id', 'sk.verified_by')
-      ->leftJoin('gen_position as pver', 'app.position_id', 'pver.id')
+      ->leftJoin('gen_position as pver', 'ver.position_id', 'pver.id')
 
       ->leftJoin('gen_user as ag', 'ag.id', 'sk.agenda_by')
       ->leftJoin('gen_position as pag', 'ag.position_id', 'pag.id')
@@ -195,7 +195,7 @@ class SuratKeluarRepository
           'cr.full_name as created_by',
           'gp.position_name',
           'file_id',
-          'is_read',
+          DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
           'last_read',
           'dsk.keterangan',
           'original_name as file_name',
@@ -584,6 +584,7 @@ class SuratKeluarRepository
           $update = $sk->update([
             'file_id' => $newFile->id,
             'signed_by' => $loginid,
+            'is_sign' => '0',
             'signed_at' => DB::raw('now()'),
             'status_log' => $inputs['log'],
             'modified_at' => DB::raw('now()'),
@@ -642,14 +643,23 @@ class SuratKeluarRepository
       ->where('sk.active', '1')
       ->select('gks.kode_klasifikasi', 'gks.nama_klasifikasi', 'gks.id as klasifikasi_id', 'gg.group_code')
       ->first();
-    
     $getFile = DB::table("dis_surat_keluar as dsk")
-      ->leftJoin('gen_file as gf', 'gf.id', 'dsk.file_id')
+      ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
       ->where('dsk.active', '1')
       ->where('log', DB::raw("'VERIFIED'"))
       ->where('surat_keluar_id', $id)
       ->select('file_path', 'file_name', 'original_name', 'log')
       ->first();
+    
+    if($getFile == null){
+      $getFile = DB::table("dis_surat_keluar as dsk")
+      ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
+      ->where('dsk.active', '1')
+      ->where('surat_keluar_id', $id)
+      ->orderBy('dsk.created_at', 'DESC')
+      ->select('file_path', 'file_name', 'original_name', 'log')
+      ->first();
+    }
       
     if($kKlasifikasi && $getFile){
       $getNomor = DB::table('gen_nomor_surat_keluar as gns')
@@ -729,6 +739,7 @@ class SuratKeluarRepository
       } catch(\Exception $e){
         // lewat
         DB::rollback();
+        dd($e);
         $respon['success'] = false;
         $respon['state_code'] = 500;
         array_push($respon['messages'], trans('messages.errorAdministrator'));

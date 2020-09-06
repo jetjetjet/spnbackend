@@ -17,7 +17,7 @@ class CreateSuratMasuksTable extends Migration
             $table->id();
             $table->bigInteger('file_id');
             $table->string('asal_surat');
-            $table->string('to_user_id');
+            $table->bigInteger('to_user_id');
             $table->string('perihal')->nullable();
             $table->string('nomor_surat');
             $table->dateTime('tgl_surat');

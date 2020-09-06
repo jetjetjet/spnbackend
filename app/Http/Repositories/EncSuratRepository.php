@@ -13,7 +13,7 @@ class EncSuratRepository
       ->join('surat_keluar as sk', 'surat_keluar_id', 'sk.id')
       ->join('gen_klasifikasi_surat as gks', 'gks.id', 'sk.klasifikasi_id')
       ->join('gen_user as cr', 'cr.id', 'sk.created_by')
-      ->join('gen_user as td', 'td.id', 'sk.approved_by')
+      ->join('gen_user as td', 'td.id', 'sk.signed_by')
       ->join('gen_file as gf', 'gf.id', 'sk.file_id')
       ->where('sk.active', '1')
       ->where('es.active', '1')
