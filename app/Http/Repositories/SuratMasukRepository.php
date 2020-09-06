@@ -262,7 +262,7 @@ class SuratMasukRepository
         $dataDis = Array(
           'surat_masuk_id' => $insert['id'],
           'to_user_id' => Array($inputs['to_user_id']),
-          'arahan' => null,
+          'arahan' => $inputs['keterangan'],
           'log' => 'create',
           'nomor_surat' => $inputs['nomor_surat'],
           'is_tembusan' => null,

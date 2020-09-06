@@ -225,6 +225,9 @@ class UserRepository
       case 'suratKeluar_agenda':
         $query = $query->where('gp.id', 2);
         break;
+      case 'suratKeluar_save':
+        $query = $query->where('gp.id', $qCek->parent_id);
+        break;
       default:
         $query = $query;
     }

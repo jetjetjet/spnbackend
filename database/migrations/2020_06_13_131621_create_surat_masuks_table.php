@@ -27,6 +27,7 @@ class CreateSuratMasuksTable extends Migration
             $table->bigInteger('klasifikasi_id');
             $table->string('keterangan')->nullable();
             $table->string('prioritas')->nullable();
+            $table->bigInteger('disposisi_file_id')->nullable();
 
             $table->bigInteger('closed_by')->nullable();
             $table->dateTime('closed_at')->nullable();
