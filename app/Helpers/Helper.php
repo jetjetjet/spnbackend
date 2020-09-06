@@ -62,7 +62,7 @@ class Helper
     $return = "";
     switch($log){
       case "CREATED":
-        $return = "Dibuat";
+        $return = "Draft";
         break;
       case "REJECTED":
       case "SIGN_REJECTED":

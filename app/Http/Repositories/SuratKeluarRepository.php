@@ -103,10 +103,10 @@ class SuratKeluarRepository
       "),
       DB::raw(" cr.full_name ||to_char(sk.created_at, 'dd-mm-yyyy') as created_by"),
       DB::raw("
-        case when sk.is_approve = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_edit
+        case when coalesce(sk.is_verify,'0') = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_edit
       "),
       DB::raw("
-        case when sk.is_approve = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_delete
+        case when coalesce(sk.is_verify,'0') = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_delete
       ")
     )->distinct('sk.id')->get();
 
@@ -155,6 +155,7 @@ class SuratKeluarRepository
         'lampiran_surat',
         'approval_user_id',
         'appr.full_name as approval_name',
+        'sign.full_name as sign_name',
         'klasifikasi_id',
         'gks.nama_klasifikasi as klasifikasi_name',
         'sign_user_id',
@@ -164,7 +165,7 @@ class SuratKeluarRepository
         'sk.created_at',
         // 'md.full_name as modified_by',
         // 'sk.modified_by',
-        DB::raw("case when sk.is_approve = '1' and (surat_log = 'VERIFY_REJECTED' or surat_log = 'DRAFT') and 1 =" . $perms['suratKeluar_approve'] . " then 1 else 0 end as can_approve"),
+        DB::raw("case when sk.is_approve = '1' and (surat_log = 'VERIFY_REJECTED' or surat_log = 'CREATED' or surat_log = 'REVISED') and 1 =" . $perms['suratKeluar_approve'] . " then 1 else 0 end as can_approve"),
         DB::raw("case when sk.is_verify = '1' and (surat_log = 'APPROVED' or surat_log = 'SIGN_REJECTED') and 1 =" . $perms['suratKeluar_verify'] . " then 1 else 0 end as can_verify"),
         DB::raw("case when sk.is_agenda = '1' and surat_log = 'VERIFIED' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda"),
         DB::raw("case when sk.is_sign = '1' and surat_log = 'AGENDA' and 1 =" . $perms['suratKeluar_sign'] . " then 1 else 0 end as can_sign")
@@ -174,24 +175,24 @@ class SuratKeluarRepository
       $data = new \stdClass();
 
       $disposisi = DB::table('dis_surat_keluar as dsk')
-        ->join('gen_user as to', 'dsk.created_by', 'to.id')
-        ->leftJoin('gen_position as gp', 'to.position_id', 'gp.id')
+        ->join('gen_user as cr', 'dsk.created_by', 'cr.id')
+        ->leftJoin('gen_position as gp', 'cr.position_id', 'gp.id')
         ->leftJoin('gen_file as f', 'file_id', 'f.id')
         ->where('dsk.active', '1')
         ->where('dsk.surat_keluar_id', $id)
         ->orderBy('dsk.created_at', 'ASC')
         ->select('dsk.id', 
-          DB::raw("case when log = 'CREATED' then 'Surat dibuat oleh: ' || to.full_name
-            when log = 'REVISED' then 'Surat direvisi oleh: ' || to.full_name
-            when log = 'REJECTED' or log = 'SIGN_REJECTED' then 'Surat ditolak oleh: ' || to.full_name
-            when log = 'APPROVED' then 'Surat disetujui oleh: ' || to.full_name
-            when log = 'VERIFIED' then 'Surat diverifikasi oleh: ' || to.full_name
-            when log = 'VERIFY_REJECTED' then 'Verifikasi ditolak oleh: ' || to.full_name
-            when log = 'AGENDA' then 'Surat diagenda oleh: ' || to.full_name
-            when log = 'SIGNED' then 'Surat ditandatangani oleh: ' || to.full_name
+          DB::raw("case when log = 'CREATED' then 'Surat dibuat oleh: ' || cr.full_name
+            when log = 'REVISED' then 'Surat direvisi oleh: ' || cr.full_name
+            when log = 'REJECTED' or log = 'SIGN_REJECTED' then 'Surat ditolak oleh: ' || cr.full_name
+            when log = 'APPROVED' then 'Surat disetujui oleh: ' || cr.full_name
+            when log = 'VERIFIED' then 'Surat diverifikasi oleh: ' || cr.full_name
+            when log = 'VERIFY_REJECTED' then 'Verifikasi ditolak oleh: ' || cr.full_name
+            when log = 'AGENDA' then 'Surat diagenda oleh: ' || cr.full_name
+            when log = 'SIGNED' then 'Surat ditandatangani oleh: ' || cr.full_name
             else '' end as label"),
           'surat_keluar_id', 
-          'dsk.created_by',
+          'cr.full_name as created_by',
           'gp.position_name',
           'file_id',
           'is_read',
@@ -297,6 +298,9 @@ class SuratKeluarRepository
         'lampiran_surat' => $inputs['lampiran_surat'],
         'approval_user_id' => $inputs['approval_user_id'],
         'is_approve' => '1',
+        'is_verify' => '0',
+        'is_agenda' => '0',
+        'is_sign' => '0',
         'surat_log' => 'CREATED',
         'active' => '1',
         'created_at' => DB::raw('now()'),

@@ -563,6 +563,7 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
+        //afif
         $gpkadin = PositionMenu::create([
             'position_id' => $kadin->id,
             'menu_id' => '0',
@@ -572,24 +573,27 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
+        //yudha_p
         $gpkasubbag = PositionMenu::create([
             'position_id' => $sumum->id,
             'menu_id' => '0',
-            'permissions' => 'suratKeluar_list,suratKeluar_view,suratMasuk_list,suratMasuk_view,suratMasuk_save,suratMasuk_delete,suratMasuk_disposition,suratMasuk_close',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratMasuk_list,,suratKeluar_agenda,suratMasuk_view,suratMasuk_save,suratMasuk_delete,suratMasuk_disposition,suratMasuk_close',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
 
+        //evie
         $gpSekretaris = PositionMenu::create([
             'position_id' => $sekretaris->id,
             'menu_id' => '0',
-            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_agenda,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
+            'permissions' => 'suratKeluar_list,suratKeluar_view,suratKeluar_verify,suratMasuk_list,suratMasuk_view,suratMasuk_disposition,suratMasuk_close',
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
 
+        //septian
         $gpkapaud = PositionMenu::create([
             'position_id' => $kapaud->id,
             'menu_id' => '0',
@@ -599,6 +603,7 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
+        //vera
         $gpKasiPaud = PositionMenu::create([
             'position_id' => $kasipaud->id,
             'menu_id' => '0',

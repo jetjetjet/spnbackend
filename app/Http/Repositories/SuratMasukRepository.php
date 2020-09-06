@@ -140,8 +140,7 @@ class SuratMasukRepository
       
       $detail = DB::table('dis_surat_masuk as dsm')
         ->join('gen_user as cr', 'dsm.created_by', 'cr.id')
-        //->leftJoin('gen_position as cgp', 'cr.position_id', 'cgp.id')
-        //->leftJoin('gen_group as cgg', 'cgg.id', 'cgp.group_id')
+        ->leftJoin('gen_position as pcr', 'cr.position_id', 'pcr.id')
         ->join('gen_user as dp', 'dsm.to_user_id', 'dp.id')
         ->where('dsm.active', '1')
         ->where('dsm.surat_masuk_id', $id)
@@ -153,6 +152,8 @@ class SuratMasukRepository
             when log = 'finish' then 'Surat diselesaikan oleh: ' || cr.full_name
             else '' end as label_history"),
           DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
+          'pcr.position_name',
+          'arahan',
           'last_read'
         )->get();
 

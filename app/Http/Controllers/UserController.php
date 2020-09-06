@@ -152,7 +152,18 @@ class UserController extends Controller
   public function searchUserSK(Request $request)
   {
     $respon = Helper::$responses;
-		$result = UserRepository::searchUserSuratKeluar($respon, Auth::user()->getAuthIdentifier());
+    $user = request()->user();
+    $permission = '';
+    if($user->tokenCan('suratKeluar_approve')){
+      $permission = 'suratKeluar_approve';
+    } else if (tokenCan('suratKeluar_agenda')){
+      $permission = 'suratKeluar_agenda';
+    } else if (tokenCan('suratKeluar_agenda')){
+      $permission = 'suratKeluar_verify';
+    } else {
+      //
+    }
+		$result = UserRepository::searchUserSuratKeluar($respon, $permission, Auth::user()->getAuthIdentifier());
 
 		return response()->json($result, $result['state_code']);
   }

@@ -18,7 +18,7 @@ class DisSuratKeluarController extends Controller
     
     $rules = array(
       'surat_keluar_id' => 'required',
-      'tujuan_user' => 'required'
+      'tujuan_user_id' => 'required'
     );
 
     if($inputs['file'] != "null"){

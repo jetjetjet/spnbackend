@@ -37,7 +37,7 @@ class DisSuratKeluarRepository
         array_push($respon['messages'], trans('messages.successApprovedSK'));
       });
     } catch (\Exception $e) {
-      if ($e->getMessage() === 'rollbacked') return $result;
+      if ($e->getMessage() === 'rollbacked') return $respon;
       $respon['state_code'] = 500;
       array_push($respon['messages'], $e->getMessage());
     }
@@ -49,16 +49,15 @@ class DisSuratKeluarRepository
     $q = DB::table('surat_keluar')
       ->where('id', $inputs['surat_keluar_id'])
       ->where('active', '1')
-      ->where('is_agenda', '0')
-      ->where('is_approved', '0')
+      ->whereRaw("coalesce(is_verify,'0') = '0'")
+      ->where('is_approve', '1')
       ->update([
-        'is_approve' => '1',
         'is_verify' => $inputs['log'] == "APPROVED" ? '1' : '0',
         'surat_log' => $inputs['log'],
         'approved_at' => DB::raw('now()'),
         'approved_by' => $loginid
       ]);
-    if($q = null){
+    if($q == null){
       throw new Exception('rollbacked');
       return false;
     } else {

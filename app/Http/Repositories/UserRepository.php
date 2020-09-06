@@ -207,37 +207,34 @@ class UserRepository
     return $respon;
   }
 
-  public static function searchUserSuratKeluar($respon, $loginid)
+  public static function searchUserSuratKeluar($respon, $permission, $loginid)
   {
     $qCek = User::join('gen_position as gp', 'gp.id', 'position_id')
     ->where('gen_user.active', '1')->where('gen_user.id', $loginid)
     ->where('gp.active', '1')
     ->select('gen_user.id as id', DB::raw("coalesce(gp.parent_id, 0) as parent_id") , 'gp.position_name')->first();
 
-    if ($qCek != null){
-      $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
-      switch ($qCek->parent_id) {
-        case 0:
-          $query = $query->whereIn('gp.id', [2,3]);
+    $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
+    switch ($permission) {
+      case 'suratKeluar_approve':
+        $query = $query->where('gp.id', 3);
+      break;
+      case 'suratKeluar_verify':
+        $query = $query->where('gp.id', 4);
         break;
-        case $qCek->parent_id > 3:
-          $query = $query->where('gp.id', $qCek->parent_id);
-          break;
-        default:
-          $query = $query;
-      }
-
-      $data = $query->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
-        ->get();
-      $respon['success'] = true;
-      $respon['state_code'] = 200;
-      $respon['data'] = $data;
-
-      return $respon;
-    } else {
-      $respon['state_code'] = 200;
-      array_push($result['messages'], trans('messages.errorNotFound'));
+      case 'suratKeluar_agenda':
+        $query = $query->where('gp.id', 2);
+        break;
+      default:
+        $query = $query;
     }
+
+    $data = $query->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
+      ->get();
+    $respon['success'] = true;
+    $respon['state_code'] = 200;
+    $respon['data'] = $data;
+
     return $respon;
   }
 
