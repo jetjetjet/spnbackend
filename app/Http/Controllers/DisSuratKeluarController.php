@@ -15,10 +15,13 @@ class DisSuratKeluarController extends Controller
   {
     $respon = Helper::$responses;
     $inputs = $request->all();
+    $inputs['log'] = json_decode($inputs['approved']) ? "APPROVED" : "REJECTED";
+
+    if($inputs['log'] == "APPROVED")
+      $rules['tujuan_user_id'] = 'required';
     
     $rules = array(
-      'surat_keluar_id' => 'required',
-      'tujuan_user_id' => 'required'
+      'surat_keluar_id' => 'required'
     );
 
     if($inputs['file'] != "null"){
@@ -34,7 +37,6 @@ class DisSuratKeluarController extends Controller
       return response()->json($respon, 400);
     }
 
-    $inputs['log'] = json_decode($inputs['approved']) ? "APPROVED" : "REJECTED";
     $result = DisSuratKeluarRepository::disSuratKeluar($respon, $inputs, Auth::user()->getAuthIdentifier());
     $logTrail = Helper::convertLogForAuditTrail($inputs['log']);
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, $logTrail .' Surat Keluar', Auth::user()->getAuthIdentifier());

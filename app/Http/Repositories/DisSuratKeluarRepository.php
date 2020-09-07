@@ -22,7 +22,7 @@ class DisSuratKeluarRepository
           if (!$valid) return;
         } 
         
-        if($inputs['tujuan_user_id'] == null)
+        if(json_decode($inputs['tujuan_user_id']) == null)
           $inputs['tujuan_user_id'] = self::getCreatedSurat($inputs['surat_keluar_id']);
 
         $valid = self::updateSuratKeluar($inputs, $loginid);
@@ -57,6 +57,10 @@ class DisSuratKeluarRepository
         'approved_at' => DB::raw('now()'),
         'approved_by' => $loginid
       ]);
+
+    // if($inputs['log'] == "REJECTED")
+    //   $inputs['tujuan_user_id'] = $q->created_by;
+
     if($q == null){
       throw new Exception('rollbacked');
       return false;
@@ -113,7 +117,7 @@ class DisSuratKeluarRepository
   private static function getCreatedSurat($id)
   {
     $q = DB::table('surat_keluar')->where('active', '1')->where('id', $id)->select('created_by')->first();
-
+    
     return $q->created_by;
   }
 }

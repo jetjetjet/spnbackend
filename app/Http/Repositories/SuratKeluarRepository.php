@@ -82,7 +82,7 @@ class SuratKeluarRepository
       DB::raw("coalesce(to_char(tgl_surat, 'dd-mm-yyyy'), 'belum diisi') as tgl_surat"),
       DB::raw("case when is_approve = '1' and surat_log = 'CREATED' then 'Konsep - '|| cr.full_name
         when is_approve = '1' and surat_log = 'REVISED' then 'Revisi - '|| cr.full_name
-        when is_approve = '1' and coalesce(is_verify,'0') = '0' and surat_log = 'REJECT' then 'Ditolak - ' ||  app.full_name
+        when is_approve = '1' and coalesce(is_verify,'0') = '0' and surat_log = 'REJECTED' then 'Ditolak - ' ||  app.full_name
         when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then 'Disetujui - ' ||  app.full_name
         when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then 'Ditolak - ' ||  ver.full_name
         when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then 'Diverifikasi - ' || ver.full_name
