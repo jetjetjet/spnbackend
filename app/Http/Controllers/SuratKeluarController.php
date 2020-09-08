@@ -36,7 +36,8 @@ class SuratKeluarController extends Controller
       'suratKeluar_approve' => $user->tokenCan('suratKeluar_approve') ? 1 : 0,
       'suratKeluar_agenda' => $user->tokenCan('suratKeluar_agenda') ? 1 : 0,
       'suratKeluar_sign' => $user->tokenCan('suratKeluar_sign') ? 1 : 0,
-      'suratKeluar_verify' => $user->tokenCan('suratKeluar_verify') ? 1 :0
+      'suratKeluar_verify' => $user->tokenCan('suratKeluar_verify') ? 1 :0,
+      'suratKeluar_save' => $user->tokenCan('suratKeluar_save') ? 1 :0
     );
 
     $result = SuratKeluarRepository::getById($responses, $id, $permissions);
@@ -48,7 +49,12 @@ class SuratKeluarController extends Controller
   public function save(Request $request, $id = null)
   {
     $results = Helper::$responses;
-    $user = request()->user(); 
+    $user = request()->user();
+
+    $inputs = $request->all();
+    $inputs['pail'] = $request->hasFile('file') ? true : false ;
+    if(!isset($inputs['id']) || $inputs['pail'])
+      $rules['file'] = 'required|file|max:5000|mimes:docx,doc';
 
     // Validation rules.
     $rules = array(
@@ -59,11 +65,9 @@ class SuratKeluarController extends Controller
       'hal_surat' => 'required',
       'lampiran_surat' => 'required',
       'sign_user_id' => 'required',
-      'approval_user_id' => 'required',
-      'file' => 'required|file|max:5000|mimes:docx,doc',
+      'approval_user_id' => 'required'
     );
 
-    $inputs = $request->all();
     $validator = Validator::make($inputs, $rules);
 		// Validation fails?
 		if ($validator->fails()){

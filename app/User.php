@@ -47,6 +47,11 @@ class User extends Authenticatable
     return $this->attributes['id'];
   }
 
+  public function getAuthPosition()
+  {
+    return $this->attributes['position_id'];
+  }
+
   public function routeNotificationForMail()
   {
     return $this->email;

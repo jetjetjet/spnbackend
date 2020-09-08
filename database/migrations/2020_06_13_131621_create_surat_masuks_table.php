@@ -32,6 +32,10 @@ class CreateSuratMasuksTable extends Migration
             $table->bigInteger('closed_by')->nullable();
             $table->dateTime('closed_at')->nullable();
             $table->boolean('is_closed');
+            
+            $table->bigInteger('kadin_id')->nullable();
+            $table->bigInteger('sekretaris_id')->nullable();
+            $table->bigInteger('kabid_id')->nullable();
 
             $table->boolean('active');
             $table->timestamp('created_at');

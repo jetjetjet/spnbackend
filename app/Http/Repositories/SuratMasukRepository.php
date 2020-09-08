@@ -82,12 +82,14 @@ class SuratMasukRepository
       // ->join('gen_position as gp', 'gp.id', 'dp.position_id')
       ->leftJoin('gen_user as dc', 'dc.id', 'dsm.created_by')
       ->leftJoin('gen_position as gpc', 'gpc.id', 'dc.position_id')
+      ->leftJoin('gen_user as tuj', 'tuj.id', 'dsm.to_user_id')
+      ->leftJoin('gen_position as ptuj', 'ptuj.id', 'tuj.position_id')
       ->where('dsm.active','1')
       ->where('dsm.log', 'DISPOSITION')
       ->where('surat_masuk_id', $id)
       ->where('to_user_id', $loginid)
       ->orderBy('dsm.created_at', 'DESC')
-      ->select('surat_masuk_id', 'gpc.position_name', 'arahan', 'dc.full_name', 'dsm.created_at');
+      ->select('surat_masuk_id', 'arahan', 'gpc.position_name', 'dc.full_name', 'ptuj.parent_id as l_position_parent_id', 'tuj.id as l_id', 'dsm.created_at');
 
     $header = DB::table('surat_masuk as sm')
       ->join('gen_user as cr', 'cr.id', 'sm.created_by')
@@ -97,6 +99,7 @@ class SuratMasukRepository
       ->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->join('gen_klasifikasi_surat as gks', 'klasifikasi_id', 'gks.id')
       ->leftJoin('gen_file as gf', 'sm.file_id', 'gf.id')
+      ->leftJoin('gen_file as df', 'sm.disposisi_file_id', 'df.id')
       ->leftJoinSub($dispSub, 'disp', function ($join) {
         $join->on('sm.id', 'disp.surat_masuk_id');
       })
@@ -110,12 +113,14 @@ class SuratMasukRepository
         'gp.position_name',
         'gg.group_name',
         'file_id',
-        'file_path',
+        'gf.file_path as file_path',
+        'gf.original_name as file_name',
+        'df.file_path as disposition_file_path',
+        'df.original_name as disposition_file_name',
         'to_user_id',
         'tuj.full_name as to_user_name',
         'ptuj.position_name as to_position_name',
         //DB::raw("tuj.full_name || ' - ' || coalesce(ptuj.position_name,'') as to_user_name"),
-        'original_name as file_name',
         'perihal',
         'nomor_surat',
         DB::raw("to_char(tgl_surat, 'yyyy-mm-dd') as tgl_surat"),
@@ -133,6 +138,8 @@ class SuratMasukRepository
         'disp.arahan as disposition_arahan',
         'disp.full_name as disposition_name',
         'disp.created_at as disposition_created_at',
+        DB::raw("case when disp.l_position_parent_id is not null and disp.l_id =" . $loginid . " then 1 else 0 end as disposition_kasi"),
+        
         //permissions
         DB::raw("case when sm.is_closed = '0' and 1 =" . $perms['suratMasuk_close'] . " then 1 else 0 end as can_closed"),
         DB::raw("case when sm.is_closed = '0' and 1 =" . $perms['suratMasuk_disposition'] . " then 1 else 0 end as can_disposition")
@@ -174,14 +181,14 @@ class SuratMasukRepository
     return $respon;
   }
 
-  public static function save($id, $result,$inputs, $loginid)
+  public static function save($id, $result,$inputs, $loginid, $positionid)
   {
     try{
-      DB::transaction(function () use (&$result, $id, $inputs, $loginid){
+      DB::transaction(function () use (&$result, $id, $inputs, $loginid, $positionid){
         $valid = self::saveFile($result, $inputs, $loginid);
         if (!$valid) return;
 
-        $valid = self::saveSuratMasuk($result, $id, $inputs, $loginid);
+        $valid = self::saveSuratMasuk($result, $id, $inputs, $loginid, $positionid);
         if (!$valid) return;
 
         $result['success'] = true;
@@ -216,7 +223,7 @@ class SuratMasukRepository
     return true;
   }
 
-  private static function saveSuratMasuk(&$result, $id, $inputs, $loginid)
+  private static function saveSuratMasuk(&$result, $id, $inputs, $loginid, $positionid)
   {
     $inputs['file_id'] = isset($result['file_id']) ? $result['file_id'] : $inputs['file_id'];
     if ($id){
@@ -272,7 +279,7 @@ class SuratMasukRepository
           'is_tembusan' => null,
           'is_private' => null
         );
-        $dis = DisSuratMasukRepository::saveDisSuratMasuk($dataDis, $loginid);
+        $dis = DisSuratMasukRepository::saveDisSuratMasuk($dataDis, $loginid, $positionid);
         if($dis == null){
           throw new Exception('rollbacked');
         }

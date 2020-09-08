@@ -29,7 +29,7 @@ class DisSuratMasukController extends Controller
       return response()->json($respon, 400);
     }
 
-    $result = DisSuratMasukRepository::disSuratMasuk($respon, $inputs, Auth::user()->getAuthIdentifier());
+    $result = DisSuratMasukRepository::disSuratMasuk($respon, $inputs, Auth::user()->getAuthIdentifier(), Auth::user()->getAuthPosition());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Disposition', Auth::user()->getAuthIdentifier());
     
     unset($result['file_id'], $result['file']);

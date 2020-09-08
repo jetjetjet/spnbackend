@@ -67,7 +67,7 @@ class SuratMasukController extends Controller
       return response()->json($result, 400);
     }
     
-    $result = SuratMasukRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+    $result = SuratMasukRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier(), Auth::user()->getAuthPosition());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
 
     unset($result['id'], $result['file_id'], $inputs['file']);

@@ -88,7 +88,7 @@ class SuratKeluarRepository
         when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then 'Diverifikasi - ' || ver.full_name
         when is_agenda = '1' and is_sign = '1' and surat_log = 'AGENDA' then 'Diagenda - ' ||  ag.full_name
         when is_agenda = '1' and is_sign = '1' and surat_log = 'SIGNED' then 'Ditandatangani - ' || sign.full_name
-        when is_agenda = '1' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then 'Ditolak - ' || sign.full_name
+        when is_approve = '1' and is_verify = '0' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then 'Ditolak - ' || sign.full_name
         else '' end as status_surat
       "),
       DB::raw("case when is_approve = '1' and (surat_log = 'CREATED' or surat_log = 'REVISED') then pcr.position_name
@@ -98,7 +98,7 @@ class SuratKeluarRepository
       when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then pver.position_name
       when is_agenda = '1' and is_sign = '1' and surat_log = 'AGENDA' then pag.position_name
       when is_agenda = '1' and is_sign = '1' and surat_log = 'SIGNED' then psign.position_name
-      when is_agenda = '1' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then psign.position_name
+      when is_approve = '1' and is_verify = '0' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then psign.position_name
         else '' end as status_position_name
       "),
       DB::raw(" cr.full_name ||to_char(sk.created_at, 'dd-mm-yyyy') as created_by"),
@@ -165,7 +165,8 @@ class SuratKeluarRepository
         'sk.created_at',
         // 'md.full_name as modified_by',
         // 'sk.modified_by',
-        DB::raw("case when sk.is_approve = '1' and (surat_log = 'VERIFY_REJECTED' or surat_log = 'CREATED' or surat_log = 'REVISED') and 1 =" . $perms['suratKeluar_approve'] . " then 1 else 0 end as can_approve"),
+        DB::raw("case when sk.is_approve = '1' and (surat_log = 'VERIFY_REJECTED' or surat_log = 'CREATED' or surat_log = 'REVISED' or surat_log = 'SIGN_REJECTED') and 1 =" . $perms['suratKeluar_approve'] . " then 1 else 0 end as can_approve"),
+        DB::raw("case when sk.is_approve = '1' and (surat_log = 'REJECTED') and 1 =" . $perms['suratKeluar_save'] . " then 1 else 0 end as can_edit"),
         DB::raw("case when sk.is_verify = '1' and (surat_log = 'APPROVED' or surat_log = 'SIGN_REJECTED') and 1 =" . $perms['suratKeluar_verify'] . " then 1 else 0 end as can_verify"),
         DB::raw("case when sk.is_agenda = '1' and surat_log = 'VERIFIED' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda"),
         DB::raw("case when sk.is_sign = '1' and surat_log = 'AGENDA' and 1 =" . $perms['suratKeluar_sign'] . " then 1 else 0 end as can_sign")
@@ -220,15 +221,19 @@ class SuratKeluarRepository
   {
     try{
       DB::transaction(function () use (&$result, $id, $inputs, $loginid){
-        $valid = self::saveFile($result, $inputs, $loginid);
-        if (!$valid) return;
+        
+        if($inputs['pail']){
+          $valid = self::saveFile($result, $inputs, $loginid);
+          if (!$valid) return;
+        } else {
+          $inputs['file_id'] = null;
+        }
 
         $valid = self::saveSuratKeluar($result, $id, $inputs, $loginid);
         if (!$valid) return;
 
         $result['success'] = true;
         $result['state_code'] = 200;
-        $inputs['file_id'] = $result['file_id'];
         $inputs['id'] = $result['id'];
         array_push($result['messages'], trans('messages.successSaveSuratKeluar'));
        // $result['data'] = $inputs;
@@ -269,6 +274,7 @@ class SuratKeluarRepository
         array_push($result['messages'], trans('messages.errorNotFoundInvalid'));
         return false;
       } else {
+        $tempLog = $tSurat->surat_log;
         $update = $tSurat->update([
           'jenis_surat' => $inputs['jenis_surat'],
           'klasifikasi_id' => $inputs['klasifikasi_id'],
@@ -283,6 +289,21 @@ class SuratKeluarRepository
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
         ]);
+
+        if($tempLog == "REJECTED"){
+          $dataDis = Array(
+            'surat_keluar_id' => $tSurat->id,
+            'tujuan_user_id' => $inputs['approval_user_id'],
+            'file_id' => $inputs['file_id'],
+            'log' => "REVISED",
+            //'tujuan_surat' => $inputs['tujuan_surat'],
+            'keterangan' => 'Revisi',
+          );
+          $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+          if(!$dis){
+            throw new Exception('rollbacked');
+          }
+        }
         
         $result['id'] = $tSurat->id ?: $id;
         return true;
@@ -606,16 +627,19 @@ class SuratKeluarRepository
         }
       } else {
         $update = $sk->update([
-          'file_id' => $newFile->id,
+          //'file_id' => $newFile->id,
           'is_sign' => '0',
-          'status_log' => $inputs['log'],
+          'is_agenda' => '0',
+          'is_verify' => '0',
+          'is_approve' => '1',
+          'surat_log' => $inputs['log'],
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
         ]);
 
         $dataDis = Array(
           'surat_keluar_id' => $id,
-          'tujuan_user_id' => $sk->created_by,
+          'tujuan_user_id' => $sk->approved_by,
           'file_id' => null,
           'log' => $inputs['log'],
           'keterangan' => $inputs['keterangan'],
@@ -624,7 +648,7 @@ class SuratKeluarRepository
         //$pdf->reset();
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        array_push($respon['messages'], trans('messages.successSignRejectSuratKeluar'));
+        array_push($respon['messages'], trans('messages.successRejectedSignSuratKeluar'));
       }
     } else {
       array_push($respon['messages'], trans('messages.suratAlreadySign'));
@@ -739,7 +763,6 @@ class SuratKeluarRepository
       } catch(\Exception $e){
         // lewat
         DB::rollback();
-        dd($e);
         $respon['success'] = false;
         $respon['state_code'] = 500;
         array_push($respon['messages'], trans('messages.errorAdministrator'));
