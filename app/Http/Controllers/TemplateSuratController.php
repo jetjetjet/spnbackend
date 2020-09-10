@@ -15,7 +15,13 @@ class TemplateSuratController extends Controller
 	{
 		$responses = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = TemplateSuratRepository::getList($filter);
+    $user = request()->user();
+    $isAdmin = $user->tokenCan('is_admin') ? true : false;
+    $permissions = Array(
+      'templateSurat_edit' => $user->tokenCan('templateSurat_edit') || $isAdmin ? 1 : 0,
+      'templateSurat_delete' => $user->tokenCan('templateSurat_delete') || $isAdmin ? 1 : 0
+    );
+    $data = TemplateSuratRepository::getList($filter, $permissions);
 
     $responses['state_code'] = 200;
     $responses['success'] = true;
@@ -49,7 +55,7 @@ class TemplateSuratController extends Controller
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $respon['messages'] = $validator->messages();
+      $results['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
       return response()->json($respon, 400);
     }

@@ -17,7 +17,13 @@ class KlasifikasiSuratController extends Controller
 	{
 		$responses = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = KlasifikasiSuratRepository::getList($filter);
+    $user = request()->user();
+    $isAdmin = $user->tokenCan('is_admin') ? true : false;
+    $permissions = Array(
+      'klasifikasiSurat_edit' => $user->tokenCan('klasifikasiSurat_edit') || $isAdmin ? 1 : 0,
+      'klasifikasiSurat_delete' => $user->tokenCan('klasifikasiSurat_delete') || $isAdmin ? 1 : 0
+    );
+    $data = KlasifikasiSuratRepository::getList($filter, $permissions);
 
     $responses['state_code'] = 200;
     $responses['success'] = true;
@@ -51,7 +57,7 @@ class KlasifikasiSuratController extends Controller
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $respon['messages'] = $validator->messages();
+      $respon['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
       return response()->json($respon, 400);
     }

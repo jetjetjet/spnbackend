@@ -37,13 +37,12 @@ class EncSuratRepository
 
     if($q == null) {
       $respon['state_code'] = 400;
-      array_push($respon['messages'], trans('messages.dataNotFound'));
+      array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Nomor Surat'));
     } else {
       $respon['success'] = true;
       $respon['state_code'] = 200;
       $respon['data'] = $q;
     }
     return $respon;
-
   }
 }

@@ -8,7 +8,7 @@ use Exception;
 
 class PositionRepository
 {
-  public static function getList($filter)
+  public static function getList($filter, $perm)
   {
     $data = new \stdClass();
     $q = Position::leftJoin('gen_group as gg', function($sq){
@@ -43,8 +43,16 @@ class PositionRepository
       'gg.group_name',
       'gg.id as group_id',
       'position_name', 
-      'position_type'
-      )->get();
+      'position_type',
+      DB::raw("
+        case when 1 = ". $perm['jabatan_edit'] ." then 1 else 0 end as can_edit
+      "),
+      DB::raw("
+        case when 1 = ". $perm['jabatan_delete'] ." then 1 else 0 end as can_delete
+      "),
+      DB::raw("
+        case when 1 = ". $perm['jabatan_savePermission'] ." then 1 else 0 end as can_permissions
+      "))->get();
     return $data;
   }
 
@@ -72,7 +80,7 @@ class PositionRepository
 
       if($q == null) {
         $respon['state_code'] = 400;
-        array_push($respon['messages'], trans('messages.dataNotFound'));
+        array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Jabatan'));
       } else {
         $respon['success'] = true;
         $respon['state_code'] = 200;
@@ -117,10 +125,10 @@ class PositionRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       $respon['data'] = $posisi;
-      array_push($respon['messages'], trans('messages.succesSaveUpdate', ["item" => $posisi->position_name, "item2" => $mode]));
+      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $posisi->position_name));
     } catch(\Exception $e){
       $respon['state_code'] = 500;
-      array_push($respon['messages'], $e->getMessage());
+      array_push($respon['messages'], sprintf(trans('messages.errorSaveUpdate'),'Jabatan.'));
     }
 
     return $respon;
@@ -143,10 +151,10 @@ class PositionRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       //$respon['data'] = $posisi;
-      array_push($respon['messages'], trans('messages.successDeleting', ["item" => $posisi->position_name]));
+      array_push($respon['messages'], sprintf(trans('messages.successDeleting', $posisi->position_name)));
     } catch (\Exception $e) {
       $respon['state_code'] = 500;
-      array_push($respon['messages'], $e->getMessage());
+      array_push($respon['messages'], sprintf(trans('messages.errorDeleting'), 'Jabatan.'));
     }
     return $respon;
   }

@@ -175,7 +175,7 @@ class SuratMasukRepository
         $respon['state_code'] = 200;
         $respon['data'] = $data;
     } else {
-      array_push($respon['messages'], trans('messages.errorNotFound'));
+      array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Surat Masuk'));
       $respon['state_code'] = 400;
     }
     return $respon;
@@ -201,7 +201,7 @@ class SuratMasukRepository
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
       $result['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorSaveSM'));
     }
     return $result;
   }
@@ -229,7 +229,7 @@ class SuratMasukRepository
     if ($id){
       $tSurat = SuratMasuk::where('active', 1)->where('id', $id)->first();
       if ($tSurat == null || $tSurat->created_by != $loginid){
-        array_push($result['messages'], trans('messages.errorNotFoundInvalid'));
+        array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Surat Masuk'));
         return false;
       } else {
         $update = $tSurat->update([
@@ -343,7 +343,7 @@ class SuratMasukRepository
 
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      array_push($respon['messages'], trans('messages.successDeleteSuratMasuk'));
+      array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Surat Masuk'));
     }
     return $respon;
   }

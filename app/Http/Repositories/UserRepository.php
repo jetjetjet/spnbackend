@@ -9,7 +9,7 @@ use Exception;
 
 class UserRepository
 {
-  public static function getUserList($filter)
+  public static function getUserList($filter, $perm)
   {
     $data = new \stdClass();
     $q = User::leftJoin('gen_position as gg', function($sq){
@@ -52,8 +52,13 @@ class UserRepository
       'email',
       'phone',
       'address',
-      'last_login'
-      )->get();
+      'last_login',
+      DB::raw("
+        case when 1 = ". $perm['user_edit'] ." then 1 else 0 end as can_edit
+      "),
+      DB::raw("
+        case when 1 = ". $perm['user_delete'] ." then 1 else 0 end as can_delete
+      "))->get();
 
     return $data;
   }
@@ -92,7 +97,7 @@ class UserRepository
       ->first();
     if ($q == null){
       $result['state_code'] = 400;
-      $result['messages'] = trans('messages.dataNotFound', ["item" => $id]);
+      $result['messages'] = Array(sprintf(trans('messages.dataNotFound'), $id));
     } else {
       $result['state_code'] = 200;
       $result['success'] = true;
@@ -141,7 +146,7 @@ class UserRepository
       $result['success'] = true;
       $result['state_code'] = 200;
       $result['data'] = $user;
-      array_push($result['messages'], trans('messages.succesSaveUpdate', ["item" => $user->username, "item2" => $mode]));
+      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $user->username));
     } catch(\Exception $e){
       $result['state_code'] = 500;
       array_push($result['messages'], $e->getMessage());
@@ -166,7 +171,7 @@ class UserRepository
 
       $result['success'] = true;
       $result['state_code'] = 200;
-      array_push($result['messages'], trans('messages.successDeleting', ["item" => $user->username]));
+      array_push($result['messages'], sprintf(trans('messages.successDeleting'),  $user->username));
     }catch(\Exception $e){
       array_push($result['messages'], $e->getMessage());
     }
@@ -186,7 +191,7 @@ class UserRepository
 
       $result['success'] = true;
       $result['state_code'] = 200;
-      array_push($result['messages'], trans('messages.successUpdatePassword', ["item" => $user->username]));
+      array_push($result['messages'], sprintf(trans('messages.successUpdatePassword'), $user->username));
     }catch(\Exception $e){
       array_push($result['messages'], $e->getMessage());
     }
@@ -287,7 +292,7 @@ class UserRepository
       return $respon;
     } else {
       $respon['state_code'] = 200;
-      array_push($result['messages'], trans('messages.errorNotFound'));
+      array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Template Surat'));
     }
     return $respon;
   }
@@ -309,7 +314,7 @@ class UserRepository
         $respon['state_code'] = 200;
         $pathPoto = Array('path_photo' => $user['path_foto']);
         array_push($respon['data'], $pathPoto);
-        array_push($respon['messages'], trans('messages.successUpdatedPhoto'), ["item" => $user->username]);
+        array_push($respon['messages'], trans('messages.successUpdatedPhoto'));
       } 
     }catch (\Exception $e){
       $respon['state_code'] = 500;
@@ -367,7 +372,7 @@ class UserRepository
       }
     } else {
       $respon['state_code'] = 400;
-      array_push($respon['messages'], trans('messages.dataNotFound'));
+      $result['messages'] = Array(sprintf(trans('messages.dataNotFound'), 'User'));
     }
 
     return $respon;

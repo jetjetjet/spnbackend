@@ -7,9 +7,21 @@ use Exception;
 
 class GroupRepository
 {
-  public static function groupList($respon)
+  public static function groupList($respon, $perm)
   {
-    $q = Group::where('active', '1')->get();
+    $q = Group::where('active', '1')
+      ->select('id',
+      'group_code',
+      'group_name',
+      'created_at',
+      'created_by',
+      DB::raw("
+        case when 1 = ". $perm['unit_edit'] ." then 1 else 0 end as can_edit
+      "),
+      DB::raw("
+        case when 1 = ". $perm['unit_delete'] ." then 1 else 0 end as can_delete
+      "))
+      ->get();
     $respon['state_code'] = 200;
     $respon['success'] = true;
     $respon['data'] = $q;
@@ -24,7 +36,7 @@ class GroupRepository
       ->first();
     if ($q == null){
       $respon['state_code'] = 400;
-      $respon['messages'] = trans('messages.dataNotFound', ["item" => $id]);
+      $respon['messages'] = Array(sprintf(trans('messages.dataNotFound'), 'Unit'));
     } else {
       $respon['state_code'] = 200;
       $respon['success'] = true;
@@ -62,7 +74,7 @@ class GroupRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       $respon['data'] = $jabatan;
-      array_push($respon['messages'], trans('messages.succesSaveUpdate', ["item" => $jabatan->group_code, "item2" => $mode]));
+      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $jabatan->group_code));
     } catch(\Exception $e){
       $respon['state_code'] = 500;
       array_push($respon['messages'], $e->getMessage());
@@ -83,7 +95,7 @@ class GroupRepository
 
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      array_push($respon['messages'], trans('messages.successDeleting', ["item" => $jabatan->group_code]));
+      array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Unit'));
     }catch(\Exception $e){
       array_push($respon['messages'], $e->getMessage());
     }

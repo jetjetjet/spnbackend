@@ -50,7 +50,7 @@ class PermissionRepository
 
     } catch(Exception $e){
       $respon['state_code'] = 500;
-      array_push($respon['messages'], trans('messages.errorApplication'));
+      array_push($respon['messages'], trans('messages.failSavePermissions'));
     }
     return $respon;
   }

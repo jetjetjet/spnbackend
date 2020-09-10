@@ -17,7 +17,14 @@ class PositionController extends Controller
 	{
 		$responses = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = PositionRepository::getList($filter);
+    $user = request()->user();
+    $isAdmin = $user->tokenCan('is_admin') ? true : false;
+    $permissions = Array(
+      'jabatan_edit' => $user->tokenCan('jabatan_edit') || $isAdmin ? 1 : 0,
+      'jabatan_savePermission' => $user->tokenCan('jabatan_savePermission') || $isAdmin ? 1 : 0,
+      'jabatan_delete' => $user->tokenCan('jabatan_delete') || $isAdmin ? 1 : 0
+    );
+    $data = PositionRepository::getList($filter, $permissions);
 
     $responses['state_code'] = 200;
     $responses['success'] = true;
@@ -42,7 +49,7 @@ class PositionController extends Controller
     // Validation rules.
     $rules = array(
       'group_id' => 'required',
-      'position_name' => 'required',
+      'position_name' => 'required'
 		);
 		
     $inputs = $request->all();
@@ -51,7 +58,7 @@ class PositionController extends Controller
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $respon['messages'] = $validator->messages();
+      $results['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
       return response()->json($respon, 400);
     }

@@ -39,7 +39,7 @@ class DisSuratKeluarRepository
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $respon;
       $respon['state_code'] = 500;
-      array_push($respon['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.failApprovedSK'));
     }
     return $respon;
   }

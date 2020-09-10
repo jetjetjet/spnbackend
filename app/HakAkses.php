@@ -18,6 +18,11 @@ class HakAkses
     'jabatan_delete',
     'jabatan_permission',
     'jabatan_savePermission',
+
+    'klasifikasiSurat_list',
+    'klasifikasiSurat_view',
+    'klasifikasiSurat_save',
+    'klasifikasiSurat_delete',
     
     'suratKeluar_list',
     'suratKeluar_view',
@@ -40,6 +45,12 @@ class HakAkses
     'templateSurat_save',
     'templateSurat_edit',
     'templateSurat_delete',
+
+    'unit_list',
+    'unit_view',
+    'unit_save',
+    'unit_edit',
+    'unit_delete',
 
     'user_list',
     'user_view',

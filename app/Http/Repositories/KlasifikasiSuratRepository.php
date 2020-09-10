@@ -8,15 +8,20 @@ use Exception;
 
 class KlasifikasiSuratRepository
 {
-  public static function getList($filter)
+  public static function getList($filter, $perm)
   {
     $data = KlasifikasiSurat::where('active', '1')
       ->select(
         'id',
         'kode_klasifikasi',
         'nama_klasifikasi',
-        'detail'
-        )
+        'detail',
+        DB::raw("
+          case when 1 = ". $perm['klasifikasiSurat_edit'] ." then 1 else 0 end as can_edit
+        "),
+        DB::raw("
+          case when 1 = ". $perm['klasifikasiSurat_delete'] ." then 1 else 0 end as can_delete
+        "))
       ->get();
     return $data;
   }
@@ -40,7 +45,7 @@ class KlasifikasiSuratRepository
 
       if($q == null) {
         $respon['state_code'] = 400;
-        array_push($respon['messages'], trans('messages.dataNotFound'));
+        array_push($respon['messages'], sprintf(trans('messages.dataNotFound'), 'Klasifikasi Surat'));
       } else {
         $respon['success'] = true;
         $respon['state_code'] = 200;
@@ -79,7 +84,7 @@ class KlasifikasiSuratRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       $respon['data'] = $posisi;
-      array_push($respon['messages'], trans('messages.succesSaveUpdate', ["item" => $posisi->position_name, "item2" => $mode]));
+      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $posisi->position_name));
     } catch(\Exception $e){
       $respon['state_code'] = 500;
       array_push($respon['messages'], $e->getMessage());
@@ -102,7 +107,7 @@ class KlasifikasiSuratRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       //$respon['data'] = $posisi;
-      array_push($respon['messages'], trans('messages.successDeleting', ["item" => $klasifikasi->klasifikasi_name]));
+      array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Klasifikasi Surat'));
     } catch (\Exception $e) {
       $respon['state_code'] = 500;
       array_push($respon['messages'], $e->getMessage());

@@ -15,7 +15,13 @@ class GroupController extends Controller
   public function getAll(Request $request)
   {
     $respon = Helper::$responses;
-    $result = GroupRepository::groupList($respon);
+    $user = request()->user();
+    $isAdmin = $user->tokenCan('is_admin') ? true : false;
+    $permissions = Array(
+      'unit_edit' => $user->tokenCan('unit_edit') || $isAdmin ? 1 : 0,
+      'unit_delete' => $user->tokenCan('unit_delete') || $isAdmin ? 1 : 0
+    );
+    $result = GroupRepository::groupList($respon, $permissions);
 
     return response()->json($result, $result['state_code']);
   }
@@ -41,9 +47,9 @@ class GroupController extends Controller
 
     if ($validator->fails()){
       $respon['state_code'] = 400;
-      $respon['messages'] = $validator->messages();
+      $respon['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
-      return response()->json($respon, 400);
+      return response()->json($respon, $respon['state_code']);
     }
 
     $result = GroupRepository::save($respon, $id, $inputs, Auth::user()->getAuthIdentifier());

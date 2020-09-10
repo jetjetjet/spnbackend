@@ -211,7 +211,7 @@ class SuratKeluarRepository
         $respon['state_code'] = 200;
         $respon['data'] = $data;
     } else {
-      array_push($respon['messages'], trans('messages.errorNotFound'));
+      array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Surat Keluar'));
       $respon['state_code'] = 400;
     }
     return $respon;
@@ -241,7 +241,7 @@ class SuratKeluarRepository
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
       $result['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorSaveSK'));
     }
     return $result;
   }
@@ -271,7 +271,7 @@ class SuratKeluarRepository
     if ($id){
       $tSurat = SuratKeluar::where('active', 1)->where('id', $id)->first();
       if ($tSurat == null || $tSurat->created_by != $loginid){
-        array_push($result['messages'], trans('messages.errorNotFoundInvalid'));
+        array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Surat Keluar'));
         return false;
       } else {
         $tempLog = $tSurat->surat_log;
@@ -383,12 +383,12 @@ class SuratKeluarRepository
         DB::commit();
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        array_push($respon['messages'], trans('messages.successApprovedSuratKeluar'));
+        array_push($respon['messages'], trans('messages.successVerifySK'));
       } catch(\Exception $e){
         DB::rollback();
         $respon['success'] = false;
         $respon['state_code'] = 500;
-        array_push($respon['messages'], trans('messages.errorAdministrator'));
+        array_push($respon['messages'], trans('messages.errorVerifySK'));
       }
     } else {
       $respon['state_code'] = 500;
@@ -423,7 +423,7 @@ class SuratKeluarRepository
       } catch (\Exception $e) {
         if ($e->getMessage() === 'rollbacked') return $result;
         $result['state_code'] = 500;
-        array_push($result['messages'], $e->getMessage());
+        array_push($respon['messages'], trans('messages.errorAgendaSK'));
       }
     } else {
       $respon['state_code'] = 500;
@@ -476,7 +476,7 @@ class SuratKeluarRepository
       $respon['success'] = true;
       $respon['state_code'] = 200;
       $respon['data'] = $sk;
-      array_push($respon['messages'], trans('messages.successApprovedSuratKeluar'));
+      array_push($respon['messages'], trans('messages.successApprovedSK'));
     } else {
       $respon['state_code'] = 500;
       array_push($respon['messages'], trans('messages.suratAlreadyApproved'));
@@ -511,7 +511,7 @@ class SuratKeluarRepository
 
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      array_push($respon['messages'], trans('messages.successDeleteSuratKeluar'));
+      array_push($respon['messages'], sprintf(trans('messages.successDeleting', 'Surat Keluar')));
     }
     return $respon;
   }
@@ -648,10 +648,10 @@ class SuratKeluarRepository
         //$pdf->reset();
         $respon['success'] = true;
         $respon['state_code'] = 200;
-        array_push($respon['messages'], trans('messages.successRejectedSignSuratKeluar'));
+        array_push($respon['messages'], trans('messages.successRejectedSignSK'));
       }
     } else {
-      array_push($respon['messages'], trans('messages.suratAlreadySign'));
+      array_push($respon['messages'], trans('messages.suratAlreadySigned'));
     }
     return $respon;
   }
@@ -765,12 +765,12 @@ class SuratKeluarRepository
         DB::rollback();
         $respon['success'] = false;
         $respon['state_code'] = 500;
-        array_push($respon['messages'], trans('messages.errorAdministrator'));
+        array_push($respon['messages'], trans('messages.errorGenerateSK'));
       }
     } else {
       $respon['success'] = false;
       $respon['state_code'] = 500;
-      array_push($respon['messages'], trans('messages.dataNotFound'));
+      array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Surat Keluar'));
     }
     return $respon;
   }

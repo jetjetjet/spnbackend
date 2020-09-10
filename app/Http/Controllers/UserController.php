@@ -16,7 +16,13 @@ class UserController extends Controller
   {
     $result = Helper::$responses;
     $filter = Helper::mapFilter($request);
-    $data = UserRepository::getUserList($filter);
+    $user = request()->user();
+    $isAdmin = $user->tokenCan('is_admin') ? true : false;
+    $permissions = Array(
+      'user_edit' => $user->tokenCan('user_edit') || $isAdmin ? 1 : 0,
+      'user_delete' => $user->tokenCan('user_delete') || $isAdmin ? 1 : 0
+    );
+    $data = UserRepository::getUserList($filter, $permissions);
 
     $result['state_code'] = 200;
     $result['success'] = true;
@@ -58,7 +64,7 @@ class UserController extends Controller
       
       if ($validator->fails()){
         $results['state_code'] = 400;
-        $results['messages'] = $validator->messages();
+        $results['messages'] = Array($validator->messages()->first());
         $results['data'] = $inputs;
         return response()->json($results, 400);
       }
@@ -73,25 +79,28 @@ class UserController extends Controller
   public function save(Request $request, $id = null)
   {
     $results = Helper::$responses;
-    if(!$id){
-      $rules['password'] = 'required';
-      $rules['nip'] = 'required';
-      $rules['email'] = 'required';
-      $rules['nip'] = 'required';
-    }
     $rules = array(
       'jenis_kelamin' => 'required',
-      'phone' => 'max:15',
+      'phone' => 'max:15'
     );
-
+    if(!$id){
+      $rules['position_id'] = 'required';
+      $rules['full_name'] = 'required';
+      $rules['password'] = 'required';
+      $rules['username'] = 'required';
+      $rules['nip'] = 'required|numeric|max:18';
+      $rules['email'] = 'required';
+      $rules['jenis_kelamin'] = 'required';
+      $rules['phone'] = 'max:15';
+    }
     $inputs = $request->all();
     $validator = Validator::make($inputs, $rules);
     
     if ($validator->fails()){
-      $results['state_code'] = 400;
-      $results['messages'] = $validator->messages();
+      $results['state_code'] = 500;
+      $results['messages'] = Array($validator->messages()->first());
       $results['data'] = $inputs;
-      return response()->json($results, 400);
+      return response()->json($results, $results['state_code']);
     }
 
     $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
@@ -121,9 +130,9 @@ class UserController extends Controller
 
     if ($validator->fails()){
       $results['state_code'] = 400;
-      $results['messages'] = $validator->messages();
+      $results['messages'] = Array($validator->messages()->first());
       $results['data'] = $inputs;
-      return response()->json($results, 400);
+      return response()->json($results, $results['state_code']);
     }
 
     $result = UserRepository::changePassword($id, $results, $inputs, Auth::user()->getAuthIdentifier());
@@ -194,9 +203,9 @@ class UserController extends Controller
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $respon['messages'] = $validator->messages();
+      $respon['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
-      return response()->json($respon, 400);
+      return response()->json($respon, $respon['state_code']);
     }
     
     $result = UserRepository::saveFoto($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
@@ -227,7 +236,7 @@ class UserController extends Controller
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $respon['messages'] = $validator->messages();
+      $respon['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
       return response()->json($respon, 400);
     }

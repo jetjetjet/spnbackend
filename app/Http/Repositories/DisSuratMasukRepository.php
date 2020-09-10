@@ -31,10 +31,9 @@ class DisSuratMasukRepository
         array_push($respon['messages'], trans('messages.successDispositionInMail'));
       });
     } catch (\Exception $e) {
-      dd($e);
       if ($e->getMessage() === 'rollbacked') return $result;
       $respon['state_code'] = 500;
-      array_push($respon['messages'], trans('messages.errorAdministrator'));
+      array_push($respon['messages'], trans('messages.failDispositionInMail'));
     }
     return $respon;
   }
@@ -106,6 +105,32 @@ class DisSuratMasukRepository
           'disposisi_file_id' => $saveFileToDb->id
         ]);
         $update = true;
+        // $checkFile = file_exists($path . $newFilePath);
+        // if ($checkFile){
+        //   $converter = new OfficeConverter($path . $newFilePath);
+        //   //generates pdf file in same directory as test-file.docx
+        //   $converter->convertTo($newFile.".pdf");
+        //   $pdfConverted = '/upload/suratmasuk/' . $newFile.'.pdf';
+        //   if (file_exists($path . $pdfConverted)){
+        //     $saveFileToDb = File::create([
+        //       'file_name' => $newFile.'.pdf',
+        //       'file_path' => $pdfConverted,
+        //       'original_name' => $newFile,
+        //       'active' => '1',
+        //       'created_at' => DB::raw('now()'),
+        //       'created_by' => $loginid
+        //     ]);
+    
+        //     $updateSK = $sM->update([
+        //       'disposisi_file_id' => $saveFileToDb->id
+        //     ]);
+        //     $update = true;
+        //   } else {
+        //     throw new Exception();
+        //   }
+        // } else {
+        //   throw new Exception();
+        // }
       }
     } catch(\Exception $e){
       throw new Exception('Rollbacked');

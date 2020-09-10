@@ -49,6 +49,7 @@ class SuratMasukController extends Controller
     $rules = array(
       'asal_surat' => 'required',
       'nomor_surat' => 'required',
+      'perihal' => 'required',
       'tgl_surat' => 'required',
       'to_user_id' => 'required',
       'sifat_surat' => 'required',

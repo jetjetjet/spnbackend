@@ -11,12 +11,18 @@ use Exception;
 
 class TemplateSuratRepository
 {
-  public static function getList($filter)
+  public static function getList($filter, $perm)
   {
     $data = Array();
 
     $q = TemplateSurat::where('active', '1')
-      ->select('id', 'template_type', 'template_name')
+      ->select('id', 'template_type', 'template_name',
+      DB::raw("
+        case when 1 = ". $perm['templateSurat_edit'] ." then 1 else 0 end as can_edit
+      "),
+      DB::raw("
+        case when 1 = ". $perm['templateSurat_delete'] ." then 1 else 0 end as can_delete
+      "))
       ->get();
     
     foreach($q as $qx){
@@ -57,7 +63,7 @@ class TemplateSuratRepository
       $respon['data'] = $tmp;
     } else {
       $respon['state_code'] = 400;
-      array_push($respon['messages'], trans('messages.dataNotFound'));
+      array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Template Surat'));
     }
 
     return $respon;
@@ -79,7 +85,7 @@ class TemplateSuratRepository
 
         $result['success'] = true;
         $result['state_code'] = 200;
-        //$inputs['file_id'] = $result['file_id'];
+        array_push($respon['messages'], trans('messages.successSaveTemplate'));
         $inputs['id'] = $result['id'];
         unset($result['id']);
         //$result['data'] = $inputs;
@@ -87,7 +93,7 @@ class TemplateSuratRepository
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
       $result['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorSaveTemplate'));
     }
     return $result;
   }
@@ -182,10 +188,10 @@ class TemplateSuratRepository
 
       $result['success'] = true;
       $result['state_code'] = 200;
-      array_push($result['messages'], trans('messages.successDeleting'));
+      array_push($result['messages'], sprintf(trans('messages.successDeleting'), 'Template surat'));
     }catch(\Exception $e){
       $result['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($result['messages'], sprintf(trans('messages.errorDeleting'), 'Template surat'));
     }
     return $result;
   }
