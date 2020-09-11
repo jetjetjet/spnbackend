@@ -607,7 +607,7 @@ class SuratKeluarRepository
             'signed_by' => $loginid,
             'is_sign' => '0',
             'signed_at' => DB::raw('now()'),
-            'status_log' => $inputs['log'],
+            'surat_log' => $inputs['log'],
             'modified_at' => DB::raw('now()'),
             'modified_by' => $loginid
           ]);

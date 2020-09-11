@@ -23,6 +23,7 @@ Route::post('/suratKeluar/cetak/{id?}', 'SuratKeluarController@cetakNomor');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
     
+    Route::get('/dashboardTugas', 'DashboardController@getTugas');
     Route::get('/cekUser', 'AuthController@getAuthUser');
     Route::post('/logout', 'AuthController@logout');
 
