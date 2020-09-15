@@ -21,7 +21,7 @@ class AuthController extends Controller
   {
     $result = Helper::$responses;
     $rules = array(
-      'email' => 'required|email',
+      'nip' => 'required',
       'password' => 'required',
     );
 
@@ -34,10 +34,10 @@ class AuthController extends Controller
       return response()->json($result, 400);
     }
 
-    $user = User::where('email', $request->email)->first();
+    $user = User::where('nip', $request->nip)->first();
     if($user != null){
       if (!Hash::check($request->password, $user->password)) {
-        array_push($result['messages'],'Password Anda Salah');
+        array_push($result['messages'],'NIP/Password Anda Salah');
         $result['state_code'] = 400;
       } else {
         $perm = User::getPermission($user->id);
@@ -45,7 +45,7 @@ class AuthController extends Controller
         if($sa)
           array_push($perm, 'is_admin');
           
-        $token = $user->createToken($request->email, $perm);
+        $token = $user->createToken($request->nip, $perm);
         $jbtgrp = User::JabatanGroup($user->id)->first();
         $data = Array( "token" => $token->plainTextToken,
           "userid" => $user->id,
@@ -69,7 +69,7 @@ class AuthController extends Controller
         $result['data'] = $data;
       }
     } else {
-      array_push($result['messages'],'Email anda salah atau tidak terdaftar');
+      array_push($result['messages'],'NIP/Password anda salah atau tidak terdaftar');
       $result['state_code'] = 400;
     }
     $idUser = $user->id ?? 0;
