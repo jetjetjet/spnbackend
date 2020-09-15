@@ -47,14 +47,13 @@ class SuratKeluarRepository
       //->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->where('sk.active', '1');
     if(!$isAdmin)
-      $q = $q->where('dsk.tujuan_user_id', $loginid)
-        ->orWhere('dsk.created_by', $loginid);
+      $q = $q->whereRaw('(dsk.tujuan_user_id = ? or dsk.created_by = ? )', Array($loginid, $loginid));
     
     if($filter->search){
       foreach($filter->search as $qCol){
         $sCol = explode('|', $qCol);
         $fCol = str_replace('"', '', $sCol[0]);
-        $q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
+        $q = $q->whereRaw('sk.'.$fCol. " like ? ", ['%' . trim($sCol[1]) . '%' ]);
       }
     }
       
@@ -511,7 +510,7 @@ class SuratKeluarRepository
 
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      array_push($respon['messages'], sprintf(trans('messages.successDeleting', 'Surat Keluar')));
+      array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Surat Keluar'));
     }
     return $respon;
   }
@@ -544,12 +543,24 @@ class SuratKeluarRepository
           $pdf = new Fpdi();
           $pdf->setPrintHeader(false);
           $pdf->setPrintFooter(false);
-          $pdf->AddPage();
+          //$pdf->AddPage();
           // set the source file
           $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
           for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
-            $tplId = $pdf->importPage(1);
-            $pdf->useTemplate($tplId);
+            // import a page
+            $templateId = $pdf->importPage($pageNo);
+            // get the size of the imported page
+            $size = $pdf->getTemplateSize($templateId);
+
+            // create a page (landscape or portrait depending on the imported page size)
+            if ($size[0] > $size[1]) {
+              $pdf->AddPage('L', array($size[0], $size[1]));
+            } else {
+              $pdf->AddPage('P', array($size[0], $size[1]));
+            }
+
+            // use the imported page
+            $pdf->useTemplate($templateId);
   
             if($pageNo == 1){
               //set certificate file
@@ -605,7 +616,7 @@ class SuratKeluarRepository
           $update = $sk->update([
             'file_id' => $newFile->id,
             'signed_by' => $loginid,
-            'is_sign' => '0',
+            'is_sign' => '1',
             'signed_at' => DB::raw('now()'),
             'surat_log' => $inputs['log'],
             'modified_at' => DB::raw('now()'),

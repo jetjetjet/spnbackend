@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\AuditTrailRepository;
+use App\User;
 use Auth;
 use App\Helpers\Helper;
 use Validator;
@@ -34,7 +35,14 @@ class UserController extends Controller
   public function getById(Request $request, $id = null)
   {
     $results = Helper::$responses;
-    $result = UserRepository::getUserById($id, $results);
+    $loginid = Auth::user()->getAuthIdentifier();
+    $isAdmin = User::checkAdmin($loginid);
+    if(($id != null && $id == $loginid) || $isAdmin){
+      $result = UserRepository::getUserById($id, $results);
+    } else {
+      $result = $results;
+      $results['messages'] = Array('Tidak dapat melihat profil.');
+    }
     return response()->json($result, $result['state_code']);
   }
 
@@ -52,7 +60,7 @@ class UserController extends Controller
   public function saveProfile(Request $request, $id)
   {
     $results = Helper::$responses;
-
+    
     if($id == Auth::user()->getAuthIdentifier()){
       $rules = array(
         'jenis_kelamin' => 'required',
@@ -79,33 +87,40 @@ class UserController extends Controller
   public function save(Request $request, $id = null)
   {
     $results = Helper::$responses;
-    $rules = array(
-      'jenis_kelamin' => 'required',
-      'phone' => 'max:15'
-    );
-    if(!$id){
-      $rules['position_id'] = 'required';
-      $rules['full_name'] = 'required';
-      $rules['password'] = 'required';
-      $rules['username'] = 'required';
-      $rules['nip'] = 'required|numeric|max:18';
-      $rules['email'] = 'required';
-      $rules['jenis_kelamin'] = 'required';
-      $rules['phone'] = 'max:15';
-    }
-    $inputs = $request->all();
-    $validator = Validator::make($inputs, $rules);
-    
-    if ($validator->fails()){
-      $results['state_code'] = 500;
-      $results['messages'] = Array($validator->messages()->first());
-      $results['data'] = $inputs;
-      return response()->json($results, $results['state_code']);
-    }
-
-    $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
-    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+    $loginid = Auth::user()->getAuthIdentifier();
+    $isAdmin = User::checkAdmin($loginid);
+    if(($id != null && $id == $loginid) || $isAdmin){
+      $rules = array(
+        'jenis_kelamin' => 'required',
+        'phone' => 'max:15'
+      );
+      
+      if(!$id){
+        $rules['position_id'] = 'required';
+        $rules['full_name'] = 'required';
+        $rules['password'] = 'required';
+        $rules['username'] = 'required';
+        $rules['nip'] = 'required|numeric|max:18';
+        $rules['email'] = 'required';
+        $rules['jenis_kelamin'] = 'required';
+        $rules['phone'] = 'max:15';
+      }
+      $inputs = $request->all();
+      $validator = Validator::make($inputs, $rules);
+      
+      if ($validator->fails()){
+        $results['state_code'] = 500;
+        $results['messages'] = Array($validator->messages()->first());
+        $results['data'] = $inputs;
+        return response()->json($results, $results['state_code']);
+      }
   
+      $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+      $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+    } else {
+      $result = $results;
+      $results['messages'] = Array('Tidak dapat mengautorisasi.');
+    }
     return response()->json($result, $result['state_code']);
   }
 

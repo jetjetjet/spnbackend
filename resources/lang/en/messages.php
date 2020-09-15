@@ -2,6 +2,7 @@
 
 return[
   'dataNotFound' => '%s tidak ditemukan.',
+  'errorCallAdmin' => 'Kesalahan!. Hubungi Admin Aplikasi',
   'errorAgendaSK' => 'Gagal agenda Surat Keluar.',
   'errorDeleting' => 'Gagal hapus %s',
   'errorDeleteSKApproved' => 'Tidak bisa hapus surat yang sudah disetujui.',

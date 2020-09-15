@@ -92,13 +92,13 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/unit/search', 'GroupController@searchGroup');
     
     Route::get('/user/list', 'UserController@getAll')->middleware('can:user_list');
-    Route::get('/user/view/{id?}', 'UserController@getById')->middleware('can:user_view');
+    Route::get('/user/view/{id?}', 'UserController@getById');
     Route::get('/user/createTtdId/{id}', 'UserController@createIdTtd')->middleware('can:user_createttd');
     Route::get('/user/search', 'UserController@searchUser');
     Route::get('/user/searchSM', 'UserController@searchUserSM');
     Route::get('/user/searchSK', 'UserController@searchUserSK');
     Route::get('/user/searchTtd', 'UserController@searchUserTtd');
-    Route::post('/user/save/{id?}', 'UserController@save')->middleware('can:user_save');
+    Route::post('/user/save/{id?}', 'UserController@save');
     Route::post('/user/delete/{id?}', 'UserController@delete')->middleware('can:user_delete');
     Route::post('/user/changePassword/{id?}', 'UserController@changePassword')->middleware('can:user_save');
     Route::post('/user/uploadPhoto/{id}', 'UserController@uploadFoto')->middleware('can:user_save');

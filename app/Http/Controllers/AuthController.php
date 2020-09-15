@@ -29,7 +29,7 @@ class AuthController extends Controller
     $validator = Validator::make($inputs, $rules);
     if ($validator->fails()){
       $result['state_code'] = 400;
-      $result['messages'] = $validator->messages();
+      $result['messages'] = Array($validator->messages()->first());
       $result['data'] = $inputs;
       return response()->json($result, 400);
     }
@@ -47,6 +47,14 @@ class AuthController extends Controller
           
         $token = $user->createToken($request->nip, $perm);
         $jbtgrp = User::JabatanGroup($user->id)->first();
+        $poto = "";
+        if($user->path_foto == null && $user->jenis_kelamin == "Laki-laki"){
+          $poto = '/upload/photo/man.png';
+        } else if ($user->path_foto == null && $user->jenis_kelamin == "Perempuan") {
+          $poto = '/upload/photo/woman.png';
+        } else {
+          $poto = $user->path_foto;
+        }
         $data = Array( "token" => $token->plainTextToken,
           "userid" => $user->id,
           "username" => $user->username,
@@ -57,7 +65,7 @@ class AuthController extends Controller
           "position_name" => $jbtgrp->position_name ?? null,
           "group_id" => $jbtgrp->group_id ?? null,
           "group_name" => $jbtgrp->group_name ?? null,
-          "path_foto" => $user->path_foto,
+          "path_foto" => $poto,
           "address" => $user->address,
           "phone" => $user->phone,
           "jenis_kelamin" => $user->jenis_kelamin,

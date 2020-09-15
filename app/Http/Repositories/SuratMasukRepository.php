@@ -27,14 +27,13 @@ class SuratMasukRepository
     ->where('sm.active', '1');
 
     if(!$isAdmin)
-      $q = $q->where('dsm.to_user_id', $loginid)
-        ->orWhere('dsm.created_by', $loginid);
+    $q = $q->whereRaw('(dsm.to_user_id = ? or dsm.created_by = ? )', Array($loginid, $loginid));
 
     if($filter->search){
       foreach($filter->search as $qCol){
         $sCol = explode('|', $qCol);
         $fCol = str_replace('"', '', $sCol[0]);
-        $q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
+        $q = $q->whereRaw('sm.'.$fCol. " like ? ", ['%' . trim($sCol[1]) . '%' ]);
       }
     }
       

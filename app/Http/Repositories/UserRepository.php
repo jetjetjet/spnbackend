@@ -146,10 +146,10 @@ class UserRepository
       $result['success'] = true;
       $result['state_code'] = 200;
       $result['data'] = $user;
-      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $user->username));
+      array_push($result['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $user->username));
     } catch(\Exception $e){
       $result['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
 
     return $result;
@@ -173,7 +173,7 @@ class UserRepository
       $result['state_code'] = 200;
       array_push($result['messages'], sprintf(trans('messages.successDeleting'),  $user->username));
     }catch(\Exception $e){
-      array_push($result['messages'], $e->getMessage());
+      array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
     return $result;
   }
@@ -193,7 +193,7 @@ class UserRepository
       $result['state_code'] = 200;
       array_push($result['messages'], sprintf(trans('messages.successUpdatePassword'), $user->username));
     }catch(\Exception $e){
-      array_push($result['messages'], $e->getMessage());
+      array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
     return $result;
   }
@@ -318,7 +318,7 @@ class UserRepository
       } 
     }catch (\Exception $e){
       $respon['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
     return $respon;
   }
@@ -342,7 +342,7 @@ class UserRepository
       } 
     }catch (\Exception $e){
       $respon['state_code'] = 500;
-      array_push($result['messages'], $e->getMessage());
+      array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
     return $respon;
   }
@@ -368,7 +368,7 @@ class UserRepository
         array_push($respon['messages'], trans('messages.successCreateID'));
       }catch(\Exception $e){
         $respon['state_code'] = 500;
-        array_push($respon['messages'], $e->getMessage());
+        array_push($result['messages'], trans('messages.errorCallAdmin'));
       }
     } else {
       $respon['state_code'] = 400;
