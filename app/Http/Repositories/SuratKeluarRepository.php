@@ -2,7 +2,8 @@
 
 namespace app\Http\Repositories;
 
-use setasign\Fpdi\Tcpdf\Fpdi;
+// use setasign\Fpdi\Tcpdf\Fpdi;
+use App\Helpers\MyPdf;
 use Illuminate\Support\Str;
 use App\Http\Repositories\DisSuratKeluarRepository;
 use App\Model\File;
@@ -540,10 +541,13 @@ class SuratKeluarRepository
           ->select('ttd', 'email', 'username', 'full_name')
           ->first();
 
-          $pdf = new Fpdi();
+          $pdf = new MyPdf();
           $pdf->setPrintHeader(false);
-          $pdf->setPrintFooter(false);
-          //$pdf->AddPage();
+
+          $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.surat.ratafd.xyz/validate-mail untuk validasi surat.");
+          $pdf->setCustomFooterText($text);
+          //$pdf->setPrintFooter(false);
+          
           // set the source file
           $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
           for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
