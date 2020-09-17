@@ -50,6 +50,7 @@ class NotificationRepository
     if($user != null){
       $notif = Array(
         'id_reference' => $data['id_reference'],
+        'id_subreference' => $data['id_subreference'],
         'display' => $data['display'],
         'full_name' =>$user->full_name,
         'type' => $data['type'],

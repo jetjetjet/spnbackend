@@ -56,7 +56,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/notif/topbar/count', 'NotificationController@getCount');
     Route::get('/notif/topbar/view', 'NotificationController@getNotif');
     Route::get('/notif/all', 'NotificationController@getAll');
-    Route::post('/notif/read/{id}', 'NotificationController@read');
+    Route::post('/notif/read/{id}/{subid}/{type}', 'NotificationController@read');
 
     Route::get('/profile/get', 'UserController@getProfile');
     Route::post('/profile/save', 'UserController@saveProfile');

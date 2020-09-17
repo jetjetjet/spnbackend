@@ -79,7 +79,7 @@ class SuratMasukController extends Controller
 
   public function read(Request $request, $idDisposisi)
   {
-    $read = DisSuratMasukRepository::readDis($idDisposisi, Auth::user()->getAuthIdentifier());
+    $read = DisSuratMasukRepository::readDis($idDisposisi);
     $res = $read != null ? "Ok" : "Nok";
     return response()->json($res, 200);
   }

@@ -194,6 +194,7 @@ class DisSuratMasukRepository
         if($q != null){
           $notif = array(
             'id_reference' => $inputs['surat_masuk_id'],
+            'id_subreference' => $q->id,
             'display' => 'Surat Masuk - ' . ($inputs['nomor_surat'] ?? "_"),
             'type' => 'SURATMASUK'
           );
@@ -209,9 +210,9 @@ class DisSuratMasukRepository
     return $result;
   }
 
-  public static function readDis($id, $loginid)
+  public static function readDis($id)
   {
-    $surat = DisSuratMasuk::where('id', $id)->where('to_user_id', $loginid)->where('active', '1')->first();
+    $surat = DisSuratMasuk::where('id', $id)->where('active', '1')->first();
 
     if ($surat != null) {
       $surat->update([

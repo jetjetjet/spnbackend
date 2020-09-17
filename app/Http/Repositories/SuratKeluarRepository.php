@@ -241,7 +241,7 @@ class SuratKeluarRepository
     } catch (\Exception $e) {
       if ($e->getMessage() === 'rollbacked') return $result;
       $result['state_code'] = 500;
-      array_push($respon['messages'], trans('messages.errorSaveSK'));
+      array_push($result['messages'], trans('messages.errorSaveSK'));
     }
     return $result;
   }

@@ -99,7 +99,7 @@ class AuthController extends Controller
     $result = Helper::$responses;
     $result['success'] = true;
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Logout', $idUser);
-    $user->tokens()->where('name', $user->email)->delete();
+    $user->tokens()->where('name', $user->nip)->delete();
     return response()->json(['success' => true], 200);
   }
 

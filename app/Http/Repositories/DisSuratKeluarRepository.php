@@ -89,6 +89,7 @@ class DisSuratKeluarRepository
       $sk = DB::table('surat_keluar')->where('active', '1')->where('id', $inputs['surat_keluar_id'])->select('tujuan_surat')->first();
       $notif = array(
         'id_reference' =>  $inputs['surat_keluar_id'],
+        'id_subreference' => $q->id,
         'display' => 'Surat Keluar - ' . $sk->tujuan_surat . ' - ' . $log,
         'type' => 'SURATKELUAR'
       );
