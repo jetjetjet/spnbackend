@@ -8,6 +8,7 @@ use App\Http\Repositories\NotificationRepository;
 use App\Helpers\Helper;
 use DB;
 use Exception;
+use NcJoes\OfficeConverter\OfficeConverter;
 
 class DisSuratMasukRepository
 {
@@ -92,45 +93,32 @@ class DisSuratMasukRepository
         $docx->setValue('{DISPOSISI_KABID}', $getSM->arahan_kabid);
         $docx->saveAs( $path . $newFilePath, TRUE);
 
-        $saveFileToDb = File::create([
-          'file_name' => $newFile.'.docx',
-          'file_path' => $newFilePath,
-          'original_name' => $newFile,
-          'active' => '1',
-          'created_at' => DB::raw('now()'),
-          'created_by' => $loginid
-        ]);
-
-        $updateSK = $sM->update([
-          'disposisi_file_id' => $saveFileToDb->id
-        ]);
-        $update = true;
-        // $checkFile = file_exists($path . $newFilePath);
-        // if ($checkFile){
-        //   $converter = new OfficeConverter($path . $newFilePath);
-        //   //generates pdf file in same directory as test-file.docx
-        //   $converter->convertTo($newFile.".pdf");
-        //   $pdfConverted = '/upload/suratmasuk/' . $newFile.'.pdf';
-        //   if (file_exists($path . $pdfConverted)){
-        //     $saveFileToDb = File::create([
-        //       'file_name' => $newFile.'.pdf',
-        //       'file_path' => $pdfConverted,
-        //       'original_name' => $newFile,
-        //       'active' => '1',
-        //       'created_at' => DB::raw('now()'),
-        //       'created_by' => $loginid
-        //     ]);
+        $checkFile = file_exists($path . $newFilePath);
+        if ($checkFile){
+          $converter = new OfficeConverter($path . $newFilePath);
+          //generates pdf file in same directory as test-file.docx
+          $converter->convertTo($newFile.".pdf");
+          $pdfConverted = '/upload/suratmasuk/' . $newFile.'.pdf';
+          if (file_exists($path . $pdfConverted)){
+            $saveFileToDb = File::create([
+              'file_name' => $newFile.'.pdf',
+              'file_path' => $pdfConverted,
+              'original_name' => $newFile,
+              'active' => '1',
+              'created_at' => DB::raw('now()'),
+              'created_by' => $loginid
+            ]);
     
-        //     $updateSK = $sM->update([
-        //       'disposisi_file_id' => $saveFileToDb->id
-        //     ]);
-        //     $update = true;
-        //   } else {
-        //     throw new Exception();
-        //   }
-        // } else {
-        //   throw new Exception();
-        // }
+            $updateSK = $sM->update([
+              'disposisi_file_id' => $saveFileToDb->id
+            ]);
+            $update = true;
+          } else {
+            throw new Exception();
+          }
+        } else {
+          throw new Exception();
+        }
       }
     } catch(\Exception $e){
       throw new Exception('Rollbacked');

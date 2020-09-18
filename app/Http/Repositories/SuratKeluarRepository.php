@@ -21,6 +21,7 @@ use PDF;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
+use NcJoes\OfficeConverter\OfficeConverter;
 
 class SuratKeluarRepository
 {
@@ -731,51 +732,80 @@ class SuratKeluarRepository
         $docx->setValue('{TGL_SURAT}', $inputs['tgl_teks']);
         $docx->saveAs( $path . $newFilePath, TRUE);
 
-        $saveFileToDb = File::create([
-          'file_name' => $newFile.'.docx',
-          'file_path' => $newFilePath,
-          'original_name' => $newFile,
-          'active' => '1',
-          'created_at' => DB::raw('now()'),
-          'created_by' => $loginid
-        ]);
+        $checkFile = file_exists($path . $newFilePath);
+        if ($checkFile){
+          $converter = new OfficeConverter($path . $newFilePath);
+          //generates pdf file in same directory as test-file.docx
+          $converter->convertTo($newFile.".pdf");
+          $pdfConverted = '/upload/suratkeluar/' . $newFile.'.pdf';
+          if (file_exists($path . $pdfConverted)){
+            $saveFileToDb = File::create([
+              'file_name' => $newFile.'.pdf',
+              'file_path' => $pdfConverted,
+              'original_name' => $newFile,
+              'active' => '1',
+              'created_at' => DB::raw('now()'),
+              'created_by' => $loginid
+            ]);
+    
+            $saveNomor = NomorSurat::create([
+              'periode' => $tahun->format('Y'),
+              'prefix'=> $kKlasifikasi->kode_klasifikasi,
+              'urut_surat' => $latNo,
+              'urut_agenda' => $latAg,
+              'no_surat' => $noSurat,
+              'no_agenda' => $noSurat,
+              'surat_keluar_id' => $id,
+              'klasifikasi_id' => $kKlasifikasi->klasifikasi_id,
+              'active' => '1',
+              'created_at' => DB::raw('now()'),
+              'created_by' => $loginid
+            ]);
 
-        $saveNomor = NomorSurat::create([
-          'periode' => $tahun->format('Y'),
-          'prefix'=> $kKlasifikasi->kode_klasifikasi,
-          'urut_surat' => $latNo,
-          'urut_agenda' => $latAg,
-          'no_surat' => $noSurat,
-          'no_agenda' => $noSurat,
-          'surat_keluar_id' => $id,
-          'klasifikasi_id' => $kKlasifikasi->klasifikasi_id,
-          'active' => '1',
-          'created_at' => DB::raw('now()'),
-          'created_by' => $loginid
-        ]);
+            $updateSK = SuratKeluar::where('id', $id)
+              ->where('active', '1')
+              ->where('is_agenda', '1');
 
-        $updateSK = SuratKeluar::where('id', $id)
-          ->where('active', '1')
-          ->where('is_agenda', '1')
-          ->update([
-            'nomor_surat' => $noSurat,
-            'nomor_agenda' => $noAgenda,
-            'tgl_surat' => $inputs['tgl_agenda'],
-            'agenda_file_id' => $saveFileToDb->id,
-            'modified_at' => DB::raw('now()'),
-            'modified_by' => $loginid
-          ]);
-        
-        DB::commit();
+              $upd = $updateSK->update([
+                'nomor_surat' => $noSurat,
+                'nomor_agenda' => $noAgenda,
+                'tgl_surat' => $inputs['tgl_agenda'],
+                'agenda_file_id' => $saveFileToDb->id,
+                'agenda_at' => DB::raw("now()"),
+                'agenda_by' => $loginid,
+                'surat_log' => 'AGENDA',
+                'is_sign' => '1',
+                'modified_at' => DB::raw('now()'),
+                'modified_by' => $loginid
+              ]);
 
-        // if($dis == null){
-        //   throw new Exception('rollbacked');
-        // }
+            $updateSK = $updateSK->first();
+            $dataDis = Array(
+              'surat_keluar_id' => $updateSK->id,
+              'tujuan_user_id' => $updateSK->sign_user_id,
+              'file_id' => $saveFileToDb->id,
+              'log' => "AGENDA",
+              'keterangan' => "Sudah diagendakan" // $inputs['keterangan'],
+            );
+            $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+            if(!$dis){
+              throw new Exception();
+            }
+
+            DB::commit();
+            $update = true;
+          } else {
+            throw new Exception();
+          }
+        } else {
+          throw new Exception();
+        }
+            
         $respon['success'] = true;
         $respon['state_code'] = 200;
         array_push($respon['messages'], trans('messages.succeedGenerateNomorSurat'));
-
       } catch(\Exception $e){
+        dd($e);
         // lewat
         DB::rollback();
         $respon['success'] = false;
