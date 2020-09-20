@@ -3,6 +3,7 @@
 namespace app\Http\Repositories;
 
 use App\Model\Position;
+use App\Http\Repositories\ErrorLogRepository;
 use DB;
 use Exception;
 
@@ -18,27 +19,6 @@ class PositionRepository
         'gen_position.active' => '1'
       ]);
 
-    // if($filter->search){
-		// 	foreach($filter->search as $qCol){
-		// 		$sCol = explode('|', $qCol);
-		// 		$fCol = str_replace('"', '', $sCol[0]);
-		// 		$q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
-		// 	}
-    // }
-    
-    // $qCount = $q->count();
-
-    // if ($filter->sortColumns){
-		// 	$order = $filter->sortColumns[0];
-		// 	$q = $q->orderBy($order->column, $order->order);
-		// } else {
-		// 	$q = $q->orderBy('gen_position.created_at');
-    // }
-    
-		// $q = $q->skip($filter->offset);
-    // $q = $q->take($filter->limit);
-    
-    //$data->totalCount = $qCount;
     $data = $q->select('gen_position.id', 
       'gg.group_name',
       'gg.id as group_id',
@@ -127,6 +107,13 @@ class PositionRepository
       $respon['data'] = $posisi;
       array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $posisi->position_name));
     } catch(\Exception $e){
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'JBTN',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
       array_push($respon['messages'], sprintf(trans('messages.errorSaveUpdate'),'Jabatan.'));
     }
@@ -137,8 +124,13 @@ class PositionRepository
   public static function delete($respon, $id, $loginid)
   {
     try{
-      $posisi = Position::where('active', '1')->where('id', $id)->firstOrFail();
+      $cekRef = DB::table('gen_user')->where('active','1')->where('position_id', $id)->first();
+      if($cekRef != null){
+        array_push($respon['messages'], sprintf(trans('messages.errorDelReference'), 'Jabatan'));
+        return $respon;
+      }
 
+      $posisi = Position::where('active', '1')->where('id', $id)->firstOrFail();
       if ($posisi->id == 1 || $posisi->id == 2)
         throw new exception;
 
@@ -153,6 +145,13 @@ class PositionRepository
       //$respon['data'] = $posisi;
       array_push($respon['messages'], sprintf(trans('messages.successDeleting', $posisi->position_name)));
     } catch (\Exception $e) {
+      $log =Array(
+        'action' => 'DEL',
+        'modul' => 'JBTN',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
       array_push($respon['messages'], sprintf(trans('messages.errorDeleting'), 'Jabatan.'));
     }
@@ -161,10 +160,11 @@ class PositionRepository
 
   public static function searchPosition($respon)
   {
-    $q = Position::where('active','1')
-      ->whereNotIn('id', [DB::raw("select position_id from gen_user where active = '1' and position_id is not null")])
+    $q = Position::where('gen_position.active','1')
+      ->join('gen_group as gg', 'gg.id', 'group_id')
+      ->whereNotIn('gen_position.id', [DB::raw("select position_id from gen_user where active = '1' and position_id is not null")])
       ->orderBy('position_name', 'ASC')
-      ->select('id', DB::raw("position_name || ' - ' || position_type as text"))
+      ->select('gen_position.id', DB::raw("position_name || ' - ' || group_name as text"))
       ->get();
     $respon['success'] = true;
     $respon['state_code'] = 200;

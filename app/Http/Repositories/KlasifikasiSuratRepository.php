@@ -3,6 +3,7 @@
 namespace app\Http\Repositories;
 
 use App\Model\KlasifikasiSurat;
+use App\Http\Repositories\ErrorLogRepository;
 use DB;
 use Exception;
 
@@ -86,16 +87,28 @@ class KlasifikasiSuratRepository
       $respon['data'] = $posisi;
       array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $posisi->position_name));
     } catch(\Exception $e){
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'KLASIFIKASI',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? "NOT_RECORDED"
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
-      array_push($respon['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorCallAdmin'));
     }
-
     return $respon;
   }
 
   public static function delete($respon, $id, $loginid)
   {
     try{
+      $sm = DB::table('surat_masuk')->where('active','1')->where('klasifikasi_id', $id)->first();
+      $sk = DB::table('surat_keluar')->where('active','1')->where('klasifikasi_id', $id)->first();
+      if($sk != null || $sm != null){
+        array_push($respon['messages'], sprintf(trans('messages.errorDelReferenceUser'), 'Klasifikasi Surat'));
+        return $respon;
+      }
       $klasifikasi = KlasifikasiSurat::where('active', '1')->where('id', $id)->firstOrFail();
 
       $klasifikasi->update([
@@ -109,8 +122,15 @@ class KlasifikasiSuratRepository
       //$respon['data'] = $posisi;
       array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Klasifikasi Surat'));
     } catch (\Exception $e) {
+      $log =Array(
+        'action' => 'DEL',
+        'modul' => 'KLASIFIKASI',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? "NOT_RECORDED"
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
-      array_push($respon['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorCallAdmin'));
     }
     return $respon;
   }

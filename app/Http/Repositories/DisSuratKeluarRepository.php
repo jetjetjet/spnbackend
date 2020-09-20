@@ -5,6 +5,7 @@ namespace app\Http\Repositories;
 use App\Model\DisSuratKeluar;
 use App\Http\Repositories\SuratKeluarRepository;
 use App\Http\Repositories\NotificationRepository;
+use App\Http\Repositories\ErrorLogRepository;
 use App\Helpers\Helper;
 use DB;
 use Exception;
@@ -37,7 +38,13 @@ class DisSuratKeluarRepository
         array_push($respon['messages'], trans('messages.successApprovedSK'));
       });
     } catch (\Exception $e) {
-      if ($e->getMessage() === 'rollbacked') return $respon;
+      $log =Array(
+        'action' => 'DISSK',
+        'modul' => 'SK',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? "NOT_RECORDED"
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
       array_push($respon['messages'], trans('messages.failApprovedSK'));
     }

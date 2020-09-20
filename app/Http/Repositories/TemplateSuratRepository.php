@@ -4,6 +4,7 @@ namespace app\Http\Repositories;
 
 use App\Model\TemplateSurat;
 use App\Model\DetailTemplate;
+use App\Http\Repositories\ErrorLogRepository;
 use App\Model\File;
 use App\Helpers\Helper;
 use DB;
@@ -85,15 +86,21 @@ class TemplateSuratRepository
 
         $result['success'] = true;
         $result['state_code'] = 200;
-        array_push($respon['messages'], trans('messages.successSaveTemplate'));
+        array_push($result['messages'], trans('messages.successSaveTemplate'));
         $inputs['id'] = $result['id'];
         unset($result['id']);
         //$result['data'] = $inputs;
       });
     } catch (\Exception $e) {
-      if ($e->getMessage() === 'rollbacked') return $result;
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'TEMPSURAT',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $result['state_code'] = 500;
-      array_push($respon['messages'], trans('messages.errorSaveTemplate'));
+      array_push($result['messages'], trans('messages.errorSaveTemplate'));
     }
     return $result;
   }
@@ -190,6 +197,13 @@ class TemplateSuratRepository
       $result['state_code'] = 200;
       array_push($result['messages'], sprintf(trans('messages.successDeleting'), 'Template surat'));
     }catch(\Exception $e){
+      $log =Array(
+        'action' => 'DEL',
+        'modul' => 'TEMPSURAT',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $result['state_code'] = 500;
       array_push($result['messages'], sprintf(trans('messages.errorDeleting'), 'Template surat'));
     }

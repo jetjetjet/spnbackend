@@ -5,6 +5,7 @@ namespace app\Http\Repositories;
 use App\Model\SuratMasuk;
 use App\Model\DisSuratMasuk;
 use App\Http\Repositories\DisSuratMasukRepository;
+use App\Http\Repositories\ErrorLogRepository;
 use App\Model\File;
 use App\Helpers\Helper;
 use DB;
@@ -198,7 +199,13 @@ class SuratMasukRepository
         //$result['data'] = $inputs;
       });
     } catch (\Exception $e) {
-      if ($e->getMessage() === 'rollbacked') return $result;
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'SM',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $result['state_code'] = 500;
       array_push($respon['messages'], trans('messages.errorSaveSM'));
     }
@@ -345,10 +352,5 @@ class SuratMasukRepository
       array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Surat Masuk'));
     }
     return $respon;
-  }
-
-  public static function createDispositionFile($id, $loginid)
-  {
-    $q = "";
   }
 }

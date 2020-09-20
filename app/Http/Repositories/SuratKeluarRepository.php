@@ -6,6 +6,7 @@ namespace app\Http\Repositories;
 use App\Helpers\MyPdf;
 use Illuminate\Support\Str;
 use App\Http\Repositories\DisSuratKeluarRepository;
+use App\Http\Repositories\ErrorLogRepository;
 use App\Model\File;
 use App\Helpers\Helper;
 
@@ -240,7 +241,13 @@ class SuratKeluarRepository
        // $result['data'] = $inputs;
       });
     } catch (\Exception $e) {
-      if ($e->getMessage() === 'rollbacked') return $result;
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'SK',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $result['state_code'] = 500;
       array_push($result['messages'], trans('messages.errorSaveSK'));
     }
@@ -387,7 +394,13 @@ class SuratKeluarRepository
         array_push($respon['messages'], trans('messages.successVerifySK'));
       } catch(\Exception $e){
         DB::rollback();
-        $respon['success'] = false;
+        $log =Array(
+          'action' => 'VER',
+          'modul' => 'SK',
+          'reference_id' => $id ?? 0,
+          'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+        );
+        $saveLog = ErrorLogRepository::save($log, $loginid);
         $respon['state_code'] = 500;
         array_push($respon['messages'], trans('messages.errorVerifySK'));
       }
@@ -522,153 +535,164 @@ class SuratKeluarRepository
     $sk = SuratKeluar::where('id', $id)
       ->where('active', '1')
       ->where('is_sign', '1')
-      ->whereNull('signed_at')->first(); 
-    if ($sk != null){
-      if($inputs['approved']) {
-        $isiKode = Str::random(12);
-        $data = DB::table('dis_surat_keluar as dsk')
-          ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
-          ->where('dsk.active', '1')
-          ->where('surat_keluar_id', $id)
-          ->where('log', 'AGENDA')
-          ->orderBy('dsk.created_at', 'desc')
-          ->select('file_path', 'file_name', 'original_name')
-          ->first();
-
-        if($data->file_path != null){
-          $user = DB::table('gen_user as gu')
-          ->where('active', '1')
-          ->where('id', $loginid)
-          ->select('ttd', 'email', 'username', 'full_name')
-          ->first();
-
-          $pdf = new MyPdf();
-          $pdf->setPrintHeader(false);
-
-          $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.surat.ratafd.xyz/validate-mail untuk validasi surat.");
-          $pdf->setCustomFooterText($text);
-          //$pdf->setPrintFooter(false);
-          
-          // set the source file
-          $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
-          for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
-            // import a page
-            $templateId = $pdf->importPage($pageNo);
-            // get the size of the imported page
-            $size = $pdf->getTemplateSize($templateId);
-
-            // create a page (landscape or portrait depending on the imported page size)
-            if ($size[0] > $size[1]) {
-              $pdf->AddPage('L', array($size[0], $size[1]));
-            } else {
-              $pdf->AddPage('P', array($size[0], $size[1]));
-            }
-
-            // use the imported page
-            $pdf->useTemplate($templateId);
-  
-            if($pageNo == 1){
-              //set certificate file
-              $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
-              $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
-  
-              $info = array(
-                'Name' => $user->full_name,
-                'Location' => 'Kerinci',
-                'Keterangan' => $inputs['keterangan'],
-                'Email' => $user->email
+      ->whereNull('signed_at')->first();
+      try{
+        if ($sk != null){
+          if($inputs['approved']) {
+            $isiKode = Str::random(12);
+            $data = DB::table('dis_surat_keluar as dsk')
+              ->join('gen_file as gf', 'gf.id', 'dsk.file_id')
+              ->where('dsk.active', '1')
+              ->where('surat_keluar_id', $id)
+              ->where('log', 'AGENDA')
+              ->orderBy('dsk.created_at', 'desc')
+              ->select('file_path', 'file_name', 'original_name')
+              ->first();
+    
+            if($data->file_path != null){
+              $user = DB::table('gen_user as gu')
+              ->where('active', '1')
+              ->where('id', $loginid)
+              ->select('ttd', 'email', 'username', 'full_name')
+              ->first();
+    
+              $pdf = new MyPdf();
+              $pdf->setPrintHeader(false);
+    
+              $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.surat.ratafd.xyz/validate-mail untuk validasi surat.");
+              $pdf->setCustomFooterText($text);
+              //$pdf->setPrintFooter(false);
+              
+              // set the source file
+              $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
+              for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
+                // import a page
+                $templateId = $pdf->importPage($pageNo);
+                // get the size of the imported page
+                $size = $pdf->getTemplateSize($templateId);
+    
+                // create a page (landscape or portrait depending on the imported page size)
+                if ($size[0] > $size[1]) {
+                  $pdf->AddPage('L', array($size[0], $size[1]));
+                } else {
+                  $pdf->AddPage('P', array($size[0], $size[1]));
+                }
+    
+                // use the imported page
+                $pdf->useTemplate($templateId);
+      
+                if($pageNo == 1){
+                  //set certificate file
+                  $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
+                  $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
+      
+                  $info = array(
+                    'Name' => $user->full_name,
+                    'Location' => 'Kerinci',
+                    'Keterangan' => $inputs['keterangan'],
+                    'Email' => $user->email
+                  );
+      
+                  $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
+                  $pdf->setSignatureAppearance(170, 260, 15, 15);
+                }
+      
+                $style = array(
+                  'border' => 1,
+                  'vpadding' => 'auto',
+                  'hpadding' => 'auto',
+                  'fgcolor' => array(0,0,0),
+                  'bgcolor' => false, //array(255,255,255)
+                  'module_width' => 1, // width of a single module in points
+                  'module_height' => 1 // height of a single module in points
+                );
+      
+                // QRCODE,L : QR-CODE Low error correction
+                $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
+              }
+      
+              $signed = time()."_signed_". $data->original_name;
+              $signedPath = '/upload/suratkeluar/'. $signed;
+              $pdf->Output(base_path() . $signedPath, 'F');
+      
+              $newFile = File::create([
+                'file_name' => $signed,
+                'file_path' => $signedPath,
+                'original_name' => $signed,
+                'active' => '1',
+                'created_at' => DB::raw('now()'),
+                'created_by' => $loginid
+              ]);
+      
+              $encSurat = EncSurat::create([
+                'key' => $isiKode,
+                'surat_keluar_id' => $sk->id,
+                'active' => '1',
+                'created_at' => DB::raw('now()'),
+                'created_by' => $loginid
+              ]);
+      
+              $update = $sk->update([
+                'file_id' => $newFile->id,
+                'signed_by' => $loginid,
+                'is_sign' => '1',
+                'signed_at' => DB::raw('now()'),
+                'surat_log' => $inputs['log'],
+                'modified_at' => DB::raw('now()'),
+                'modified_by' => $loginid
+              ]);
+      
+              $dataDis = Array(
+                'surat_keluar_id' => $id,
+                'tujuan_user_id' => $sk->created_by,
+                'file_id' => $newFile->id,
+                'log' => $inputs['log'],
+                'keterangan' => $inputs['keterangan'],
               );
-  
-              $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
-              $pdf->setSignatureAppearance(170, 260, 15, 15);
+              $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+              //$pdf->reset();
+              $respon['success'] = true;
+              $respon['state_code'] = 200;
+              array_push($respon['messages'], trans('messages.successSignSuratKeluar'));
             }
-  
-            $style = array(
-              'border' => 1,
-              'vpadding' => 'auto',
-              'hpadding' => 'auto',
-              'fgcolor' => array(0,0,0),
-              'bgcolor' => false, //array(255,255,255)
-              'module_width' => 1, // width of a single module in points
-              'module_height' => 1 // height of a single module in points
+          } else {
+            $update = $sk->update([
+              //'file_id' => $newFile->id,
+              'is_sign' => '0',
+              'is_agenda' => '0',
+              'is_verify' => '0',
+              'is_approve' => '1',
+              'surat_log' => $inputs['log'],
+              'modified_at' => DB::raw('now()'),
+              'modified_by' => $loginid
+            ]);
+    
+            $dataDis = Array(
+              'surat_keluar_id' => $id,
+              'tujuan_user_id' => $sk->approved_by,
+              'file_id' => null,
+              'log' => $inputs['log'],
+              'keterangan' => $inputs['keterangan'],
             );
-  
-            // QRCODE,L : QR-CODE Low error correction
-            $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
+            $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+            //$pdf->reset();
+            $respon['success'] = true;
+            $respon['state_code'] = 200;
+            array_push($respon['messages'], trans('messages.successRejectedSignSK'));
           }
-  
-          $signed = time()."_signed_". $data->original_name;
-          $signedPath = '/upload/suratkeluar/'. $signed;
-          $pdf->Output(base_path() . $signedPath, 'F');
-  
-          $newFile = File::create([
-            'file_name' => $signed,
-            'file_path' => $signedPath,
-            'original_name' => $signed,
-            'active' => '1',
-            'created_at' => DB::raw('now()'),
-            'created_by' => $loginid
-          ]);
-  
-          $encSurat = EncSurat::create([
-            'key' => $isiKode,
-            'surat_keluar_id' => $sk->id,
-            'active' => '1',
-            'created_at' => DB::raw('now()'),
-            'created_by' => $loginid
-          ]);
-  
-          $update = $sk->update([
-            'file_id' => $newFile->id,
-            'signed_by' => $loginid,
-            'is_sign' => '1',
-            'signed_at' => DB::raw('now()'),
-            'surat_log' => $inputs['log'],
-            'modified_at' => DB::raw('now()'),
-            'modified_by' => $loginid
-          ]);
-  
-          $dataDis = Array(
-            'surat_keluar_id' => $id,
-            'tujuan_user_id' => $sk->created_by,
-            'file_id' => $newFile->id,
-            'log' => $inputs['log'],
-            'keterangan' => $inputs['keterangan'],
-          );
-          $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
-          //$pdf->reset();
-          $respon['success'] = true;
-          $respon['state_code'] = 200;
-          array_push($respon['messages'], trans('messages.successSignSuratKeluar'));
+        } else {
+          array_push($respon['messages'], trans('messages.suratAlreadySigned'));
         }
-      } else {
-        $update = $sk->update([
-          //'file_id' => $newFile->id,
-          'is_sign' => '0',
-          'is_agenda' => '0',
-          'is_verify' => '0',
-          'is_approve' => '1',
-          'surat_log' => $inputs['log'],
-          'modified_at' => DB::raw('now()'),
-          'modified_by' => $loginid
-        ]);
-
-        $dataDis = Array(
-          'surat_keluar_id' => $id,
-          'tujuan_user_id' => $sk->approved_by,
-          'file_id' => null,
-          'log' => $inputs['log'],
-          'keterangan' => $inputs['keterangan'],
+      } catch(\Exception $e){
+        $log =Array(
+          'action' => 'SIG',
+          'modul' => 'SK',
+          'reference_id' => $id ?? 0,
+          'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
         );
-        $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
-        //$pdf->reset();
-        $respon['success'] = true;
-        $respon['state_code'] = 200;
-        array_push($respon['messages'], trans('messages.successRejectedSignSK'));
+        $saveLog = ErrorLogRepository::save($log, $loginid);
+        array_push($respon['messages'], trans('messages.errorSignSK'));
       }
-    } else {
-      array_push($respon['messages'], trans('messages.suratAlreadySigned'));
-    }
     return $respon;
   }
 
@@ -805,9 +829,15 @@ class SuratKeluarRepository
         $respon['state_code'] = 200;
         array_push($respon['messages'], trans('messages.succeedGenerateNomorSurat'));
       } catch(\Exception $e){
-        dd($e);
         // lewat
         DB::rollback();
+        $log =Array(
+          'action' => 'AGD',
+          'modul' => 'SK',
+          'reference_id' => $id ?? 0,
+          'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+        );
+        $saveLog = ErrorLogRepository::save($log, $loginid);
         $respon['success'] = false;
         $respon['state_code'] = 500;
         array_push($respon['messages'], trans('messages.errorGenerateSK'));

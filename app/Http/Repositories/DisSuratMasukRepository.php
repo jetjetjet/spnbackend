@@ -5,6 +5,7 @@ use App\Model\DisSuratMasuk;
 use App\Model\SuratMasuk;
 use App\Model\File;
 use App\Http\Repositories\NotificationRepository;
+use App\Http\Repositories\ErrorLogRepository;
 use App\Helpers\Helper;
 use DB;
 use Exception;
@@ -32,7 +33,13 @@ class DisSuratMasukRepository
         array_push($respon['messages'], trans('messages.successDispositionInMail'));
       });
     } catch (\Exception $e) {
-      if ($e->getMessage() === 'rollbacked') return $result;
+      $log =Array(
+        'action' => 'DISSM',
+        'modul' => 'DISSURATMASUK',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
       array_push($respon['messages'], trans('messages.failDispositionInMail'));
     }

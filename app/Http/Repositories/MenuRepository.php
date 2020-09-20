@@ -97,7 +97,7 @@ class MenuRepository
     } catch(\Exception $e){
       $result['state_code'] = 500;
       $result['data'] = $inputs;
-      array_push($result['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorCallAdmin'));
     }
     return $result;
   }
@@ -117,7 +117,7 @@ class MenuRepository
       $result['state_code'] = 200;
       array_push($result['messages'], trans('messages.successDeleting', ["item" => $menu->menu_name]));
     }catch(\Exception $e){
-      array_push($result['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorCallAdmin'));
       return response()->json($result, 500);
     }
     return $result;

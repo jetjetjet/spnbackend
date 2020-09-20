@@ -4,6 +4,7 @@ namespace app\Http\Repositories;
 
 use App\User;
 use App\Helpers\Helper;
+use App\Http\Repositories\ErrorLogRepository;
 use DB;
 use Exception;
 
@@ -148,6 +149,13 @@ class UserRepository
       $result['data'] = $user;
       array_push($result['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $user->username));
     } catch(\Exception $e){
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'USER',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $result['state_code'] = 500;
       array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
@@ -158,6 +166,13 @@ class UserRepository
   public static function deleteUserById($id, $result, $loginid)
   {
     try{
+      $dsk = DB::table('dis_surat_keluar')->where('active','1')->where('tujuan_user_id', $id)->first();
+      $dsm = DB::table('dis_surat_masuk')->where('active','1')->where('to_user_id', $id)->first();
+      if($dsk != null || $dsm != null){
+        array_push($result['messages'], sprintf(trans('messages.errorDelReferenceUser'), 'User'));
+        return $result;
+      }
+
       $user = User::where('active', '1')->where('id', $id)->firstOrFail();
 
       if ($user->id == 1)
@@ -173,6 +188,13 @@ class UserRepository
       $result['state_code'] = 200;
       array_push($result['messages'], sprintf(trans('messages.successDeleting'),  $user->username));
     }catch(\Exception $e){
+      $log =Array(
+        'action' => 'DEL',
+        'modul' => 'USER',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
     return $result;
@@ -193,6 +215,13 @@ class UserRepository
       $result['state_code'] = 200;
       array_push($result['messages'], sprintf(trans('messages.successUpdatePassword'), $user->username));
     }catch(\Exception $e){
+      $log =Array(
+        'action' => 'CHPASS',
+        'modul' => 'USER',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
     return $result;
@@ -317,6 +346,13 @@ class UserRepository
         array_push($respon['messages'], trans('messages.successUpdatedPhoto'));
       } 
     }catch (\Exception $e){
+      $log =Array(
+        'action' => 'SAVFT',
+        'modul' => 'USER',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
       array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
@@ -341,6 +377,13 @@ class UserRepository
         array_push($respon['messages'], trans('messages.successUpdatedTTD'), ["item" => $user->username]);
       } 
     }catch (\Exception $e){
+      $log =Array(
+        'action' => 'SAVTTD',
+        'modul' => 'USER',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
       array_push($result['messages'], trans('messages.errorCallAdmin'));
     }
@@ -367,6 +410,13 @@ class UserRepository
         $respon['state_code'] = 200;
         array_push($respon['messages'], trans('messages.successCreateID'));
       }catch(\Exception $e){
+        $log =Array(
+          'action' => 'CRTTD',
+          'modul' => 'USER',
+          'reference_id' => $id ?? 0,
+          'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+        );
+        $saveLog = ErrorLogRepository::save($log, $loginid);
         $respon['state_code'] = 500;
         array_push($result['messages'], trans('messages.errorCallAdmin'));
       }

@@ -2,6 +2,7 @@
 namespace app\Http\Repositories;
 
 use App\Model\Group;
+use App\Http\Repositories\ErrorLogRepository;
 use DB;
 use Exception;
 
@@ -76,8 +77,15 @@ class GroupRepository
       $respon['data'] = $jabatan;
       array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'),  $mode, $jabatan->group_code));
     } catch(\Exception $e){
+      $log =Array(
+        'action' => 'SAV',
+        'modul' => 'UNITKERJA',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
       $respon['state_code'] = 500;
-      array_push($respon['messages'], $e->getMessage());
+      array_push($respon['messages'], trans('messages.errorCallAdmin'));
     }
     return $respon;
   }
@@ -85,10 +93,16 @@ class GroupRepository
   public static function delete($respon, $id, $loginid)
   {
     try{
+      $cekRef = DB::table('gen_position')->where('active','1')->where('group_id', $id)->first();
+      if($cekRef != null){
+        array_push($respon['messages'], sprintf(trans('messages.errorDelReference'), 'Unit Kerja'));
+        return $respon;
+      }
+
       $jabatan = Group::where('active', '1')->where('id', $id)->firstOrFail();
 
       $jabatan->update([
-        'active' => '0',
+        'active' => 'ASD',
         'modified_at' => \Carbon\Carbon::now(),
         'modified_by' => $loginid
       ]);
@@ -97,7 +111,14 @@ class GroupRepository
       $respon['state_code'] = 200;
       array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Unit'));
     }catch(\Exception $e){
-      array_push($respon['messages'], $e->getMessage());
+      $log =Array(
+        'action' => 'DEL',
+        'modul' => 'UNITKERJA',
+        'reference_id' => $id ?? 0,
+        'errorlog' => $e->getMessage() ?? "NOT_RECORDED"
+      );
+      $saveLog = ErrorLogRepository::save($log, $loginid);
+      array_push($respon['messages'], trans('messages.errorCallAdmin'));
     }
     return $respon;
   }
