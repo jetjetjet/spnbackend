@@ -33,7 +33,8 @@ class Helper
     $file = new \StdClass;
     try {
       $file = isset($inputs['file']) ? $inputs['file'] : null;
-      $file->path = base_path() . $subFolder;
+      // $file->path = base_path() . $subFolder;
+      $file->path = '/home/admin/web/apisurat.disdikkerinci.id/public_html'. $subFolder;
       $file->newName = time()."_".$file->getClientOriginalName();
       $file->originalName = explode('.',$file->getClientOriginalName())[0];
       $file->move($file->path ,$file->newName);
@@ -47,7 +48,8 @@ class Helper
   {
     $newFile = new \StdClass;
     try {
-      $newFile->path = base_path() . $subFolder;
+      // $newFile->path = base_path() . $subFolder;
+      $newFile->path = '/home/admin/web/apisurat.disdikkerinci.id/public_html'. $subFolder;
       $newFile->newName = time()."_".$file->getClientOriginalName();
       $newFile->originalName = explode('.',$file->getClientOriginalName())[0];
       $file->move($newFile->path ,$newFile->newName);
