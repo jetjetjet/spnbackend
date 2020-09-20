@@ -81,7 +81,8 @@ class DisSuratMasukRepository
           DB::raw("sekredsm.arahan as arahan_sekre")
           )->first();
       if($getSM != null){
-        $path = base_path();
+        //$path = base_path();
+        $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
         $newFile = time()."_LembarDisposisi_". $getSM->asal_surat;
         $newFilePath = '/upload/suratmasuk/' . $newFile.'.docx';
         

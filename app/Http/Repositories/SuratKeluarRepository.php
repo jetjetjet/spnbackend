@@ -537,6 +537,7 @@ class SuratKeluarRepository
       ->where('is_sign', '1')
       ->whereNull('signed_at')->first();
       try{
+        $basePath = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
         if ($sk != null){
           if($inputs['approved']) {
             $isiKode = Str::random(12);
@@ -564,7 +565,7 @@ class SuratKeluarRepository
               //$pdf->setPrintFooter(false);
               
               // set the source file
-              $pageCount = $pdf->setSourceFile(base_path() . $data->file_path);
+              $pageCount = $pdf->setSourceFile($basePath . $data->file_path);
               for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
                 // import a page
                 $templateId = $pdf->importPage($pageNo);
@@ -613,7 +614,7 @@ class SuratKeluarRepository
       
               $signed = time()."_signed_". $data->original_name;
               $signedPath = '/upload/suratkeluar/'. $signed;
-              $pdf->Output(base_path() . $signedPath, 'F');
+              $pdf->Output($basePath . $signedPath, 'F');
       
               $newFile = File::create([
                 'file_name' => $signed,
@@ -745,7 +746,8 @@ class SuratKeluarRepository
       DB::beginTransaction();
       //Replace Nomor Surat
       try{
-        $path = base_path();
+        //$path = base_path();
+        $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
         $newFile = time()."_". $getFile->original_name .'_agenda';
         $newFilePath = '/upload/suratkeluar/' . $newFile.'.docx';
         
