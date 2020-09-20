@@ -14,44 +14,26 @@ use Exception;
 class SuratMasukRepository
 {
 
-  public static function getList($filter, $loginid, $isAdmin)
+  public static function getList($param, $loginid, $isAdmin)
   {
-    $data = new \StdClass();
+    $sQ = DB::table('dis_surat_masuk')
+      ->where('active', '1');
+    
+    if(!$isAdmin)
+      $sQ = $sQ->whereRaw('(to_user_id = ? or created_by = ? )', Array($loginid, $loginid));
+    
+    $sQ = $sQ->distinct('surat_masuk_id');
+
     $q = DB::table('surat_masuk as sm')
-    ->leftJoin('dis_surat_masuk as dsm',function($query){
-      $query->on('dsm.surat_masuk_id', 'sm.id')
-      ->on('dsm.active', DB::raw("'1'"));
+    ->joinSub($sQ, 'dsm',function($query){
+      $query->on('dsm.surat_masuk_id', 'sm.id');
     })
     ->leftJoin('gen_user as cr', 'cr.id', 'dsm.created_by')
     ->leftJoin('gen_position as gp', 'gp.id', 'cr.position_id')
     ->leftJoin('gen_group as gg', 'gg.id', 'gp.group_id')
     ->where('sm.active', '1');
 
-    if(!$isAdmin)
-    $q = $q->whereRaw('(dsm.to_user_id = ? or dsm.created_by = ? )', Array($loginid, $loginid));
-
-    if($filter->search){
-      foreach($filter->search as $qCol){
-        $sCol = explode('|', $qCol);
-        $fCol = str_replace('"', '', $sCol[0]);
-        $q = $q->whereRaw('sm.'.$fCol. " like ? ", ['%' . trim($sCol[1]) . '%' ]);
-      }
-    }
-      
-    $qCount = $q->distinct('sm.id')->count();
-  
-    if ($filter->sortColumns){
-      $order = $filter->sortColumns[0];
-      $q = $q->orderBy($order->column, $order->order);
-    } else {
-      $q = $q->orderBy('sm.id', 'DESC');
-    }
-      
-    $q = $q->skip($filter->offset);
-    $q = $q->take($filter->limit);
-      
-    $data->totalCount = $qCount;
-    $data->data =  $q->select(
+    $q =  $q->select(
       'sm.id',
       'dsm.id as disposisi_id',
       'asal_surat',
@@ -69,8 +51,17 @@ class SuratMasukRepository
       "),
       DB::raw("
         case when is_closed = '0' and sm.created_by = ". $loginid ." then 1 else 0 end as can_delete
-      ")
-      )->distinct('sm.id')->get();
+      "));
+      
+    $q = $param['order'] != null
+      ? $q->orderByRaw( $param['order'])
+      : $q->orderBy('sm.id', 'DESC');
+
+    $q = $param['filter'] != null 
+      ? $q->whereRaw($param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
+      : $q;
+
+    $data = $q->paginate($param['per_page']);;
 
     return $data;
   }

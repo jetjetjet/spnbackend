@@ -17,9 +17,15 @@ class SuratKeluarController extends Controller
   {
     $user = request()->user();
     $result = Helper::$responses;
-    $filter = Helper::mapFilter($request);
+    $inputs = $request->all();
+    $param = Array(
+      'per_page' => $inputs['per_page'] ?? 10,
+      'order' => $inputs['order'] ?? null,
+      'filter' => $inputs['filter'] ?? null,
+      'q' => $inputs['q'] ?? null
+    );
     $isAdmin = $user->tokenCan('is_admin') ? true : false;
-    $data = SuratKeluarRepository::getList($filter, Auth::user()->getAuthIdentifier(), $isAdmin);
+    $data = SuratKeluarRepository::getList($param, Auth::user()->getAuthIdentifier(), $isAdmin);
 
     $result['state_code'] = 200;
     $result['success'] = true;

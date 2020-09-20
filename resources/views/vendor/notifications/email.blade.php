@@ -56,7 +56,7 @@
     [
         'actionText' => $actionText,
     ]
-) <span class="break-all">[{{ 'https://surat.ratafd.xyz/' . $displayableActionUrl }}]({{ 'https://surat.ratafd.xyz/' . $actionUrl }})</span>
+) <span class="break-all">[{{ 'https://office.disdikkerinci.id/' . $displayableActionUrl }}]({{ 'https://office.disdikkerinci.id/' . $actionUrl }})</span>
 @endslot
 @endisset
 @endcomponent

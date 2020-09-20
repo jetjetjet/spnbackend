@@ -27,12 +27,19 @@ use NcJoes\OfficeConverter\OfficeConverter;
 class SuratKeluarRepository
 {
 
-  public static function getList($filter, $loginid, $isAdmin)
+  public static function getList($param, $loginid, $isAdmin)
   {
-    $data = new \StdClass();
+    $sQ = DB::table('dis_surat_keluar')
+      ->where('active', '1');
+    if(!$isAdmin)
+      $sQ = $sQ->whereRaw('(tujuan_user_id = ? or created_by = ? )', Array($loginid, $loginid));
 
+    $sQ = $sQ->distinct('surat_keluar_id');
+    
     $q = DB::table('surat_keluar as sk')
-      ->join('dis_surat_keluar as dsk', 'dsk.surat_keluar_id', 'sk.id')
+      ->joinSub($sQ, 'dsk', function($join){
+          $join->on('dsk.surat_keluar_id', 'sk.id');
+      })
       ->leftJoin('gen_user as cr', 'cr.id', 'sk.created_by')
       ->leftJoin('gen_position as pcr', 'cr.position_id', 'pcr.id')
 
@@ -49,31 +56,8 @@ class SuratKeluarRepository
       ->leftJoin('gen_position as psign', 'sign.position_id', 'psign.id')
       //->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->where('sk.active', '1');
-    if(!$isAdmin)
-      $q = $q->whereRaw('(dsk.tujuan_user_id = ? or dsk.created_by = ? )', Array($loginid, $loginid));
-    
-    if($filter->search){
-      foreach($filter->search as $qCol){
-        $sCol = explode('|', $qCol);
-        $fCol = str_replace('"', '', $sCol[0]);
-        $q = $q->whereRaw('sk.'.$fCol. " like ? ", ['%' . trim($sCol[1]) . '%' ]);
-      }
-    }
-      
-    $qCount = $q->distinct('sk.id')->count();
-  
-    if ($filter->sortColumns){
-      $order = $filter->sortColumns[0];
-      $q = $q->orderBy($order->column, $order->order);
-    } else {
-      $q = $q->orderBy('sk.id', 'DESC');
-    }
-      
-    $q = $q->skip($filter->offset);
-    $q = $q->take($filter->limit);
-      
-    $data->totalCount = $qCount;
-    $data->data =  $q->select(
+
+    $q =  $q->select(
       'sk.id',
       'dsk.id as disposisi_id',
       'tujuan_surat',
@@ -109,8 +93,17 @@ class SuratKeluarRepository
       "),
       DB::raw("
         case when coalesce(sk.is_verify,'0') = '0' and sk.created_by = ". $loginid ." then 1 else 0 end as can_delete
-      ")
-    )->distinct('sk.id')->get();
+      "));
+      
+    $q = $param['order'] != null
+      ? $q->orderByRaw( $param['order'])
+      : $q->orderBy('sk.id', 'DESC');
+
+    $q = $param['filter'] != null 
+      ? $q->whereRaw($param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
+      : $q;
+        
+    $data = $q->paginate($param['per_page']);;
 
     return $data;
   }
@@ -560,7 +553,7 @@ class SuratKeluarRepository
               $pdf = new MyPdf();
               $pdf->setPrintHeader(false);
     
-              $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.surat.ratafd.xyz/validate-mail untuk validasi surat.");
+              $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.office.disdikkerinci.id/validate-mail untuk validasi surat.");
               $pdf->setCustomFooterText($text);
               //$pdf->setPrintFooter(false);
               

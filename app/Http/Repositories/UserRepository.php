@@ -10,38 +10,14 @@ use Exception;
 
 class UserRepository
 {
-  public static function getUserList($filter, $perm)
+  public static function getUserList($param, $perm)
   {
-    $data = new \stdClass();
-    $q = User::leftJoin('gen_position as gg', function($sq){
+    $data = User::leftJoin('gen_position as gg', function($sq){
       $sq->on('gg.id', 'position_id')
         ->on('gg.active', DB::raw("'1'")); })
       ->where([
-        'gen_user.active' => '1'
-      ]);
-
-    if($filter->search){
-			foreach($filter->search as $qCol){
-				$sCol = explode('|', $qCol);
-				$fCol = str_replace('"', '', $sCol[0]);
-				$q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
-			}
-    }
-    
-    $qCount = $q->count();
-
-    if ($filter->sortColumns){
-			$order = $filter->sortColumns[0];
-			$q = $q->orderBy($order->column, $order->order);
-		} else {
-			$q = $q->orderBy('gen_user.username');
-    }
-    
-		$q = $q->skip($filter->offset);
-    $q = $q->take($filter->limit);
-    
-    $data->totalCount = $qCount;
-    $data->data = $q->select('gen_user.id', 
+        'gen_user.active' => '1'])
+      ->select('gen_user.id', 
       'nip',
       DB::raw("to_char(ttl, 'yyyy-mm-dd') as ttl"),
       'jenis_kelamin',
