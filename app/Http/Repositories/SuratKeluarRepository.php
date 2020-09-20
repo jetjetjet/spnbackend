@@ -584,8 +584,8 @@ class SuratKeluarRepository
       
                 if($pageNo == 1){
                   //set certificate file
-                  $certificate = 'file://'. realpath('../stack/certificates/public/'. $user->username .'.crt');
-                  $private_key = 'file://'. realpath('../stack/certificates/private/'. $user->username .'.key');
+                  $certificate = 'file://'. realpath('/stack/certificates/public/'. $user->username .'.crt');
+                  $private_key = 'file://'. realpath('/stack/certificates/private/'. $user->username .'.key');
       
                   $info = array(
                     'Name' => $user->full_name,
