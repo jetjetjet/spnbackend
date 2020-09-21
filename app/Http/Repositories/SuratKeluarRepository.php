@@ -173,7 +173,7 @@ class SuratKeluarRepository
         DB::raw("case when sk.is_verify = '1' and (surat_log = 'APPROVED' or surat_log = 'SIGN_REJECTED') and 1 =" . $perms['suratKeluar_verify'] . " then 1 else 0 end as can_verify"),
         DB::raw("case when sk.is_agenda = '1' and surat_log = 'VERIFIED' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda"),
         DB::raw("case when sk.is_sign = '1' and surat_log = 'AGENDA' and 1 =" . $perms['suratKeluar_sign'] . " then 1 else 0 end as can_sign"),
-        DB::raw("case when  1 =" . $perms['suratKeluar_void'] . " then 1 else 0 end as can_void")
+        DB::raw("case when sk.is_verify = '1' and 1 =" . $perms['suratKeluar_void'] . " then 1 else 0 end as can_void")
       )->first();
     
     if($header != null){
@@ -617,7 +617,6 @@ class SuratKeluarRepository
               $pdf->setPrintHeader(false);
     
               $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.office.disdikkerinci.id/validate-mail untuk validasi surat.");
-              $pdf->setCustomFooterText($text);
               //$pdf->setPrintFooter(false);
               
               // set the source file
@@ -627,6 +626,8 @@ class SuratKeluarRepository
                 $templateId = $pdf->importPage($pageNo);
                 // get the size of the imported page
                 $size = $pdf->getTemplateSize($templateId);
+                //
+                $pdf->setCustomFooterText($text, $size, $isiKode);
     
                 // create a page (landscape or portrait depending on the imported page size)
                 if ($size[0] > $size[1]) {
@@ -651,7 +652,7 @@ class SuratKeluarRepository
                   );
       
                   $pdf->setSignature($certificate, $private_key, '', '', 2, $info);
-                  $pdf->setSignatureAppearance(170, 260, 15, 15);
+                  $pdf->setSignatureAppearance(180, $size[1]-40, 15, 15);
                 }
       
               }

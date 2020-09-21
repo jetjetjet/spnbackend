@@ -7,14 +7,16 @@ class MyPdf extends Fpdi {
 
   private $customFooterText = Array();
   private $size = Array();
+  private $kode = "";
 
   /**
    * @param string $customFooterText
    */
-  public function setCustomFooterText($customFooterText, $size)
+  public function setCustomFooterText($customFooterText, $size, $kode)
   {
     $this->customFooterText = $customFooterText;
     $this->size = $size;
+    $this->kode = $kode;
   }
 
   public function Footer()
@@ -34,7 +36,7 @@ class MyPdf extends Fpdi {
       'module_height' => 1 // height of a single module in points
     );
       // QRCODE,L : QR-CODE Low error correction
-     $barccod =  $this->write2DBarcode('1234qwqrq', 'QRCODE,M', 185, $this->size[1] - 40, 15, 15, $style, 'N');
+     $barccod =  $this->write2DBarcode($this->kode, 'QRCODE,M', 180, $this->size[1] - 40, 15, 15, $style, 'N');
       
       //$pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
      foreach($this->customFooterText as $footer){
