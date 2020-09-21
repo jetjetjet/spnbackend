@@ -169,6 +169,7 @@ return [
         'perihal' => 'Perihal',
         'position_id' => 'Jabatan',
         'position_name' => 'Nama Jabatan',
+        'remark' => 'Keterangan',
         'sifat_surat' => 'Sifat Surat',
         'sign_user_id' => 'Penandatanganan Surat',
         'template_type' => 'Tipe Template Surat',

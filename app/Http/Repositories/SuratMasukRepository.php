@@ -54,11 +54,11 @@ class SuratMasukRepository
       "));
       
     $q = $param['order'] != null
-      ? $q->orderByRaw( $param['order'])
+      ? $q->orderByRaw("sm.". $param['order'])
       : $q->orderBy('sm.id', 'DESC');
 
     $q = $param['filter'] != null 
-      ? $q->whereRaw($param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
+      ? $q->whereRaw("sm.".$param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
       : $q;
 
     $data = $q->paginate($param['per_page']);;

@@ -40,6 +40,11 @@ class SuratKeluar extends Model
     'agenda_at',
     'agenda_file_id',
 
+    'is_void',
+    'voided_by',
+    'voided_at',
+    'void_remark',
+
     'is_sign',
     'signed_by',
     'signed_at',

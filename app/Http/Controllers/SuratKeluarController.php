@@ -39,11 +39,13 @@ class SuratKeluarController extends Controller
     $responses = Helper::$responses;
     $user = request()->user();
     $permissions = Array(
-      'suratKeluar_approve' => $user->tokenCan('suratKeluar_approve') ? 1 : 0,
-      'suratKeluar_agenda' => $user->tokenCan('suratKeluar_agenda') ? 1 : 0,
+      'suratKeluar_approve' => $user->tokenCan('suratKeluar_approve') || $user->tokenCan('is_admin') ? 1 : 0,
+      'suratKeluar_agenda' => $user->tokenCan('suratKeluar_agenda') || $user->tokenCan('is_admin') ? 1 : 0,
       'suratKeluar_sign' => $user->tokenCan('suratKeluar_sign') ? 1 : 0,
-      'suratKeluar_verify' => $user->tokenCan('suratKeluar_verify') ? 1 :0,
-      'suratKeluar_save' => $user->tokenCan('suratKeluar_save') ? 1 :0
+      'suratKeluar_verify' => $user->tokenCan('suratKeluar_verify') || $user->tokenCan('is_admin') ? 1 :0,
+      'suratKeluar_save' => $user->tokenCan('suratKeluar_save') || $user->tokenCan('is_admin') ? 1 :0,
+      'suratKeluar_void' => $user->tokenCan('suratKeluar_void') || $user->tokenCan('is_admin') ? 1 :0,
+      'suratKeluar_void' => $user->tokenCan('suratKeluar_void') || $user->tokenCan('is_admin') ? 1 : 0
     );
 
     $result = SuratKeluarRepository::getById($responses, $id, $permissions);
@@ -234,5 +236,35 @@ class SuratKeluarController extends Controller
     $result = SuratKeluarRepository::generateNomorSurat($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Generate Nomor Surat', Auth::user()->getAuthIdentifier());
     return response()->json($result, $result['state_code']);
+  }
+
+  public function void(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $rules = array(
+      'remark' => 'required'
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+		// Validation fails?
+		if ($validator->fails()){
+			$respon['state_code'] = 400;
+      $respon['messages'] = $validator->messages();
+      $respon['data'] = $inputs;
+      return response()->json($respon, 400);
+    }
+    $inputs['log'] = 'VOID';
+    $result = SuratKeluarRepository::void($respon, $id, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Void Surat Keluar', Auth::user()->getAuthIdentifier());
+    return response()->json($result, $result['state_code']);
+  }
+
+  public function footer()
+  {
+    $result = SuratKeluarRepository::customFooter();
+    
+    return response()->json("OK", 200);
   }
 }

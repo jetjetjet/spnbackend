@@ -54,8 +54,14 @@ class SuratKeluarRepository
 
       ->leftJoin('gen_user as sign', 'sign.id', 'sk.signed_by')
       ->leftJoin('gen_position as psign', 'sign.position_id', 'psign.id')
+
+      ->leftJoin('gen_user as void', 'void.id', 'sk.voided_by')
+      ->leftJoin('gen_position as pvoid', 'void.position_id', 'pvoid.id')
       //->join('gen_group as gg', 'gg.id', 'gp.group_id')
       ->where('sk.active', '1');
+
+    if($param['filter'] != "log" && $param['filter'] !== "VOID")
+      $q = $q->whereNull('sk.voided_at');
 
     $q =  $q->select(
       'sk.id',
@@ -75,16 +81,18 @@ class SuratKeluarRepository
         when is_agenda = '1' and is_sign = '1' and surat_log = 'AGENDA' then 'Diagenda - ' ||  ag.full_name
         when is_agenda = '1' and is_sign = '1' and surat_log = 'SIGNED' then 'Ditandatangani - ' || sign.full_name
         when is_approve = '1' and is_verify = '0' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then 'Ditolak - ' || sign.full_name
+        when is_void = '1' and surat_log = 'VOID' then 'Dibatalkan - ' || void.full_name
         else '' end as status_surat
       "),
       DB::raw("case when is_approve = '1' and (surat_log = 'CREATED' or surat_log = 'REVISED') then pcr.position_name
-      when is_approve = '1' and is_verify = '0' and surat_log = 'REJECT' then papp.position_name
-      when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then papp.position_name
-      when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then pver.position_name
-      when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then pver.position_name
-      when is_agenda = '1' and is_sign = '1' and surat_log = 'AGENDA' then pag.position_name
-      when is_agenda = '1' and is_sign = '1' and surat_log = 'SIGNED' then psign.position_name
-      when is_approve = '1' and is_verify = '0' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then psign.position_name
+        when is_approve = '1' and is_verify = '0' and surat_log = 'REJECT' then papp.position_name
+        when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then papp.position_name
+        when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then pver.position_name
+        when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then pver.position_name
+        when is_agenda = '1' and is_sign = '1' and surat_log = 'AGENDA' then pag.position_name
+        when is_agenda = '1' and is_sign = '1' and surat_log = 'SIGNED' then psign.position_name
+        when is_approve = '1' and is_verify = '0' and is_sign = '0' and surat_log = 'SIGN_REJECTED' then psign.position_name
+        when is_void = '1' and surat_log = 'VOID' then pvoid.position_name
         else '' end as status_position_name
       "),
       DB::raw(" cr.full_name ||to_char(sk.created_at, 'dd-mm-yyyy') as created_by"),
@@ -96,11 +104,11 @@ class SuratKeluarRepository
       "));
       
     $q = $param['order'] != null
-      ? $q->orderByRaw( $param['order'])
+      ? $q->orderByRaw("sk.". $param['order'])
       : $q->orderBy('sk.id', 'DESC');
 
     $q = $param['filter'] != null 
-      ? $q->whereRaw($param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
+      ? $q->whereRaw("sk.".$param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
       : $q;
         
     $data = $q->paginate($param['per_page']);;
@@ -164,7 +172,8 @@ class SuratKeluarRepository
         DB::raw("case when sk.is_approve = '1' and (surat_log = 'REJECTED') and 1 =" . $perms['suratKeluar_save'] . " then 1 else 0 end as can_edit"),
         DB::raw("case when sk.is_verify = '1' and (surat_log = 'APPROVED' or surat_log = 'SIGN_REJECTED') and 1 =" . $perms['suratKeluar_verify'] . " then 1 else 0 end as can_verify"),
         DB::raw("case when sk.is_agenda = '1' and surat_log = 'VERIFIED' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda"),
-        DB::raw("case when sk.is_sign = '1' and surat_log = 'AGENDA' and 1 =" . $perms['suratKeluar_sign'] . " then 1 else 0 end as can_sign")
+        DB::raw("case when sk.is_sign = '1' and surat_log = 'AGENDA' and 1 =" . $perms['suratKeluar_sign'] . " then 1 else 0 end as can_sign"),
+        DB::raw("case when  1 =" . $perms['suratKeluar_void'] . " then 1 else 0 end as can_void")
       )->first();
     
     if($header != null){
@@ -404,6 +413,60 @@ class SuratKeluarRepository
     return $respon;
   }
 
+  public static function void($respon, $id, $inputs, $loginid)
+  {
+    $sk = SuratKeluar::where('active', '1')
+      ->where('id', $id)
+      ->first();
+    
+    if($sk != null){
+      DB::beginTransaction();
+      try{
+        $sk->update([
+          'is_void' => '1',
+          'surat_log' => $inputs['log'],
+          'voided_at' => DB::raw("now()"),
+          'voided_by' => $loginid,
+          'void_remark' => $inputs['keterangan'],
+          'modified_at' => DB::raw("now()"),
+          'modified_by' => $loginid,
+        ]);
+
+        $dataDis = Array(
+          'surat_keluar_id' => $sk->id,
+          'tujuan_user_id' => $sk->created_by,
+          'log' => $inputs['log'],
+          'keterangan' => $inputs['keterangan']
+        );
+
+        $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
+        if(!$dis){
+          throw new Exception();
+        }
+        
+        DB::commit();
+        $respon['success'] = true;
+        $respon['state_code'] = 200;
+        array_push($respon['messages'], trans('messages.successVoidedSK'));
+      } catch(\Exception $e){
+        DB::rollback();
+        $log =Array(
+          'action' => 'VOID',
+          'modul' => 'SK',
+          'reference_id' => $id ?? 0,
+          'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
+        );
+        $saveLog = ErrorLogRepository::save($log, $loginid);
+        $respon['state_code'] = 500;
+        array_push($respon['messages'], trans('messages.errorVoidedSK'));
+      }
+    } else {
+      $respon['state_code'] = 500;
+      array_push($respon['messages'], trans('messages.suratAlreadySigned'));
+    }
+    return $respon;
+  }
+
   public static function agenda($respon, $id, $inputs, $loginid)
   {
     $sm = SuratKeluar::where('active', '1')
@@ -591,21 +654,9 @@ class SuratKeluarRepository
                   $pdf->setSignatureAppearance(170, 260, 15, 15);
                 }
       
-                $style = array(
-                  'border' => 1,
-                  'vpadding' => 'auto',
-                  'hpadding' => 'auto',
-                  'fgcolor' => array(0,0,0),
-                  'bgcolor' => false, //array(255,255,255)
-                  'module_width' => 1, // width of a single module in points
-                  'module_height' => 1 // height of a single module in points
-                );
-      
-                // QRCODE,L : QR-CODE Low error correction
-                $pdf->write2DBarcode($isiKode, 'QRCODE,L', 170, 260, 15, 15, $style, 'N');
               }
       
-              $signed = time()."_signed_". $data->original_name;
+              $signed = time()."_". $data->original_name;
               $signedPath = '/upload/suratkeluar/'. $signed;
               $pdf->Output($basePath . $signedPath, 'F');
       
@@ -843,5 +894,18 @@ class SuratKeluarRepository
       array_push($respon['messages'], sprintf(trans('messages.dataNotFound'),'Surat Keluar'));
     }
     return $respon;
+  }
+
+  public static function customFooter()
+  {
+    $pdf = new MyPdf(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+    $pdf->AddPage('P', array(215.9 , 297));
+    $size = array(215.9 , 297);
+
+    $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.office.disdikkerinci.id/validate-mail untuk validasi surat.");
+    $pdf->setCustomFooterText($text, $size);
+
+
+    $pdf->Output(base_path(). '/upload/example_00sd.pdf', 'F');
   }
 }

@@ -17,7 +17,6 @@ class HakAkses
     'jabatan_save',
     'jabatan_delete',
     'jabatan_permission',
-    'jabatan_savePermission',
 
     'klasifikasiSurat_list',
     'klasifikasiSurat_view',
@@ -32,6 +31,7 @@ class HakAkses
     'suratKeluar_verify',
     'suratKeluar_agenda',
     'suratKeluar_sign',
+    'suratKeluar_void',
 
     'suratMasuk_list',
     'suratMasuk_view',
@@ -43,19 +43,16 @@ class HakAkses
     'templateSurat_list',
     'templateSurat_view',
     'templateSurat_save',
-    'templateSurat_edit',
     'templateSurat_delete',
 
     'unit_list',
     'unit_view',
     'unit_save',
-    'unit_edit',
     'unit_delete',
 
     'user_list',
     'user_view',
     'user_save',
-    'user_edit',
     'user_delete',
   );
 

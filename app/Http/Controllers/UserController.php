@@ -52,7 +52,11 @@ class UserController extends Controller
 
     if($id == Auth::user()->getAuthIdentifier()){
       $result = UserRepository::getUserById($id, $results);
-    }
+    } else {
+      $result = $results;
+      $result['state_code'] = 400;
+      array_push($result['messages'], trans('messages.unauthorized'));
+    } 
 
     return response()->json($result, $result['state_code']);
   }
@@ -79,7 +83,77 @@ class UserController extends Controller
   
       $result = UserRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
       $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update', Auth::user()->getAuthIdentifier());
+    } else {
+      $result = $results;
+      $result['state_code'] = 400;
+      array_push($result['messages'], trans('messages.unauthorized'));
+    } 
+
+    return response()->json($result, $result['state_code']);
+  }
+
+  
+  public function changeProfilePassword(Request $request, $id = null)
+  {
+    $results = Helper::$responses;
+
+    if($id != Auth::user()->getAuthIdentifier())
+    {
+      $result = $results;
+      $result['state_code'] = 400;
+      array_push($result['messages'], trans('messages.unauthorized'));
+      return response()->json($result, $result['state_code']);
+    }  
+
+    $rules = array(
+      'password' => 'required'
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+    if ($validator->fails()){
+      $results['state_code'] = 400;
+      $results['messages'] = Array($validator->messages()->first());
+      $results['data'] = $inputs;
+      return response()->json($results, $results['state_code']);
     }
+
+    $result = UserRepository::changePassword($id, $results, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'ChangePassword', Auth::user()->getAuthIdentifier());
+
+    return response()->json($result, $result['state_code']);
+  }
+  
+  public function uploadProfileFoto(Request $request, $id)
+  {
+    $respon = Helper::$responses;
+    $user = request()->user(); 
+
+    if($id != Auth::user()->getAuthIdentifier())
+    {
+      $respon['state_code'] = 400;
+      array_push($respon['messages'], trans('messages.unauthorized'));
+      return response()->json($result, $result['state_code']);
+    }  
+    // Validation rules.
+    $rules = array(
+      'file' => 'required|image|max:1024|mimes:jpeg,bmp,png,gif',
+    );
+
+    $inputs = $request->all();
+    $validator = Validator::make($inputs, $rules);
+
+    // Validation fails?
+    if ($validator->fails()){
+      $respon['state_code'] = 400;
+      $respon['messages'] = Array($validator->messages()->first());
+      $respon['data'] = $inputs;
+      return response()->json($respon, $respon['state_code']);
+    }
+    
+    $result = UserRepository::saveFoto($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
+    $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'UploadPhoto', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);
   }

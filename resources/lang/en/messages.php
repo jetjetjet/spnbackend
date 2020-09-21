@@ -16,6 +16,7 @@ return[
   'errorSaveTemplate' => 'Gagal simpan template surat.',
   'errorSignSK' => 'Gagal menandatangani Surat.',
   'errorVerifySK' => 'Gagal verifikasi Surat Keluar.',
+  'errorVoidedSK' => 'Gagal membatalkan Surat Keluar',
   'failApprovedSK' => 'Gagal menyetujui Surat Keluar.',
   'failDispositionInMail' => 'Gagal mendisposisikan Surat Masuk.',
   'failResetPassword' => 'Gagal reset password.',
@@ -41,5 +42,7 @@ return[
   'successVerifySK' => 'Berhasil verifikasi Surat Keluar.',
   'suratAlreadyApproved' => 'Surat sudah disetujui.',
   'suratAlreadyClosed' => 'Surat Masuk sudah diselesaikan.',
-  'suratAlreadySigned' => 'Surat sudah ditandatangani.'
+  'suratAlreadySigned' => 'Surat sudah ditandatangani.',
+  'successVoidedSK' => 'Berhasil membatalkan Surat Keluar.',
+  'unauthorized' => 'Tidak dapat menampilkan data.'
 ];
