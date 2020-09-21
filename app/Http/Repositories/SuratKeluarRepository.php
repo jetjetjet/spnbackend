@@ -427,7 +427,7 @@ class SuratKeluarRepository
           'surat_log' => $inputs['log'],
           'voided_at' => DB::raw("now()"),
           'voided_by' => $loginid,
-          'void_remark' => $inputs['keterangan'],
+          'void_remark' => $inputs['remark'],
           'modified_at' => DB::raw("now()"),
           'modified_by' => $loginid,
         ]);
@@ -436,7 +436,7 @@ class SuratKeluarRepository
           'surat_keluar_id' => $sk->id,
           'tujuan_user_id' => $sk->created_by,
           'log' => $inputs['log'],
-          'keterangan' => $inputs['keterangan']
+          'keterangan' => $inputs['remark']
         );
 
         $dis = DisSuratKeluarRepository::saveDisSuratKeluar($dataDis, $loginid);
@@ -897,16 +897,16 @@ class SuratKeluarRepository
     return $respon;
   }
 
-  public static function customFooter()
-  {
-    $pdf = new MyPdf(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-    $pdf->AddPage('P', array(215.9 , 297));
-    $size = array(215.9 , 297);
+  // public static function customFooter()
+  // {
+  //   $pdf = new MyPdf(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+  //   $pdf->AddPage('P', array(215.9 , 297));
+  //   $size = array(215.9 , 297);
 
-    $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.office.disdikkerinci.id/validate-mail untuk validasi surat.");
-    $pdf->setCustomFooterText($text, $size);
+  //   $text = Array("Surat ini ditandatangani secara digital melalui aplikasi e-Office Dinas Pendidikan Kabupaten Kerinci.", "Scan barcode pada surat dan masukkan kode pada halaman https://www.office.disdikkerinci.id/validate-mail untuk validasi surat.");
+  //   $pdf->setCustomFooterText($text, $size);
 
 
-    $pdf->Output(base_path(). '/upload/example_00sd.pdf', 'F');
-  }
+  //   $pdf->Output(base_path(). '/upload/example_00sd.pdf', 'F');
+  // }
 }

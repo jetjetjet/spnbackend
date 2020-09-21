@@ -261,10 +261,10 @@ class SuratKeluarController extends Controller
     return response()->json($result, $result['state_code']);
   }
 
-  public function footer()
-  {
-    $result = SuratKeluarRepository::customFooter();
+  // public function footer()
+  // {
+  //   $result = SuratKeluarRepository::customFooter();
     
-    return response()->json("OK", 200);
-  }
+  //   return response()->json("OK", 200);
+  // }
 }
