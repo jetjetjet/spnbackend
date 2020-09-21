@@ -53,7 +53,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/notif/read/{id}/{subid}/{type}', 'NotificationController@read');
 
     Route::get('/profile/view/{id?}', 'UserController@getProfile');
-    Route::post('/profile/save', 'UserController@saveProfile');
+    Route::post('/profile/save/{id?}', 'UserController@saveProfile');
     Route::post('/profile/uploadPhoto/{id}', 'UserController@uploadProfileFoto');
     Route::post('/profile/changePassword/{id?}', 'UserController@changeProfilePassword');
 
