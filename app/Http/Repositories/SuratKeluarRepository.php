@@ -294,8 +294,9 @@ class SuratKeluarRepository
           'lampiran_surat' => $inputs['lampiran_surat'],
           'approval_user_id' => $inputs['approval_user_id'],
           'sign_user_id' => $inputs['sign_user_id'],
-          'surat_log' => 'REVISED',
+          'surat_log' => $inputs['verLog'] ?? 'REVISED',
           'is_approve' => '1',
+          'is_verify' => isset($inputs['verified']) ? '1' : '0',
           'modified_at' => DB::raw('now()'),
           'modified_by' => $loginid
         ]);
@@ -305,7 +306,7 @@ class SuratKeluarRepository
             'surat_keluar_id' => $tSurat->id,
             'tujuan_user_id' => $inputs['approval_user_id'],
             'file_id' => $inputs['file_id'],
-            'log' => "REVISED",
+            'log' => $inputs['verLog'] ?? "REVISED",
             //'tujuan_surat' => $inputs['tujuan_surat'],
             'keterangan' => 'Revisi',
           );
@@ -329,10 +330,10 @@ class SuratKeluarRepository
         'lampiran_surat' => $inputs['lampiran_surat'],
         'approval_user_id' => $inputs['approval_user_id'],
         'is_approve' => '1',
-        'is_verify' => '0',
+        'is_verify' => isset($inputs['verLog']) ? '1' : '0',
         'is_agenda' => '0',
         'is_sign' => '0',
-        'surat_log' => 'CREATED',
+        'surat_log' => $inputs['verLog'] ?? 'CREATED',
         'active' => '1',
         'created_at' => DB::raw('now()'),
         'created_by' => $loginid
@@ -343,7 +344,7 @@ class SuratKeluarRepository
           'surat_keluar_id' => $insert['id'],
           'tujuan_user_id' => $inputs['approval_user_id'],
           'file_id' => $inputs['file_id'],
-          'log' => "CREATED",
+          'log' => $inputs['verLog'] ?? "CREATED",
           //'tujuan_surat' => $inputs['tujuan_surat'],
           'keterangan' => 'Draft',
         );

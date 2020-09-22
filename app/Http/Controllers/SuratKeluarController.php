@@ -6,6 +6,7 @@ use App\Http\Repositories\SuratKeluarRepository;
 use App\Http\Repositories\DisSuratKeluarRepository;
 use App\Http\Repositories\AuditTrailRepository;
 use App\Http\Repositories\NotificationRepository;
+use App\Http\Repositories\PositionRepository;
 use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Auth;
@@ -84,6 +85,13 @@ class SuratKeluarController extends Controller
       $result['data'] = $inputs;
       return response()->json($result, 400);
     }
+
+    $cekSekretarisParent = PositionRepository::sekreParent(Auth::user()->getAuthIdentifier());
+
+    if($cekSekretarisParent == 3){ //3 = sekretaris ID. Jika sekretaris maka log langsung ke verifikasi
+      $inputs['verLog'] = 'APPROVED';
+    }
+
     $result = SuratKeluarRepository::save($id, $results, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save/Update Surat Keluar', Auth::user()->getAuthIdentifier());
     $result['data'] = [];

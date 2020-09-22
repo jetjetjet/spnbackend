@@ -186,4 +186,17 @@ class PositionRepository
 
     return $respon;
   }
+
+  public static function sekreParent($loginid)
+  {
+    $q = DB::table('gen_user as gu')
+      ->join('gen_position as gp', 'gp.id', 'gu.position_id')
+      ->where('gu.id', $loginid)
+      ->where('gp.active', '1')
+      ->where('gu.active', '1')
+      ->select('gp.parent_id')
+      ->first();
+    
+    return $q->parent_id;
+  }
 }
