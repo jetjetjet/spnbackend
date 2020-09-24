@@ -22,6 +22,11 @@ class HakAkses
     'klasifikasiSurat_view',
     'klasifikasiSurat_save',
     'klasifikasiSurat_delete',
+
+    'nomorSurat_list',
+
+    'sifatSurat_save',
+    'sifatSurat_delete',
     
     'suratKeluar_list',
     'suratKeluar_view',
@@ -44,6 +49,9 @@ class HakAkses
     'templateSurat_view',
     'templateSurat_save',
     'templateSurat_delete',
+
+    'tipeSurat_save',
+    'tipeSurat_delete',
 
     'unit_list',
     'unit_view',

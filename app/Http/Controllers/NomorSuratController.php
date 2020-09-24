@@ -2,84 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\NomorSurat;
+use App\Http\Repositories\NomorSuratRepository;
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
+use Auth;
+use Validator;
 
 class NomorSuratController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+	public function getAll(Request $request)
+	{
+		$user = request()->user();
+    $result = Helper::$responses;
+    $inputs = $request->all();
+    $param = Array(
+      'per_page' => $inputs['per_page'] ?? 10,
+      'order' => $inputs['order'] ?? null,
+      'filter' => $inputs['filter'] ?? null,
+      'q' => $inputs['q'] ?? null
+    );
+    $data = NomorSuratRepository::getAll($param);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    $result['state_code'] = 200;
+    $result['success'] = true;
+    $result['data'] = $data;
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\NomorSurat  $nomorSurat
-     * @return \Illuminate\Http\Response
-     */
-    public function show(NomorSurat $nomorSurat)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\NomorSurat  $nomorSurat
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(NomorSurat $nomorSurat)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\NomorSurat  $nomorSurat
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, NomorSurat $nomorSurat)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\NomorSurat  $nomorSurat
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(NomorSurat $nomorSurat)
-    {
-        //
-    }
+    return response()->json($result, $result['state_code']);
+	}
 }

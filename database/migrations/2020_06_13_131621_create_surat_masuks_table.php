@@ -24,6 +24,7 @@ class CreateSuratMasuksTable extends Migration
             $table->dateTime('tgl_diterima');
             $table->string('lampiran')->nullable();
             $table->string('sifat_surat');
+            $table->string('jenis_surat')->nullable();
             $table->bigInteger('klasifikasi_id');
             $table->string('keterangan')->nullable();
             $table->string('prioritas')->nullable();

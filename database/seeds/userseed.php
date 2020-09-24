@@ -7,6 +7,8 @@ use App\Model\Group;
 use App\Model\PositionMenu;
 use App\Model\Position;
 use App\Model\KlasifikasiSurat;
+use App\Model\TipeSurat;
+use App\Model\SifatSurat;
 
 class Userseed extends Seeder
 {
@@ -17,6 +19,46 @@ class Userseed extends Seeder
      */
     public function run()
     {
+        TipeSurat::truncate();
+        SifatSurat::truncate();
+        $tipe = Array(
+            'Surat Keputusan',
+            'Surat Pemberitahuan',
+            'Surat Undangan',
+            'Surat Kuasa',
+            'Surat Keterangan',
+            'Surat Memo atau Nota Dinas',
+            'Surat Edaran',
+            'Surat Penangar',
+            'Surat Perintah',
+            'Surat Instruksi',
+            'Surat Tugas'
+        );
+
+        for($i = 0; $i < count($tipe); $i++){
+            $t = TipeSurat::create([
+                'tipe_surat' => $tipe[$i],
+                'active' => '1',
+                'created_at' => now()->toDateTimeString(),
+                'created_by' => '1'
+            ]);
+        }
+
+        $sifat = Array(
+            'Umum',
+            'Rahasia',
+            'Biasa'
+        );
+
+        for($i = 0; $i < count($sifat); $i++){
+            $t = SifatSurat::create([
+                'sifat_surat' => $sifat[$i],
+                'active' => '1',
+                'created_at' => now()->toDateTimeString(),
+                'created_by' => '1'
+            ]);
+        }
+
         User::truncate();
         $user = User::create([
             'full_name' => 'Super Admin',

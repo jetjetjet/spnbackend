@@ -21,6 +21,7 @@ class SuratMasuk extends Model
     'tgl_surat',
     'tgl_diterima',
     'lampiran',
+    'jenis_surat',
     'sifat_surat',
     'klasifikasi_id',
     'keterangan',

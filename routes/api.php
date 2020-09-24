@@ -24,11 +24,11 @@ Route::get('/tes', 'SuratKeluarController@footer');
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
     
+    Route::get('/auditTrail/list', 'AuditTrailController@getAll')->middleware('can:nomorSurat_list');
     Route::get('/dashboardTugas', 'DashboardController@getTugas');
     Route::get('/cekUser', 'AuthController@getAuthUser');
+    Route::get('/nomorSurat/list', 'NomorSuratController@getAll')->middleware('can:auditTrail_list');
     Route::post('/logout', 'AuthController@logout');
-
-    Route::get('/auditTrail/list', 'AuditTrailController@getAll')->middleware('can:auditTrail_list');
 
     Route::get('/jabatan/list', 'PositionController@getAll');
     Route::get('/jabatan/view/{id?}', 'PositionController@getById');
@@ -77,10 +77,20 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('/suratMasuk/disposisi', 'DisSuratMasukController@disposisiSuratMasuk')->middleware('can:suratMasuk_disposition');
     Route::post('/suratMasuk/close/{id?}', 'SuratMasukController@tutupSuratMasuk')->middleware('can:suratMasuk_close');
 
+    Route::get('/sifatSurat/list', 'SifatSuratController@getAll');
+    Route::post('/sifatSurat/save/{id?}', 'SifatSuratController@save')->middleware('can:sifatSurat_save');
+    Route::post('/sifatSurat/delete/{id}', 'SifatSuratController@delete')->middleware('can:sifatSurat_delete');
+    Route::get('/sifatSurat/search', 'SifatSuratController@search');
+
     Route::get('/templateSurat/list', 'TemplateSuratController@getAll');
     Route::get('/templateSurat/view/{id?}', 'TemplateSuratController@getById');
     Route::post('/templateSurat/save/{id?}', 'TemplateSuratController@save')->middleware('can:templateSurat_save');
     Route::post('/templateSurat/delete/{id}', 'TemplateSuratController@delete')->middleware('can:templateSurat_delete');
+
+    Route::get('/tipeSurat/list', 'TipeSuratController@getAll');
+    Route::post('/tipeSurat/save/{id?}', 'TipeSuratController@save')->middleware('can:tipeSurat_save');
+    Route::post('/tipeSurat/delete/{id}', 'TipeSuratController@delete')->middleware('can:tipeSurat_delete');
+    Route::get('/tipeSurat/search', 'TipeSuratController@search');
 
     Route::get('/unit/list', 'GroupController@getAll');
     Route::get('/unit/view/{id?}', 'GroupController@getById');

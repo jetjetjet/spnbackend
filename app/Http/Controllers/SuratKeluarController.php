@@ -32,7 +32,7 @@ class SuratKeluarController extends Controller
     $result['success'] = true;
     $result['data'] = $data;
 
-    return response()->json($result, 200);
+    return response()->json($result, $result['state_code']);
   }
 
   public function getById(Request $request, $id = null)

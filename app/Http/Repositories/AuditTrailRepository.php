@@ -10,42 +10,33 @@ class AuditTrailRepository
 {
   public static function getAll($filter)
   {
-    $data = new \stdClass();
     $q = DB::table('gen_audit_trail as gat')
-      ->leftJoin('gen_user as gu', 'gu.id', 'gat.created_by');
-    
-    if($filter->search){
-			foreach($filter->search as $qCol){
-				$sCol = explode('|', $qCol);
-				$fCol = str_replace('"', '', $sCol[0]);
-				$q = $q->where($sCol[0], 'like', '%'.$sCol[1].'%');
-			}
-    }
-    
-    $qCount = $q->count();
+      ->join('gen_user as cr', 'cr.id', 'gat.created_by')
+      ->leftJoin('gen_user as md', 'md.id', 'gat.modified_by')
+      ->select('gat.id', 
+        'path',
+        'action',
+        'modul',
+        'success',
+        'messages',
+        'created_at',
+        DB::raw("coalesce(cr.full_name, '-') as created_by"),
+        'created_at',
+        DB::raw("coalesce(cr.full_name, '-') as modified_by"),
+        'modified_at'
+      );
 
-    if ($filter->sortColumns){
-			$order = $filter->sortColumns[0];
-			$q = $q->orderBy($order->column, $order->order);
-		} else {
-			$q = $q->orderBy('gat.id', 'DESC');
-    }
-    
-		$q = $q->skip($filter->offset);
-    $q = $q->take($filter->limit);
-    
-    $data->totalCount = $qCount;
-    $data->data = $q->select('gat.id', 
-      DB::raw("coalesce(gu.full_name, 'Blank') as full_name"),
-      'path',
-      'action',
-      'modul',
-      'success',
-      'messages',
-      'created_at'
-      )->get();
+    $q = $param['order'] != null
+      ? $q->orderByRaw("gat.". $param['order'])
+      : $q->orderBy('gat.created_at', 'DESC');
 
-    return $data;
+    $q = $param['filter'] != null 
+      ? $q->whereRaw("gat.".$param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
+      : $q;
+
+    $data = $q->paginate($param['per_page']);;
+
+    return $q;
   }
 
   public static function saveAuditTrail($request, $result, $action, $loginid)

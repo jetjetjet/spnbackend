@@ -46,10 +46,10 @@ class CreateSuratKeluarsTable extends Migration
             $table->bigInteger('signed_by')->nullable();
             $table->dateTime('signed_at')->nullable();
 
-            // $table->boolean('is_void')->nullable();
-            // $table->bigInteger('voided_by')->nullable();
-            // $table->dateTime('voided_at')->nullable();
-            // $table->string('void_remark')->nullable();
+            $table->boolean('is_void')->nullable();
+            $table->bigInteger('voided_by')->nullable();
+            $table->dateTime('voided_at')->nullable();
+            $table->string('void_remark')->nullable();
 
             $table->boolean('active');
             $table->timestamp('created_at');
