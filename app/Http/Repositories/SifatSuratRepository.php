@@ -21,7 +21,7 @@ class SifatSuratRepository
     return $q;
   }
 
-  public static function save($respon, $id, $inputs, $loginid)
+  public static function save($respon, $inputs, $loginid)
   {
     try{
       $save = SifatSurat::create([
@@ -32,8 +32,7 @@ class SifatSuratRepository
       ]);
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      $respon['data'] = $posisi;
-      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'), "Simpan", $save->sifat_surat));
+      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'), "Simpan ", $save->sifat_surat));
     } catch(\Exception $e){
       $log =Array(
         'action' => 'SAV',
@@ -67,7 +66,6 @@ class SifatSuratRepository
       
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      //$respon['data'] = $posisi;
       array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Sifat Surat'));
     } catch (\Exception $e) {
       $log =Array(

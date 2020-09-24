@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Repositories\AuditTrailRepository;
 use Illuminate\Http\Request;
+use Auth;
+use App\Helpers\Helper;
 
 class AuditTrailController extends Controller
 {
@@ -18,7 +20,7 @@ class AuditTrailController extends Controller
       'filter' => $inputs['filter'] ?? null,
       'q' => $inputs['q'] ?? null
     );
-    $result['data'] = AuditTrailRepository::getList($param, Auth::user()->getAuthIdentifier());
+    $result['data'] = AuditTrailRepository::getAll($param);
 
     $result['state_code'] = 200;
     $result['success'] = true;

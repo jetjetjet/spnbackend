@@ -49,7 +49,7 @@ class TipeSuratController extends Controller
       return response()->json($respon, 400);
     }
     
-    $result = TipeSuratRepository::save($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
+    $result = TipeSuratRepository::save($respon, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);

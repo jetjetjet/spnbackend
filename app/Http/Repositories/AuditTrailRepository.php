@@ -8,22 +8,21 @@ use Exception;
 
 class AuditTrailRepository
 {
-  public static function getAll($filter)
+  public static function getAll($param)
   {
     $q = DB::table('gen_audit_trail as gat')
-      ->join('gen_user as cr', 'cr.id', 'gat.created_by')
-      ->leftJoin('gen_user as md', 'md.id', 'gat.modified_by')
+      ->leftJoin('gen_user as cr', 'cr.id', 'gat.created_by')
+      ->leftJoin('gen_position as gp', 'gp.id', 'cr.position_id')
       ->select('gat.id', 
         'path',
         'action',
         'modul',
         'success',
         'messages',
-        'created_at',
-        DB::raw("coalesce(cr.full_name, '-') as created_by"),
-        'created_at',
-        DB::raw("coalesce(cr.full_name, '-') as modified_by"),
-        'modified_at'
+        DB::raw("case when cr.full_name is null 
+          then 'User tidak ada'
+          else cr.full_name || ' - ' || gp.position_name end as created_by"),
+        'gat.created_at'
       );
 
     $q = $param['order'] != null
@@ -36,7 +35,7 @@ class AuditTrailRepository
 
     $data = $q->paginate($param['per_page']);;
 
-    return $q;
+    return $data;
   }
 
   public static function saveAuditTrail($request, $result, $action, $loginid)

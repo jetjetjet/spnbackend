@@ -21,7 +21,7 @@ class TipeSuratRepository
     return $q;
   }
 
-  public static function save($respon, $id, $inputs, $loginid)
+  public static function save($respon, $inputs, $loginid)
   {
     try{
       $save = TipeSurat::create([
@@ -32,8 +32,8 @@ class TipeSuratRepository
       ]);
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      $respon['data'] = $posisi;
-      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'), "Simpan", $save->tipe_surat));
+      $respon['data'] = $save;
+      array_push($respon['messages'], sprintf(trans('messages.succesSaveUpdate'), "Simpan", $inputs['tipe_surat']));
     } catch(\Exception $e){
       $log =Array(
         'action' => 'SAV',
@@ -67,7 +67,6 @@ class TipeSuratRepository
       
       $respon['success'] = true;
       $respon['state_code'] = 200;
-      //$respon['data'] = $posisi;
       array_push($respon['messages'], sprintf(trans('messages.successDeleting'), 'Sifat Surat'));
     } catch (\Exception $e) {
       $log =Array(

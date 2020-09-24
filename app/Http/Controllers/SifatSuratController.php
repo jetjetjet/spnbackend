@@ -49,7 +49,7 @@ class SifatSuratController extends Controller
       return response()->json($respon, 400);
     }
     
-    $result = SifatSuratRepository::save($id, $respon, $inputs, Auth::user()->getAuthIdentifier());
+    $result = SifatSuratRepository::save($respon, $inputs, Auth::user()->getAuthIdentifier());
     $audit = AuditTrailRepository::saveAuditTrail($request, $result, 'Save', Auth::user()->getAuthIdentifier());
 
     return response()->json($result, $result['state_code']);

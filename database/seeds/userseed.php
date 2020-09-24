@@ -120,100 +120,6 @@ class Userseed extends Seeder
             'created_by' => '1'
         ]);
 
-        //factory(User::class, 40)->create();
-
-        //Menu::truncate();
-        // $hdr = Menu::create([
-        //     'menu_name' => null,
-        //     'display' => 'Master',
-        //     'url' => '#',
-        //     'icon' => 'fa-dashboard',
-        //     'isparent' => '1',
-        //     'parent_id' => null,
-        //     'index' => '1',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
-        // $m0 = Menu::create([
-        //     'menu_name' => 'User',
-        //     'display' => 'User',
-        //     'url' => '/User',
-        //     'icon' => 'fa-users',
-        //     'isparent' => '0',
-        //     'parent_id' => $hdr->id,
-        //     'index' => '1',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
-        // $m1 = Menu::create([
-        //     'menu_name' => 'Menu',
-        //     'display' => 'Menu',
-        //     'url' => '/Menu',
-        //     'icon' => 'fa-menu',
-        //     'isparent' => '0',
-        //     'parent_id' => $hdr->id,
-        //     'index' => '2',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
-        // $m2 = Menu::create([
-        //     'menu_name' => 'Jabatan',
-        //     'display' => 'Jabatan',
-        //     'url' => '/Jabatan',
-        //     'icon' => 'fa-groups',
-        //     'isparent' => '0',
-        //     'parent_id' => $hdr->id,
-        //     'index' => '3',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
-        // $hdr2 = Menu::create([
-        //     'menu_name' => null,
-        //     'display' => 'Surat',
-        //     'url' => '#',
-        //     'icon' => 'fa-dashboard',
-        //     'isparent' => '1',
-        //     'parent_id' => null,
-        //     'index' => '2',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
-        // $m3 = Menu::create([
-        //     'menu_name' => 'SuratMasuk',
-        //     'display' => 'Surat Masuk',
-        //     'url' => '/suratMasuk',
-        //     'icon' => 'fa-groups',
-        //     'isparent' => '0',
-        //     'parent_id' => $hdr2->id,
-        //     'index' => '1',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
-        // $m4 = Menu::create([
-        //     'menu_name' => 'SuratKeluar',
-        //     'display' => 'Surat Keluar',
-        //     'url' => '/suratKeluar',
-        //     'icon' => 'fa-groups',
-        //     'isparent' => '0',
-        //     'parent_id' => $hdr2->id,
-        //     'index' => '2',
-        //     'active' => '1',
-        //     'created_at' => now()->toDateTimeString(),
-        //     'created_by' => '1'
-        // ]);
-
         Position::truncate();
         Group::truncate();
         PositionMenu::truncate();
@@ -604,6 +510,45 @@ class Userseed extends Seeder
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
+        
+        $eka = User::create([
+            'full_name' => 'Eka Wadianti',
+            'position_id' => $spep->id,
+            'username' => 'EkaPerencanaan',
+            'email' => 'wadiantieka@gmail.com',
+            'jenis_kelamin' => 'Perempuan',
+            'nip' => '197705252012122001',
+            'password' => bcrypt('password'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $Eva = User::create([
+            'full_name' => 'Eva Brammanti Putra',
+            'position_id' => $kabsp->id,
+            'username' => 'Kabid Sarpras',
+            'email' => 'evabramantiputra@gmail.com',
+            'jenis_kelamin' => 'Perempuan',
+            'nip' => '197705022006041014',
+            'password' => bcrypt('password'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
+
+        $Eva = User::create([
+            'full_name' => 'Silisman, S.Sos',
+            'position_id' => $kasisd->id,
+            'username' => 'Kasi Sarana SD',
+            'email' => 'silisman82@yahoo.com',
+            'jenis_kelamin' => 'Perempuan',
+            'nip' => '198204292007011004',
+            'password' => bcrypt('password'),
+            'active' => '1',
+            'created_at' => now()->toDateTimeString(),
+            'created_by' => '1'
+        ]);
 
         //afif
         $gpkadin = PositionMenu::create([
@@ -654,5 +599,6 @@ class Userseed extends Seeder
             'created_at' => now()->toDateTimeString(),
             'created_by' => '1'
         ]);
+
     }
 }

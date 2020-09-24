@@ -35,7 +35,7 @@ return[
   'successSaveTemplate' => 'Berhasil simpan template surat.',
   'successRejectedSignSK' => 'Surat Keluar ditolak.',
   'successResetPassword' => 'Password berhasil direset.',
-  'succesSaveUpdate' => '%d Data %s berhasil.',
+  'succesSaveUpdate' => '%s Data %s berhasil.',
   'successUpdatePassword' => 'Password %s berhasil diubah.',
   'successUpdatePermissions' => 'Berhasil ubah hak akses.',
   'successUpdatedPhoto' => 'Photo berhasil diubah.',

@@ -163,8 +163,10 @@ class AuthController extends Controller
       ->orderBy('created_at', 'DESC')
       ->select('token')
       ->first();
+    
+    $rToken = $getTokenReset->token ?? null;
 
-    if($getTokenReset->token == $input['konci_pas']){
+    if($rToken == $input['konci_pas']){
       $rPass = User::where('email', $input['email'])->where('active', '1')->first();
       $rPass->update([
         'password' => bcrypt($input['new_password']),
@@ -178,7 +180,7 @@ class AuthController extends Controller
       
       $result['state_code'] = 200;
       $result['success'] = true;
-      array_push($result['messages'], trans('messages.successResetPassword'));
+      array_push($result['messages'], 'Password berhasil direset.');
       $idUser = $rPass->id;
     } else {
       $result['state_code'] = 500;
@@ -203,6 +205,7 @@ class AuthController extends Controller
       User::where('email', $email)->first()->notify(new ResetPassword($details));
         return true;
     } catch (\Exception $e) {
+      dd($e);
         return false;
     }
   }
