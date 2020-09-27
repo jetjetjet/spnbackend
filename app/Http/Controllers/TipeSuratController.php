@@ -35,7 +35,7 @@ class TipeSuratController extends Controller
 
     // Validation rules.
     $rules = array(
-      'tipe_surat' => 'required'
+      'tipe_surat' => 'required|unique:gen_tipesurat'
 		);
 		
     $inputs = $request->all();
@@ -44,7 +44,7 @@ class TipeSuratController extends Controller
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $results['messages'] = Array($validator->messages()->first());
+      $respon['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
       return response()->json($respon, 400);
     }

@@ -56,7 +56,7 @@ class SifatSuratRepository
         array_push($respon['messages'], sprintf(trans('messages.errorDelReferenceUser'), 'Sifat Surat'));
         return $respon;
       }
-      $sifatSurat = SifatSurat::where('active', '1')->where('id', $id)->firstOrFail();
+      $sifatSurat = SifatSurat::where('active', '1')->where('sifat_surat', $id)->firstOrFail();
 
       $sifatSurat->update([
         'active' => '0',

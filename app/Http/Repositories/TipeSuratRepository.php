@@ -57,7 +57,7 @@ class TipeSuratRepository
         array_push($respon['messages'], sprintf(trans('messages.errorDelReferenceUser'), 'Tipe Surat'));
         return $respon;
       }
-      $tipeSurat = TipeSurat::where('active', '1')->where('id', $id)->firstOrFail();
+      $tipeSurat = TipeSurat::where('active', '1')->where('jenis_surat', $id)->firstOrFail();
 
       $tipeSurat->update([
         'active' => '0',

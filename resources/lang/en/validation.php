@@ -175,6 +175,7 @@ return [
         'template_type' => 'Tipe Template Surat',
         'template_name' => 'Nama Template Surat',
         'tgl_surat' => 'Tanggal Surat',
+        'tipe_surat' => 'Tipe Surat',
         'ttl' => 'Tgl. Lahir',
         'to_user_id' => 'Tujuan Surat',
         'tujuan_surat' => 'Tujuan Surat',

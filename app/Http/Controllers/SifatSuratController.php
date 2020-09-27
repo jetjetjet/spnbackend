@@ -35,16 +35,15 @@ class SifatSuratController extends Controller
 
     // Validation rules.
     $rules = array(
-      'sifat_surat' => 'required'
+      'sifat_surat' => 'required|unique:gen_sifatsurat'
 		);
 		
     $inputs = $request->all();
     $validator = Validator::make($inputs, $rules);
-
 		// Validation fails?
 		if ($validator->fails()){
 			$respon['state_code'] = 400;
-      $results['messages'] = Array($validator->messages()->first());
+      $respon['messages'] = Array($validator->messages()->first());
       $respon['data'] = $inputs;
       return response()->json($respon, 400);
     }

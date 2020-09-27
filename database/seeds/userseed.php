@@ -29,7 +29,7 @@ class Userseed extends Seeder
             'Surat Keterangan',
             'Surat Memo atau Nota Dinas',
             'Surat Edaran',
-            'Surat Penangar',
+            'Surat Pengantar',
             'Surat Perintah',
             'Surat Instruksi',
             'Surat Tugas'

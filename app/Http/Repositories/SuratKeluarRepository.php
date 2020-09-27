@@ -108,7 +108,7 @@ class SuratKeluarRepository
       : $q->orderBy('sk.id', 'DESC');
 
     $q = $param['filter'] != null 
-      ? $q->whereRaw("sk.".$param['filter']. " like ? ", ['%' . trim($param['q']) . '%' ])
+      ? $q->whereRaw("UPPER(sk.".$param['filter']. ") like UPPER(?) ", ['%' . trim($param['q']) . '%' ])
       : $q;
         
     $data = $q->paginate($param['per_page']);;

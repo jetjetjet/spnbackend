@@ -44,6 +44,6 @@ class NomorSuratRepository
 
     $data = $q->paginate($param['per_page']);;
 
-    return $q;
+    return $data;
   }
 }
