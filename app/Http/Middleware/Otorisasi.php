@@ -24,8 +24,8 @@ class Otorisasi
 
       if (!$request->user()->tokenCan($actions[0])) 
       {
-        $msg = Array("message" =>"You are not authorized to access this resource / execute the action!");
-        return response()->json($msg, 401);
+        $msg = Array("message" =>"Tidak dapat memproses.");
+        return response()->json($msg, 400);
       }
       
       return $next($request);

@@ -89,7 +89,7 @@ class UserRepository
       $user = null;
       $mode = "";
       if ($id){
-        $user = User::where('active', '1')->where('id', $id)->firstOrFail();
+        $user = User::where('active', '1')->where('nip', $id)->firstOrFail();
 
         $user->update([
           'full_name' => $inputs['full_name'],
@@ -103,6 +103,11 @@ class UserRepository
         ]);
         $mode = "Ubah";
       } else {
+        $userValid = User::where('active', '1')->where('nip', $inputs['nip'])->first();
+        if($userValid){
+          throw new exception("nip_duplicate");
+        }
+
         $user = User::create([
           'username' => $inputs['username'],
           'position_id' => $inputs['position_id'] ?? null,
@@ -131,9 +136,13 @@ class UserRepository
         'reference_id' => $id ?? 0,
         'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
       );
-      $saveLog = ErrorLogRepository::save($log, $loginid);
+      $saveLog = ErrorLogRepository::save($log, $userLogin);
       $result['state_code'] = 500;
-      array_push($result['messages'], trans('messages.errorCallAdmin'));
+      $msg = $e->getMessage() === 'nip_duplicate'
+        ? 'NIP sudah terdaftar pada sistem'
+        :trans('messages.errorCallAdmin');
+
+      array_push($result['messages'], $msg);
     }
 
     return $result;

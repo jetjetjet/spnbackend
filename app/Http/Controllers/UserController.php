@@ -174,7 +174,7 @@ class UserController extends Controller
         $rules['full_name'] = 'required';
         $rules['password'] = 'required';
         $rules['username'] = 'required';
-        $rules['nip'] = 'required|unique:gen_user|max:18';
+        $rules['nip'] = 'required|max:18';
         $rules['email'] = 'required';
         $rules['jenis_kelamin'] = 'required';
         $rules['phone'] = 'max:15';
