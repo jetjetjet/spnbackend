@@ -34,7 +34,7 @@ class AuthController extends Controller
       return response()->json($result, 400);
     }
 
-    $user = User::where('nip', $request->nip)->first();
+    $user = User::where('nip', $request->nip)->where('active','1')->first();
     if($user != null){
       if (!Hash::check($request->password, $user->password)) {
         array_push($result['messages'],'NIP/Password Anda Salah');

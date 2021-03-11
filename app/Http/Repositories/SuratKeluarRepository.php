@@ -75,6 +75,7 @@ class SuratKeluarRepository
       DB::raw("case when is_approve = '1' and surat_log = 'CREATED' then 'Konsep - '|| cr.full_name
         when is_approve = '1' and surat_log = 'REVISED' then 'Revisi - '|| cr.full_name
         when is_approve = '1' and coalesce(is_verify,'0') = '0' and surat_log = 'REJECTED' then 'Ditolak - ' ||  app.full_name
+        when is_approve = '1' and is_verify = '0' and surat_log = 'APPROVED' then 'Dibuat - ' ||  app.full_name
         when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then 'Disetujui - ' ||  app.full_name
         when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then 'Ditolak - ' ||  ver.full_name
         when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then 'Diverifikasi - ' || ver.full_name
@@ -86,6 +87,7 @@ class SuratKeluarRepository
       "),
       DB::raw("case when is_approve = '1' and (surat_log = 'CREATED' or surat_log = 'REVISED') then pcr.position_name
         when is_approve = '1' and is_verify = '0' and surat_log = 'REJECT' then papp.position_name
+        when is_approve = '1' and is_verify = '0' and surat_log = 'APPROVED' then papp.position_name
         when is_approve = '1' and is_verify = '1' and surat_log = 'APPROVED' then papp.position_name
         when is_approve = '1' and is_verify = '0' and surat_log = 'VERIFY_REJECTED' then pver.position_name
         when is_verify = '1' and is_agenda = '1' and surat_log = 'VERIFIED' then pver.position_name
@@ -173,7 +175,8 @@ class SuratKeluarRepository
         DB::raw("case when sk.is_verify = '1' and (surat_log = 'APPROVED' or surat_log = 'SIGN_REJECTED') and 1 =" . $perms['suratKeluar_verify'] . " then 1 else 0 end as can_verify"),
         DB::raw("case when sk.is_agenda = '1' and surat_log = 'VERIFIED' and 1 =" . $perms['suratKeluar_agenda'] . " then 1 else 0 end as can_agenda"),
         DB::raw("case when sk.is_sign = '1' and surat_log = 'AGENDA' and 1 =" . $perms['suratKeluar_sign'] . " then 1 else 0 end as can_sign"),
-        DB::raw("case when sk.is_verify = '1' and 1 =" . $perms['suratKeluar_void'] . " then 1 else 0 end as can_void")
+        DB::raw("case when sk.is_verify = '1' and 1 =" . $perms['suratKeluar_void'] . " then 1 else 0 end as can_void"),
+        DB::raw("case when 1 =" . $perms['suratKeluar_delete'] . " then 1 else 0 end as can_delete")
       )->first();
     
     if($header != null){
@@ -306,7 +309,7 @@ class SuratKeluarRepository
             'surat_keluar_id' => $tSurat->id,
             'tujuan_user_id' => $inputs['approval_user_id'],
             'file_id' => $inputs['file_id'],
-            'log' => $inputs['verLog'] ?? "REVISED",
+            'log' => "REVISED",
             //'tujuan_surat' => $inputs['tujuan_surat'],
             'keterangan' => 'Revisi',
           );
@@ -344,7 +347,7 @@ class SuratKeluarRepository
           'surat_keluar_id' => $insert['id'],
           'tujuan_user_id' => $inputs['approval_user_id'],
           'file_id' => $inputs['file_id'],
-          'log' => $inputs['verLog'] ?? "CREATED",
+          'log' => "CREATED",
           //'tujuan_surat' => $inputs['tujuan_surat'],
           'keterangan' => 'Draft',
         );
@@ -560,7 +563,7 @@ class SuratKeluarRepository
     $cekDisposisi = DisSuratKeluar::where('active', '1')
       ->where('surat_keluar_id', $id)
       ->count();
-    if($cekDisposisi > 1)
+    if($cekDisposisi > 1 && $loginid != 1)
     {
       $respon['state_code'] = 500;
       array_push($respon['messages'], trans('messages.errorDeleteSKApproved'));

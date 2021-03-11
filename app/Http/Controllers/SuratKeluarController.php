@@ -46,7 +46,7 @@ class SuratKeluarController extends Controller
       'suratKeluar_verify' => $user->tokenCan('suratKeluar_verify') || $user->tokenCan('is_admin') ? 1 :0,
       'suratKeluar_save' => $user->tokenCan('suratKeluar_save') || $user->tokenCan('is_admin') ? 1 :0,
       'suratKeluar_void' => $user->tokenCan('suratKeluar_void') || $user->tokenCan('is_admin') ? 1 :0,
-      'suratKeluar_void' => $user->tokenCan('suratKeluar_void') || $user->tokenCan('is_admin') ? 1 : 0
+      'suratKeluar_delete' => $user->tokenCan('is_admin') ? 1 : 0
     );
 
     $result = SuratKeluarRepository::getById($responses, $id, $permissions);
