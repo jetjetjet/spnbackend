@@ -597,7 +597,7 @@ class SuratKeluarRepository
       ->where('is_sign', '1')
       ->whereNull('signed_at')->first();
       try{
-        $basePathFile = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
+        $basePathFile = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
         $basePathCer = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
         if ($sk != null){
           if($inputs['approved']) {
