@@ -16,6 +16,7 @@ class DisSuratMasuk extends Model
     'is_read',
     'last_read',
     'log',
+    'logpos',
     'active',
     'created_at',
     'created_by',

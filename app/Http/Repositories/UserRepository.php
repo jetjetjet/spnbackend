@@ -89,8 +89,7 @@ class UserRepository
       $user = null;
       $mode = "";
       if ($id){
-        $user = User::where('active', '1')->where('nip', $id)->firstOrFail();
-
+        $user = User::where('active', '1')->where('id', $id)->firstOrFail();
         $user->update([
           'full_name' => $inputs['full_name'],
           'position_id' => $inputs['position_id'] ?? null,
@@ -226,29 +225,38 @@ class UserRepository
     return $respon;
   }
 
-  public static function searchUserSuratKeluar($respon, $permission, $loginid)
+  public static function searchUserSuratKeluar($respon, $loginid)
   {
     $qCek = User::join('gen_position as gp', 'gp.id', 'position_id')
-    ->where('gen_user.active', '1')->where('gen_user.id', $loginid)
-    ->where('gp.active', '1')
-    ->select('gen_user.id as id', DB::raw("coalesce(gp.parent_id, 0) as parent_id") , 'gp.position_name')->first();
+      ->where('gen_user.active', '1')
+      ->where('gen_user.id', $loginid)
+      ->where('gp.active', '1')
+      ->select(
+        'gen_user.id as id', 
+        DB::raw("coalesce(gp.parent_id, 0) as parent_id") , 
+        'gp.position_name',
+        'is_parent',
+        'is_admin',
+        'is_sekretaris',
+        'is_subagumum',
+        'is_officer')
+      ->first();
 
-    $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
-    switch ($permission) {
-      case 'suratKeluar_approve':
-        $query = $query->where('gp.id', 3);
-      break;
-      case 'suratKeluar_verify':
-        $query = $query->where('gp.id', 4);
-        break;
-      case 'suratKeluar_agenda':
-        $query = $query->where('gp.id', 2);
-        break;
-      case 'suratKeluar_save':
-        $query = $query->where('gp.id', $qCek->parent_id);
-        break;
-      default:
-        $query = $query;
+    $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')
+      ->where('gen_user.active','1');
+
+    if($qCek->is_admin){
+      $query = $query;
+    } else if($qCek->is_sekretaris){
+      $query = $query->where('is_subagumum', '1');
+    } else if($qCek->is_subagumum){
+      $query = $query->where('is_kadin', '1');
+    } else if($qCek->is_parent){
+      $query = $query->where('is_sekretaris', '1');
+    } else if($qCek->parent_id){
+      $query = $query->where('gp.id', $qCek->parent_id);
+    } else {
+      $query = $query;
     }
 
     $data = $query->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
@@ -263,9 +271,11 @@ class UserRepository
   public static function searchUserTtd($respon, $loginid)
   {
     $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')
-      ->where('gen_user.active','1')->whereIn('gp.id', [2,3])
+      ->where('gen_user.active','1')
+      ->whereRaw("(is_kadin = '1' or is_sekretaris = '1')")
       ->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
       ->get();
+
     $respon['success'] = true;
     $respon['state_code'] = 200;
     $respon['data'] = $query;
@@ -276,25 +286,22 @@ class UserRepository
   public static function searchUserSuratMasuk($respon, $loginid)
   {
     $qCek = User::join('gen_position as gp', 'gp.id', 'position_id')
-    ->where('gen_user.active', '1')->where('gen_user.id', $loginid)
-    ->where('gp.active', '1')
-    ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name')->first();
+      ->where('gen_user.active', '1')
+      ->where('gen_user.id', $loginid)
+      ->where('gp.active', '1')
+      ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name', 'is_sekretaris', 'is_kadin', 'is_admin', 'is_officer')
+      ->first();
 
     if ($qCek != null){
       $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
-      switch ($qCek->position_id) {
-        case 1:
-          $query = $query;
-          break;
-        case 4:
-          $query = $query->whereIn('gp.id', [2,3]);
-          break;
-        case 2:
-        case 3:
-          $query = $query->where('gp.is_parent', '1');
-          break;
-        default:
-          $query = $query->where('gp.parent_id', $qCek->position_id);
+      if($qCek->is_admin){
+        $query = $query;
+      } else if($qCek->is_sekretaris || $qCek->is_kadin){
+        $query = $query->where('gp.is_parent', '1');
+      } else if($qCek->is_officer){
+        $query = $query->whereRaw("(is_kadin = '1' or is_sekretaris = '1')");
+      } else {
+        $query = $query->where('gp.parent_id', $qCek->position_id);
       }
 
       $data = $query->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))

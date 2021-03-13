@@ -81,7 +81,7 @@ class DisSuratMasukRepository
           DB::raw("sekredsm.arahan as arahan_sekre")
           )->first();
       if($getSM != null){
-        //$path = base_path();
+        // $path = base_path();
         $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
         $newFile = time()."_LembarDisposisi_". $getSM->asal_surat;
         $newFilePath = '/upload/suratmasuk/' . $newFile.'.docx';
@@ -181,6 +181,7 @@ class DisSuratMasukRepository
           'is_tembusan' => $inputs['is_tembusan'] ?? null,
           'is_private' => $inputs['is_private'] ?? null,
           'log' => $inputs['log'],
+          'logpos' => self::getLogPos($loginid),
           'is_read' => '0',
           'active' => '1',
           'created_at' => DB::raw('now()'),
@@ -217,5 +218,13 @@ class DisSuratMasukRepository
       ]);
     }
     return $surat;
+  }
+  private static function getLogPos($loginid)
+  {
+    $q = DB::table('gen_user as gu')->join('gen_position as gp', 'gp.id', 'position_id')
+      ->where('gu.id', $loginid)
+      ->select('position_name')
+      ->first();
+    return $q->position_name;
   }
 }

@@ -85,6 +85,7 @@ class DisSuratKeluarRepository
       'file_id' => $inputs['file_id'] ?? null,
       'keterangan' => $inputs['keterangan'],
       'log' => $inputs['log'],
+      'logpos' => self::getLogPos($loginid),
       'is_read' => '0',
       'active' => '1',
       'created_at' => DB::raw('now()'),
@@ -127,5 +128,14 @@ class DisSuratKeluarRepository
     $q = DB::table('surat_keluar')->where('active', '1')->where('id', $id)->select('created_by')->first();
     
     return $q->created_by;
+  }
+
+  private static function getLogPos($loginid)
+  {
+    $q = DB::table('gen_user as gu')->join('gen_position as gp', 'gp.id', 'position_id')
+      ->where('gu.id', $loginid)
+      ->select('position_name')
+      ->first();
+    return $q->position_name;
   }
 }

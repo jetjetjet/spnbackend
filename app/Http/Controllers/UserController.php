@@ -251,19 +251,7 @@ class UserController extends Controller
   {
     $respon = Helper::$responses;
     $user = request()->user();
-    $permission = '';
-    if($user->tokenCan('suratKeluar_approve')){
-      $permission = 'suratKeluar_approve';
-    } else if ($user->tokenCan('suratKeluar_agenda')){
-      $permission = 'suratKeluar_agenda';
-    } else if ($user->tokenCan('suratKeluar_verify')){
-      $permission = 'suratKeluar_verify';
-    } else if ($user->tokenCan('suratKeluar_save')){
-      $permission = 'suratKeluar_save';
-    } else {
-      //
-    }
-		$result = UserRepository::searchUserSuratKeluar($respon, $permission, Auth::user()->getAuthIdentifier());
+		$result = UserRepository::searchUserSuratKeluar($respon, Auth::user()->getAuthIdentifier());
 
 		return response()->json($result, $result['state_code']);
   }

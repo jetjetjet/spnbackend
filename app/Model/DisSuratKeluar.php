@@ -18,6 +18,7 @@ class DisSuratKeluar extends Model
     'last_read',
     'keterangan',
     'log',
+    'logpos',
     'active',
     'created_at',
     'created_by',

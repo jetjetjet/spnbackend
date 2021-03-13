@@ -201,7 +201,7 @@ class SuratKeluarRepository
             else '' end as label"),
           'surat_keluar_id', 
           'cr.full_name as created_by',
-          'gp.position_name',
+          'logpos as position_name',
           'file_id',
           DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
           'last_read',
