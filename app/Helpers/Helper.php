@@ -48,7 +48,7 @@ class Helper
   {
     $newFile = new \StdClass;
     try {
-      // $newFile->path = base_path() . $subFolder;
+      //  $newFile->path = base_path() . $subFolder;
       $newFile->path = '/home/admin/web/apisurat.disdikkerinci.id/public_html'. $subFolder;
       $newFile->newName = time()."_".$file->getClientOriginalName();
       $newFile->originalName = explode('.',$file->getClientOriginalName())[0];
@@ -132,13 +132,14 @@ class Helper
   public static function createCertificate($info)
   {
     $rootdir=base_path() .'/stack';
+    // $rootdir = '/home/admin/web/apisurat.disdikkerinci.id/public_html'. $subFolder;
     $certdir=$rootdir;
     $name=$info['name'];
 
     $infoMail=$info['email'];
 
     if( $name ){
-      function create( $rootdir='c:/wwwroot', $certdir=false, $certname='certificate', $dn=array(), $passphrase=null, $createpem=true, $overwrite=true, $infoMail=null ){
+      function create( $rootdir='/home/wwwroot', $certdir=false, $certname='certificate', $dn=array(), $passphrase=null, $createpem=true, $overwrite=true, $infoMail=null ){
         if( !empty( $certdir ) && !empty( $certname ) && !empty( $dn ) ){
 
           $out = new \stdClass;
@@ -148,7 +149,7 @@ class Helper
           putenv( sprintf( 'OPENSSL_CONF=%s/openssl.cnf', $rootdir ) );
 
           $config=array(
-            'config'            =>  'C:\xampp\php\extras\openssl\openssl.cnf',
+            'config'            =>  '/etc/ssl/openssl.cnf',
             'digest_alg'        =>  'AES-128-CBC',
             'private_key_bits'  =>  4096,
             'private_key_type'  =>  OPENSSL_KEYTYPE_RSA,
@@ -163,7 +164,7 @@ class Helper
             "countryName"               => "ID",
             "stateOrProvinceName"       => "Jambi",
             "localityName"              => "Indonesia",
-            "organizationName"          => "ratafd.xyz",
+            "organizationName"          => "Dikjar Kerinci",
             "organizationalUnitName"    => "Dikjar Kerinci",
             "commonName"                => $certname,
             "emailAddress"              => $infoMail
