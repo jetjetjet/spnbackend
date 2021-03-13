@@ -198,7 +198,7 @@ class SuratMasukRepository
         'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
       );
       $saveLog = ErrorLogRepository::save($log, $loginid);
-      $result['state_code'] = 500;
+      $result['state_code'] = 400;
       array_push($respon['messages'], trans('messages.errorSaveSM'));
     }
     return $result;
