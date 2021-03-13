@@ -202,7 +202,7 @@ class DisSuratMasukRepository
      // DB::commit();
       $result = true;
     }catch(\Exception $e){
-      throw new exception('Rollbacked');
+      throw new exception();
     }
     return $result;
   }

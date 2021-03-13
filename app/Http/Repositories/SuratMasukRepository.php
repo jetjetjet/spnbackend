@@ -281,7 +281,7 @@ class SuratMasukRepository
         );
         $dis = DisSuratMasukRepository::saveDisSuratMasuk($dataDis, $loginid, $positionid);
         if($dis == null){
-          throw new Exception('rollbacked');
+          throw new Exception();
         }
       }
       $result['id'] = $insert->id ?: $id;
