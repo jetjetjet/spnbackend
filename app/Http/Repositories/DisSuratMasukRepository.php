@@ -202,7 +202,7 @@ class DisSuratMasukRepository
      // DB::commit();
       $result = true;
     }catch(\Exception $e){
-      throw new exception();
+      throw new exception($e->getMessage());
     }
     return $result;
   }
