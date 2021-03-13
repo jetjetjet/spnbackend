@@ -155,7 +155,7 @@ class SuratMasukRepository
             when log = 'CLOSED' then 'Surat diselesaikan oleh: ' || cr.full_name || ' - ' || pcr.position_name
             else '' end as label_history"),
           DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),
-          'log_pos as position_name',
+          'logpos as position_name',
           'arahan',
           'last_read'
         )->get();
