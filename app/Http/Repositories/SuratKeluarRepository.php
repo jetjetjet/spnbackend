@@ -597,7 +597,8 @@ class SuratKeluarRepository
       ->where('is_sign', '1')
       ->whereNull('signed_at')->first();
       try{
-        $basePath = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
+        $basePathFile = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
+        $basePathCer = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
         if ($sk != null){
           if($inputs['approved']) {
             $isiKode = Str::random(12);
@@ -624,7 +625,7 @@ class SuratKeluarRepository
               //$pdf->setPrintFooter(false);
               
               // set the source file
-              $pageCount = $pdf->setSourceFile($basePath . $data->file_path);
+              $pageCount = $pdf->setSourceFile($basePathFile . $data->file_path);
               for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
                 // import a page
                 $templateId = $pdf->importPage($pageNo);
@@ -645,8 +646,8 @@ class SuratKeluarRepository
       
                 if($pageNo == 1){
                   //set certificate file
-                  $certificate = 'file://'. $basePath.'/stack/certificates/public/'. $user->username .'.crt';
-                  $private_key = 'file://'. $basePath.'/stack/certificates/private/'. $user->username .'.key';
+                  $certificate = 'file://'. $basePathCer.'/stack/certificates/public/'. $user->username .'.crt';
+                  $private_key = 'file://'. $basePathCer.'/stack/certificates/private/'. $user->username .'.key';
       
                   $info = array(
                     'Name' => $user->full_name,
@@ -663,7 +664,7 @@ class SuratKeluarRepository
       
               $signed = time()."_". $data->original_name;
               $signedPath = '/upload/suratkeluar/'. $signed;
-              $pdf->Output($basePath . $signedPath, 'F');
+              $pdf->Output($basePathFile . $signedPath, 'F');
       
               $newFile = File::create([
                 'file_name' => $signed,
