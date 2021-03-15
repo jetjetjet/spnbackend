@@ -242,7 +242,7 @@ class UserRepository
         'is_officer')
       ->first();
 
-    $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')
+    $query = User::join('gen_position as gp', 'gp.id', 'position_id')
       ->where('gen_user.active','1');
 
     if($qCek->is_admin){
@@ -293,7 +293,7 @@ class UserRepository
       ->first();
 
     if ($qCek != null){
-      $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
+      $query = User::join('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
       if($qCek->is_admin){
         $query = $query;
       } else if($qCek->is_kadin){
