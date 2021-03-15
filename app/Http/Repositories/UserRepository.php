@@ -301,7 +301,7 @@ class UserRepository
       } else if($qCek->is_officer || $qCek->is_subagumum){
         $query = $query->whereRaw("is_sekretaris = '1'");
       } else if($qCek->is_sekretaris){
-        $query = $query->where('is_kadin', '1')->orWhere('gp.parent_id', $qCek->position_id);
+        $query = $query->whereRaw("(is_kadin = '1' or gp.parent_id = '". $qCek->position_id ."'");
       }else {
         $query = $query->where('gp.parent_id', $qCek->position_id);
       }
