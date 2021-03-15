@@ -18,7 +18,7 @@ class DisSuratMasukRepository
   {
     try{
       $inputs['log'] = 'DISPOSITION';
-      $childKabid = self::cekKabid($positionid);
+      $childKabid = self::cekSMStatus($inputs['surat_masuk_id'], $positionid);
       DB::transaction(function () use (&$respon, $inputs, $loginid, $positionid, $childKabid){
         $valid = self::saveDisSuratMasuk($inputs, $loginid, $positionid);
         if(!$valid) return;
@@ -135,14 +135,24 @@ class DisSuratMasukRepository
     return $update;
   }
 
-  public static function cekKabid($positionid)
+  public static function cekSMStatus($SMid, $positionid)
   {
-    //kabid = child > 1
-    return DB::table('gen_position')
-      ->where('active', '1')
-      ->where('parent_id', $positionid)
-      ->whereNotIn('parent_id', [2, 3])
-      ->count();
+    //kabid / is_parent sekretaris = child > 1
+    $count = 0;
+    $sM = SuratMasuk::where('active', '1')
+        ->where('id', $SMid)
+        ->whereNotNull('kadin_id')
+        ->whereNotNull('sekretaris_id')
+        ->first();
+    if($sM != null){
+      $count = DB::table('gen_position')
+        ->where('active', '1')
+        ->where('parent_id', $positionid)
+        ->whereRaw("(coalesce(is_kadin,'0') = '0')")
+        ->count();
+    }
+
+    return $count;
   }
 
   public static function saveDisSuratMasuk($inputs, $loginid, $positionid)
