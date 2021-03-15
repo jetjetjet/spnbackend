@@ -181,7 +181,7 @@ class DisSuratMasukRepository
           'is_tembusan' => $inputs['is_tembusan'] ?? null,
           'is_private' => $inputs['is_private'] ?? null,
           'log' => $inputs['log'],
-          'logpos' => self::getLogPos($loginid),
+          'logpos' => self::getLogPos($userid),
           'is_read' => '0',
           'active' => '1',
           'created_at' => DB::raw('now()'),
@@ -219,10 +219,10 @@ class DisSuratMasukRepository
     }
     return $surat;
   }
-  private static function getLogPos($loginid)
+  private static function getLogPos($userid)
   {
     $q = DB::table('gen_user as gu')->join('gen_position as gp', 'gp.id', 'position_id')
-      ->where('gu.id', $loginid)
+      ->where('gu.id', $userid)
       ->select('position_name')
       ->first();
     return $q->position_name;
