@@ -289,7 +289,7 @@ class UserRepository
       ->where('gen_user.active', '1')
       ->where('gen_user.id', $loginid)
       ->where('gp.active', '1')
-      ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name', 'is_sekretaris', 'is_kadin', 'is_admin', 'is_officer', 'is_subbagumum')
+      ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name', 'is_sekretaris', 'is_kadin', 'is_admin', 'is_officer', 'is_subagumum')
       ->first();
 
     if ($qCek != null){
