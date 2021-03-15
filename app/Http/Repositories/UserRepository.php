@@ -289,18 +289,20 @@ class UserRepository
       ->where('gen_user.active', '1')
       ->where('gen_user.id', $loginid)
       ->where('gp.active', '1')
-      ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name', 'is_sekretaris', 'is_kadin', 'is_admin', 'is_officer')
+      ->select('gen_user.id as id', 'gp.id as position_id', 'gp.position_name', 'is_sekretaris', 'is_kadin', 'is_admin', 'is_officer', 'is_subbagumum')
       ->first();
 
     if ($qCek != null){
       $query = User::leftJoin('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
       if($qCek->is_admin){
         $query = $query;
-      } else if($qCek->is_sekretaris || $qCek->is_kadin){
+      } else if($qCek->is_kadin){
         $query = $query->where('gp.is_parent', '1');
-      } else if($qCek->is_officer){
-        $query = $query->whereRaw("(is_kadin = '1' or is_sekretaris = '1')");
-      } else {
+      } else if($qCek->is_officer || $qCek->is_subagumum){
+        $query = $query->whereRaw("is_sekretaris = '1'");
+      } else if($qCek->is_sekretaris){
+        $query = $query->where('is_kadin', '1')->orWhere('gp.parent_id', $qCek->position_id);
+      }else {
         $query = $query->where('gp.parent_id', $qCek->position_id);
       }
 
