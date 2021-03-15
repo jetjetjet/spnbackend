@@ -181,7 +181,7 @@ class DisSuratMasukRepository
           'is_tembusan' => $inputs['is_tembusan'] ?? null,
           'is_private' => $inputs['is_private'] ?? null,
           'log' => $inputs['log'],
-          'logpos' => self::getLogPos($userid),
+          'logpos' => self::getLogPos($userid), 
           'is_read' => '0',
           'active' => '1',
           'created_at' => DB::raw('now()'),
