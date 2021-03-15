@@ -293,7 +293,7 @@ class UserRepository
       ->first();
 
     if ($qCek != null){
-      $query = User::join('gen_position as gp', 'gp.id', 'position_id')->where('gen_user.active','1');
+      $query = User::join('gen_position as gp', 'gp.id', 'position_id');
       if($qCek->is_admin){
         $query = $query;
       } else if($qCek->is_kadin){
@@ -306,7 +306,7 @@ class UserRepository
         $query = $query->where('gp.parent_id', $qCek->position_id);
       }
 
-      $data = $query->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
+      $data = $query->where('gen_user.active','1')->select('gen_user.id', DB::raw("full_name || ' - ' || coalesce(position_name,'') as text"))
         ->get();
       $respon['success'] = true;
       $respon['state_code'] = 200;
