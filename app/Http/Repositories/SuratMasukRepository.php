@@ -150,7 +150,7 @@ class SuratMasukRepository
         ->orderBy('dsm.created_at', 'ASC')
         ->select(
           'dsm.id as disposisi_id',
-          DB::raw("case when log = 'CREATED' then 'Dibuat oleh: ' || cr.full_name || ' - ' || logpos
+          DB::raw("case when log = 'CREATED' then 'Dibuat oleh: ' || cr.full_name || ' - ' || pcr.position_name
             when log = 'DISPOSITION' then 'Diteruskan kepada: ' || dp.full_name || ' - ' || logpos
             when log = 'CLOSED' then 'Surat diselesaikan oleh: ' || cr.full_name || ' - ' || logpos
             else '' end as label_history"),
