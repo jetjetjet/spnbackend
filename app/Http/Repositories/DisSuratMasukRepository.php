@@ -46,11 +46,34 @@ class DisSuratMasukRepository
     return $respon;
   }
 
+  public static function getDispDetail($suratid, $userid)
+  {
+    return DB::table('dis_surat_masuk')
+      ->join('gen_user as gu', 'gu.id', $userid)
+      ->join('gen_position as gp', 'gp.id', 'gp.position_id')
+      ->where('dis_surat_masuk as dsm', 'dsm.surat_masuk_id', $suratid)
+      ->where('dsm.created_by', $userid)
+      ->select(
+        DB::raw("gu.full_name || ' - ' || gp.position_name || ':' as dis_label"),
+        DB::raw("coalesce(dsm.arahan, '-') as arahan"),
+      )->first();
+  }
+
   public static function generateLembarDisposisi($inputs, $loginid)
   {
     $update = false;
     $sM = SuratMasuk::where('surat_masuk.active', '1')
-      ->where('surat_masuk.id', $inputs['surat_masuk_id']);
+      ->where('surat_masuk.id', $inputs['surat_masuk_id'])
+      ->select(
+          'asal_surat', 
+          'perihal', 
+          'nomor_surat', 
+          DB::raw("to_char(tgl_surat, 'dd-mm-yyyy') as tgl_surat"),
+          'sekretaris_id', 
+          'kadin_id', 
+          'kabid_id')
+      ->first();
+    
     //Mulai Transaction
     try{
       $updateSM = $sM->update([
@@ -58,28 +81,12 @@ class DisSuratMasukRepository
         'modified_at' => DB::raw('now()'),
         'modified_by' => $loginid
       ]);
+      sleep(2);
+
+      $kadin = self::getDispDetail($sM->id, $sM->kadin_id);
+      $sekre = self::getDispDetail($sM->id, $sM->sekretaris_id);
+      $kabid = self::getDispDetail($sM->id, $sM->kabid_id);
   
-      $getSM = $sM->join('gen_user as kabid', 'surat_masuk.kabid_id' ,'kabid.id')
-        ->join('gen_position as pkabid', 'pkabid.id', 'kabid.position_id')
-        ->join('gen_user as sekr', 'sekr.id', 'surat_masuk.sekretaris_id')
-        ->join('gen_position as psekr', 'psekr.id', 'sekr.position_id')
-        ->join('gen_user as kadin', 'kadin.id', 'surat_masuk.kadin_id')
-        ->join('gen_position as pkadin', 'pkadin.id', 'kadin.position_id')
-        ->join('dis_surat_masuk as kabiddsm', 'kabiddsm.created_by', 'surat_masuk.kabid_id')
-        ->join('dis_surat_masuk as kadindsm', 'kadindsm.created_by', 'surat_masuk.kadin_id')
-        ->join('dis_surat_masuk as sekredsm', 'sekredsm.created_by', 'surat_masuk.sekretaris_id')
-        ->select(
-          'asal_surat',
-          'perihal',
-          'nomor_surat',
-          DB::raw("to_char(tgl_surat, 'dd-mm-yyyy') as tgl_surat"),
-          DB::raw("kabid.full_name || ' - ' || pkabid.position_name || ':' as label_kabid"),
-          DB::raw("kabiddsm.arahan as arahan_kabid"),
-          DB::raw("kadin.full_name || ' - ' || pkadin.position_name || ':' as label_kadin"),
-          DB::raw("kadindsm.arahan as arahan_kadin"),
-          DB::raw("sekr.full_name || ' - ' || psekr.position_name || ':' as label_sekre"),
-          DB::raw("sekredsm.arahan as arahan_sekre")
-          )->first();
       if($getSM != null){
         // $path = base_path();
         $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
@@ -89,16 +96,16 @@ class DisSuratMasukRepository
         $docx = new \PhpOffice\PhpWord\TemplateProcessor($path . "/upload/suratmasuk/TEMPLATEDISPOSISI.docx");
         //$docx->setValue(array('{NOMOR_SURAT}' => $noSurat, '{TANGGAL_SURAT}' => $inputs['tgl_teks']));
             
-        $docx->setValue('{NOMOR_SURAT}', $getSM->nomor_surat);
-        $docx->setValue('{TGL_SURAT}', $getSM->tgl_surat);
-        $docx->setValue('{PERIHAL}', $getSM->perihal);
+        $docx->setValue('{NOMOR_SURAT}', $sM->nomor_surat);
+        $docx->setValue('{TGL_SURAT}', $sM->tgl_surat);
+        $docx->setValue('{PERIHAL}', $sM->perihal);
         $docx->setValue('{ASAL_SURAT}', $getSM->asal_surat);
-        $docx->setValue('{LBL_SEKRE}', $getSM->label_sekre);
-        $docx->setValue('{DISPOSISI_SEKRE}', $getSM->arahan_sekre);
-        $docx->setValue('{LBL_KADIN}', $getSM->label_kadin);
-        $docx->setValue('{DISPOSISI_KADIN}', $getSM->arahan_kadin);
-        $docx->setValue('{LBL_KABID}', $getSM->label_kabid);
-        $docx->setValue('{DISPOSISI_KABID}', $getSM->arahan_kabid);
+        $docx->setValue('{LBL_SEKRE}', $sekre->dis_label);
+        $docx->setValue('{DISPOSISI_SEKRE}', $sekre->arahan);
+        $docx->setValue('{LBL_KADIN}', $kadin->dis_label);
+        $docx->setValue('{DISPOSISI_KADIN}', $kadin->arahan);
+        $docx->setValue('{LBL_KABID}', $kabid->dis_label);
+        $docx->setValue('{DISPOSISI_KABID}', $kabid->arahan);
         $docx->saveAs( $path . $newFilePath, TRUE);
 
         $checkFile = file_exists($path . $newFilePath);
@@ -184,6 +191,14 @@ class DisSuratMasukRepository
       }
       //$appr = $inputs['is_approved']  ?? "false";
       foreach($inputs['to_user_id'] as $userid ){
+        $validasi = DisSuratMasuk::where('surat_masuk_id', $inputs['surat_masuk_id'])
+          ->where('active', '1')
+          ->where('to_user_id', $userid)
+          ->where('created_by', $loginid)
+          ->first();
+        //cek duplikasi
+        if($validasi != null) continue;
+
         $q = DisSuratMasuk::create([
           'surat_masuk_id' => $inputs['surat_masuk_id'],
           'to_user_id' => $userid,
