@@ -136,14 +136,7 @@ class DisSuratMasukRepository
         }
       }
     } catch(\Exception $e){
-      $log =Array(
-        'action' => 'SAV',
-        'modul' => 'SM',
-        'reference_id' => $id ?? 0,
-        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
-      );
-      $saveLog = ErrorLogRepository::save($log, $loginid);
-      throw new Exception('Rollbacked');
+      throw new Exception($e->getMessage());
       //lewat
     }
     return $update;
@@ -234,13 +227,6 @@ class DisSuratMasukRepository
      // DB::commit();
       $result = true;
     }catch(\Exception $e){
-      $log =Array(
-        'action' => 'SAV',
-        'modul' => 'SM',
-        'reference_id' => $id ?? 0,
-        'errorlog' => $e->getMessage() ?? 'NOT_RECORDED'
-      );
-      $saveLog = ErrorLogRepository::save($log, $loginid);
       throw new exception($e->getMessage());
     }
     return $result;
