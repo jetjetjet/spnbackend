@@ -20,6 +20,11 @@ class CreatePositionsTable extends Migration
             $table->string('position_type');
             $table->string('detail')->nullable();
             $table->boolean('is_parent')->nullable();
+            $table->boolean('is_admin')->nullable();
+            $table->boolean('is_kadin')->nullable();
+            $table->boolean('is_sekretaris')->nullable();
+            $table->boolean('is_subagumum')->nullable();
+            $table->boolean('is_officer')->nullable();
             $table->bigInteger('parent_id')->nullable();
 
             $table->boolean('active');

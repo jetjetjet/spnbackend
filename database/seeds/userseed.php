@@ -220,6 +220,7 @@ class Userseed extends Seeder
             'position_name' => 'Kepala Dinas',
             'position_type' => 'Gol. ',
             'is_parent' => '1',
+            'is_kadin' => '1',
             'parent_id' => null,
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
@@ -231,6 +232,7 @@ class Userseed extends Seeder
             'position_name' => 'Sekretaris',
             'position_type' => 'Gol. ',
             'is_parent' => '1',
+            'is_sekretaris' => '1',
             'parent_id' => null,
             'active' => '1',
             'created_at' => now()->toDateTimeString(),
@@ -240,6 +242,7 @@ class Userseed extends Seeder
         $sumum = Position::create([
             'group_id' => $subumum->id,
             'position_name' => 'Kasubbag Umum dan Kepegawaian',
+            'is_subagumum' => '1',
             'position_type' => 'Gol. ',
             'is_parent' => '0',
             'parent_id' => $sekretaris->id,
