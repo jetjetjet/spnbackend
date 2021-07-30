@@ -22,6 +22,7 @@ class CreateDisSuratKeluarsTable extends Migration
             $table->dateTime('last_read')->nullable();
             $table->string('keterangan')->nullable();
             $table->string('log')->nullable();
+            $table->string('logpos')->nullable();
 
             $table->boolean('active');
             $table->dateTime('created_at');

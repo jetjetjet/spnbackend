@@ -23,6 +23,7 @@ class CreateDisSuratMasuksTable extends Migration
             $table->boolean('is_read')->nullable();
             $table->dateTime('last_read')->nullable();
             $table->string('log')->nullable();
+            $table->string('logpos')->nullable();
 
             $table->boolean('active');
             $table->timestamp('created_at');
