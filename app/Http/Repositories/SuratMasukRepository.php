@@ -199,7 +199,7 @@ class SuratMasukRepository
       );
       $saveLog = ErrorLogRepository::save($log, $loginid);
       $result['state_code'] = 400;
-      array_push($respon['messages'], trans('messages.errorSaveSM'));
+      array_push($result['messages'], trans('messages.errorSaveSM'));
     }
     return $result;
   }
