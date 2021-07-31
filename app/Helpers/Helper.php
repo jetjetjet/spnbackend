@@ -1,5 +1,6 @@
 <?php
 namespace App\Helpers;
+use Illuminate\Support\Facades\Storage;
 
 class Helper
 {
@@ -33,12 +34,12 @@ class Helper
     $file = new \StdClass;
     try {
       $file = isset($inputs['file']) ? $inputs['file'] : null;
-      $file->path = base_path() . $subFolder;
-      // $file->path = '/home/admin/web/apisurat.disdikkerinci.id/public_html'. $subFolder;
+      $file->path = base_path() .  $subFolder;
       $file->newName = time()."_".$file->getClientOriginalName();
       $file->originalName = explode('.',$file->getClientOriginalName())[0];
       $file->move($file->path ,$file->newName);
     } catch (Exception $e){
+      dd($e);
         // supress
     }
     return $file;
@@ -48,8 +49,7 @@ class Helper
   {
     $newFile = new \StdClass;
     try {
-      $newFile->path = base_path() . $subFolder;
-      // $newFile->path = '/home/admin/web/apisurat.disdikkerinci.id/public_html'. $subFolder;
+      $file->path = base_path() .  $subFolder;
       $newFile->newName = time()."_".$file->getClientOriginalName();
       $newFile->originalName = explode('.',$file->getClientOriginalName())[0];
       $file->move($newFile->path ,$newFile->newName);

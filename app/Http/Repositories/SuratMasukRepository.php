@@ -151,7 +151,7 @@ class SuratMasukRepository
         ->select(
           'dsm.id as disposisi_id',
           DB::raw("case when log = 'CREATED' then 'Dibuat oleh: ' || cr.full_name || ' - ' || pcr.position_name
-            when log = 'DISPOSITION' then 'Diteruskan oleh: ' || dp.full_name || ' - ' || logpos
+            when log = 'DISPOSITION' then 'Diteruskan kepada: ' || dp.full_name || ' - ' || logpos
             when log = 'CLOSED' then 'Surat diselesaikan oleh: ' || cr.full_name || ' - ' || logpos
             else '' end as label_history"),
           DB::raw("case when is_read = '1' then 'Dibaca' else 'Belum Dibaca' end as status_read "),

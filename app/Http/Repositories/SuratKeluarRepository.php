@@ -662,8 +662,8 @@ class SuratKeluarRepository
       
               }
       
-              $signed = time()."_". $data->original_name;
-              $signedPath = '/upload/suratkeluar/'. $signed;
+              $signed = str_replace("_agenda", "",$data->original_name);
+              $signedPath = '/upload/suratkeluar/'. $signed. '.pdf';
               $pdf->Output($basePathFile . $signedPath, 'F');
       
               $newFile = File::create([

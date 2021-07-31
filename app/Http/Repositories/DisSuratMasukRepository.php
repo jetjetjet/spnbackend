@@ -20,17 +20,16 @@ class DisSuratMasukRepository
       $inputs['log'] = 'DISPOSITION';
       $childKabid = self::cekSMStatus($inputs['surat_masuk_id'], $positionid);
       DB::transaction(function () use (&$respon, $inputs, $loginid, $positionid, $childKabid){
-        $valid = self::saveDisSuratMasuk($inputs, $loginid, $positionid);
+        $valid = self::saveDisSuratMasuk($respon, $inputs, $loginid, $positionid);
         if(!$valid) return;
         if($childKabid > 1){
-          $valid = self::generateLembarDisposisi($inputs, $loginid);
+          $valid = self::generateLembarDisposisi($respon, $inputs, $loginid);
           if(!$valid) return;
         }
 
         $respon['success'] = true;
         $respon['state_code'] = 200;
         $respon['data'] = $valid;
-        array_push($respon['messages'], trans('messages.successDispositionInMail'));
       });
     } catch (\Exception $e) {
       $log =Array(
@@ -48,18 +47,19 @@ class DisSuratMasukRepository
 
   public static function getDispDetail($suratid, $userid)
   {
-    return DB::table('dis_surat_masuk')
-      ->join('gen_user as gu', 'gu.id', $userid)
-      ->join('gen_position as gp', 'gp.id', 'gp.position_id')
-      ->where('dis_surat_masuk as dsm', 'dsm.surat_masuk_id', $suratid)
+    return DB::table('dis_surat_masuk as dsm')
+      ->join('gen_user as gu', 'gu.id', 'dsm.created_by')
+      ->join('gen_position as gp', 'gp.id', 'gu.position_id')
+      ->where('dsm.surat_masuk_id', $suratid)
       ->where('dsm.created_by', $userid)
+      ->orderBy('dsm.created_at', 'DESC')
       ->select(
-        DB::raw("gu.full_name || ' - ' || gp.position_name || ':' as dis_label"),
+        DB::raw("(gu.full_name || ' - ' || gp.position_name || ':') as dis_label"),
         DB::raw("coalesce(dsm.arahan, '-') as arahan"),
       )->first();
   }
 
-  public static function generateLembarDisposisi($inputs, $loginid)
+  public static function generateLembarDisposisi(&$respon, $inputs, $loginid)
   {
     $update = false;
     $sM = SuratMasuk::where('surat_masuk.active', '1')
@@ -69,28 +69,22 @@ class DisSuratMasukRepository
           'perihal', 
           'nomor_surat', 
           DB::raw("to_char(tgl_surat, 'dd-mm-yyyy') as tgl_surat"),
-          'sekretaris_id', 
+          'sekretaris_id',
+          'disposisi_file_id',
           'kadin_id', 
           'kabid_id')
       ->first();
-    
+
     //Mulai Transaction
     try{
-      $updateSM = $sM->update([
-        'kabid_id' => $loginid,
-        'modified_at' => DB::raw('now()'),
-        'modified_by' => $loginid
-      ]);
-      sleep(2);
+      if($sM != null && $sM->disposisi_file_id == null){
+        $kadin = self::getDispDetail($inputs['surat_masuk_id'], $sM->kadin_id);
+        $sekre = self::getDispDetail($inputs['surat_masuk_id'], $sM->sekretaris_id);
+        $kabid = self::getDispDetail($inputs['surat_masuk_id'], $loginid);
 
-      $kadin = self::getDispDetail($sM->id, $sM->kadin_id);
-      $sekre = self::getDispDetail($sM->id, $sM->sekretaris_id);
-      $kabid = self::getDispDetail($sM->id, $sM->kabid_id);
-  
-      if($getSM != null){
         $path = base_path();
         // $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
-        $newFile = time()."_LembarDisposisi_". $getSM->asal_surat;
+        $newFile = time()."_LembarDisposisi_". $sM->asal_surat;
         $newFilePath = '/upload/suratmasuk/' . $newFile.'.docx';
         
         $docx = new \PhpOffice\PhpWord\TemplateProcessor($path . "/upload/suratmasuk/TEMPLATEDISPOSISI.docx");
@@ -99,7 +93,7 @@ class DisSuratMasukRepository
         $docx->setValue('{NOMOR_SURAT}', $sM->nomor_surat);
         $docx->setValue('{TGL_SURAT}', $sM->tgl_surat);
         $docx->setValue('{PERIHAL}', $sM->perihal);
-        $docx->setValue('{ASAL_SURAT}', $getSM->asal_surat);
+        $docx->setValue('{ASAL_SURAT}', $sM->asal_surat);
         $docx->setValue('{LBL_SEKRE}', $sekre->dis_label);
         $docx->setValue('{DISPOSISI_SEKRE}', $sekre->arahan);
         $docx->setValue('{LBL_KADIN}', $kadin->dis_label);
@@ -123,9 +117,13 @@ class DisSuratMasukRepository
               'created_at' => DB::raw('now()'),
               'created_by' => $loginid
             ]);
-    
-            $updateSK = $sM->update([
-              'disposisi_file_id' => $saveFileToDb->id
+            
+            $updateDisSm = SuratMasuk::where('surat_masuk.id', $inputs['surat_masuk_id'])
+            ->update([
+              'kabid_id' => $loginid,
+              'disposisi_file_id' => $saveFileToDb->id,
+              'modified_at' => DB::raw('now()'),
+              'modified_by' => $loginid
             ]);
             $update = true;
           } else {
@@ -134,7 +132,11 @@ class DisSuratMasukRepository
         } else {
           throw new Exception();
         }
+      } else {
+        array_push($respon['messages'], 'Lembar Disposisi sudah dibuat');
+        $update = true;
       }
+      
     } catch(\Exception $e){
       throw new Exception($e->getMessage());
       //lewat
@@ -162,7 +164,7 @@ class DisSuratMasukRepository
     return $count;
   }
 
-  public static function saveDisSuratMasuk($inputs, $loginid, $positionid)
+  public static function saveDisSuratMasuk(&$respon, $inputs, $loginid, $positionid)
   {
     //Mulai Transaction
     $result = false;
@@ -190,6 +192,7 @@ class DisSuratMasukRepository
           break;
       }
       //$appr = $inputs['is_approved']  ?? "false";
+      $counter = 0;
       foreach($inputs['to_user_id'] as $userid ){
         $validasi = DisSuratMasuk::where('surat_masuk_id', $inputs['surat_masuk_id'])
           ->where('active', '1')
@@ -214,6 +217,7 @@ class DisSuratMasukRepository
         ]);
 
         if($q != null){
+          $counter++;
           $notif = array(
             'id_reference' => $inputs['surat_masuk_id'],
             'id_subreference' => $q->id,
@@ -225,6 +229,7 @@ class DisSuratMasukRepository
       }
 
      // DB::commit();
+      array_push($respon['messages'], 'Surat berhasil diteruskan kepada ' . $counter . ' orang.');
       $result = true;
     }catch(\Exception $e){
       throw new exception($e->getMessage());
