@@ -279,7 +279,7 @@ class SuratMasukRepository
           'is_tembusan' => null,
           'is_private' => null
         );
-        $dis = DisSuratMasukRepository::saveDisSuratMasuk($dataDis, $loginid, $positionid);
+        $dis = DisSuratMasukRepository::saveDisSuratMasuk($result, $dataDis, $loginid, $positionid);
         if($dis == null){
           throw new Exception();
         }
