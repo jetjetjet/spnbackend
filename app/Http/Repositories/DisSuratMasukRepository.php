@@ -110,7 +110,7 @@ class DisSuratMasukRepository
           //generates pdf file in same directory as test-file.docx
           $converter->convertTo($newFile.".pdf");
           $pdfConverted = '/upload/suratmasuk/' . $newFile.'.pdf';
-          if (file_exists($path . $pdfConverted)){
+          if (FaFile::exists($path . $pdfConvertedh)){
             $saveFileToDb = File::create([
               'file_name' => $newFile.'.pdf',
               'file_path' => $pdfConverted,
