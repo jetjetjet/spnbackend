@@ -83,8 +83,8 @@ class DisSuratMasukRepository
         $sekre = self::getDispDetail($inputs['surat_masuk_id'], $sM->sekretaris_id);
         $kabid = self::getDispDetail($inputs['surat_masuk_id'], $loginid);
 
-        $path = base_path();
-        // $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
+        // $path = base_path();
+        $path = '/home/dikjarkrc/web/apisurat.disdikkerinci.id/public_html';
         $newFile = time()."_LembarDisposisi_". $sM->asal_surat;
         $newFilePath = '/upload/suratmasuk/' . $newFile.'.docx';
         
