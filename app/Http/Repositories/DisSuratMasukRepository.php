@@ -10,6 +10,7 @@ use App\Helpers\Helper;
 use DB;
 use Exception;
 use NcJoes\OfficeConverter\OfficeConverter;
+use Illuminate\Support\Facades\File as FaFile;
 
 class DisSuratMasukRepository
 {
@@ -102,7 +103,8 @@ class DisSuratMasukRepository
         $docx->setValue('{DISPOSISI_KABID}', $kabid->arahan);
         $docx->saveAs( $path . $newFilePath, TRUE);
 
-        $checkFile = file_exists($path . $newFilePath);
+        // $checkFile = file_exists($path . $newFilePath);
+        $checkFile = FaFile::exists($path . $newFilePath);
         if ($checkFile){
           $converter = new OfficeConverter($path . $newFilePath);
           //generates pdf file in same directory as test-file.docx
