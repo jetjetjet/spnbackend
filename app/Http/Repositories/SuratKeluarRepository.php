@@ -811,7 +811,7 @@ class SuratKeluarRepository
         $docx->saveAs( $path . $newFilePath, TRUE);
 
         // $checkFile = file_exists($path . $newFilePath);
-        FaFile::exists($path . $newFilePath);
+        $checkFile = FaFile::exists($path . $newFilePath);
         if ($checkFile){
           $converter = new OfficeConverter($path . $newFilePath);
           //generates pdf file in same directory as test-file.docx
