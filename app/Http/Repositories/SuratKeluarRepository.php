@@ -15,6 +15,7 @@ use App\Model\DisSuratKeluar;
 use App\Model\EncSurat;
 use App\Model\NomorSurat;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File as FaFile;
 
 use DB;
 use Exception;
@@ -597,8 +598,9 @@ class SuratKeluarRepository
       ->where('is_sign', '1')
       ->whereNull('signed_at')->first();
       try{
-        $basePathFile = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
-        $basePathCer = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
+        // $basePathFile = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
+        // $basePathCer = '/home/admin/web/apisurat.disdikkerinci.id/spnbackend';
+        $basePathCer = base_path();
         if ($sk != null){
           if($inputs['approved']) {
             $isiKode = Str::random(12);
@@ -625,7 +627,7 @@ class SuratKeluarRepository
               //$pdf->setPrintFooter(false);
               
               // set the source file
-              $pageCount = $pdf->setSourceFile($basePathFile . $data->file_path);
+              $pageCount = $pdf->setSourceFile($basePathCer . $data->file_path);
               for($pageNo = 1; $pageNo <= $pageCount; $pageNo++){
                 // import a page
                 $templateId = $pdf->importPage($pageNo);
@@ -664,7 +666,7 @@ class SuratKeluarRepository
       
               $signed = str_replace("_agenda", "",$data->original_name);
               $signedPath = '/upload/suratkeluar/'. $signed. '.pdf';
-              $pdf->Output($basePathFile . $signedPath, 'F');
+              $pdf->Output($basePathCer . $signedPath, 'F');
       
               $newFile = File::create([
                 'file_name' => $signed,
@@ -796,8 +798,8 @@ class SuratKeluarRepository
       DB::beginTransaction();
       //Replace Nomor Surat
       try{
-        //$path = base_path();
-        $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
+        $path = base_path();
+        // $path = '/home/admin/web/apisurat.disdikkerinci.id/public_html';
         $newFile = time()."_". $getFile->original_name .'_agenda';
         $newFilePath = '/upload/suratkeluar/' . $newFile.'.docx';
         
@@ -808,13 +810,14 @@ class SuratKeluarRepository
         $docx->setValue('{TGL_SURAT}', $inputs['tgl_teks']);
         $docx->saveAs( $path . $newFilePath, TRUE);
 
-        $checkFile = file_exists($path . $newFilePath);
+        // $checkFile = file_exists($path . $newFilePath);
+        FaFile::exists($path . $newFilePath);
         if ($checkFile){
           $converter = new OfficeConverter($path . $newFilePath);
           //generates pdf file in same directory as test-file.docx
           $converter->convertTo($newFile.".pdf");
           $pdfConverted = '/upload/suratkeluar/' . $newFile.'.pdf';
-          if (file_exists($path . $pdfConverted)){
+          if (FaFile::exists($path . $pdfConverted)){
             $saveFileToDb = File::create([
               'file_name' => $newFile.'.pdf',
               'file_path' => $pdfConverted,
