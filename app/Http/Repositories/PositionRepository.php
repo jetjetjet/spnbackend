@@ -39,7 +39,7 @@ class PositionRepository
   public static function getById($respon, $id)
   {
     $q = Position::leftJoin('gen_group as gg', 'group_id', 'gg.id')
-      ->join('gen_user as cr', 'gen_position.created_by', 'cr.id')
+      ->leftJoin('gen_user as cr', 'gen_position.created_by', 'cr.id')
       ->leftJoin('gen_user as md', 'gen_position.modified_by', 'md.id')
       ->where('gen_position.id', $id)
       ->where('gen_position.active', '1')
